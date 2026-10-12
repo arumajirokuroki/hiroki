@@ -333,7 +333,14 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 .side{display:flex;flex-direction:column;min-height:0;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}
 .tabs.stabs{grid-template-columns:repeat(3,1fr)}
-.side-title{padding:14px 16px;border-bottom:1px solid var(--line);color:var(--gold);font-weight:700}
+.side-title{padding:14px 16px;border:0;border-bottom:1px solid var(--line);color:var(--gold);font-weight:700;font-size:inherit;font-family:inherit;background:none;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.side-title .min-hint{font-size:13px;color:var(--mute);font-weight:700}
+@media not all and (max-height:520px) and (orientation:landscape){
+  .side.min{height:auto;align-self:start}
+  .side.min>:not(.side-title){display:none!important}
+  .side.min .side-title{border-bottom:0}
+}
+@media (max-height:520px) and (orientation:landscape){.side-title{cursor:default}.side-title .min-hint{display:none}}
 .tabs{display:grid;grid-template-columns:repeat(2,1fr);border-bottom:1px solid var(--line)}
 .tab{min-height:54px;background:none;border:0;border-bottom:3px solid transparent;color:var(--mute);font-weight:700;cursor:pointer}
 .tab[aria-selected="true"]{color:var(--gold);border-bottom-color:var(--gold)}
@@ -705,7 +712,7 @@ body.lite{background:#d7e9f8}
   </main>
 
   <aside class="side">
-    <div class="side-title">履歴</div>
+    <button class="side-title" id="sideMin" type="button" aria-expanded="true"><span>履歴</span><span class="min-hint" id="minHint">最小化 ▾</span></button>
 
     <div class="panel" id="panel-prizes" role="tabpanel" aria-labelledby="tab-prizes">
       <ul class="prize-list" id="prizeList"></ul>
@@ -743,6 +750,7 @@ body.lite{background:#d7e9f8}
       </table></div>
       <div class="row">
         <button class="btn-ghost" type="button" data-act="copy">結果をコピー</button>
+        <button class="btn-ghost" type="button" id="histCsv">結果をCSVでダウンロード</button>
       </div>
       <textarea class="field fallback" id="copyFallback" rows="6" readonly hidden></textarea>
     </div>
@@ -913,6 +921,15 @@ function fitItem(){
 window.addEventListener('resize',()=>fitItem());
 window.addEventListener('orientationchange',()=>setTimeout(fitItem,250));
 document.addEventListener('click',e=>{
+  const m=e.target.closest('#sideMin');
+  if(m){
+    if(matchMedia('(max-height:520px) and (orientation:landscape)').matches) return;
+    const side=m.closest('.side'),on=side.classList.toggle('min');
+    m.setAttribute('aria-expanded',String(!on));
+    document.querySelector('#minHint').textContent=on?'ひらく ▸':'最小化 ▾';
+    if(!on){const hw=document.querySelector('#histWrap');if(hw)hw.scrollTop=hw.scrollHeight}
+    return;
+  }
   const b=e.target.closest('#histBtn');
   if(!b) return;
   const app=document.querySelector('#gachaApp');
@@ -1004,9 +1021,11 @@ let silentEl=null;
 const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 /* browsers only allow sound after a tap/click: resume the context and play one silent sample from inside the gesture.
    On iOS also keep a silent media element playing so Web Audio is audible even with the silent switch on. */
+const SILENT_WAV='data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YUAGAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
 function unlockAudio(){
   const c=ensureCtx();
   if(!c) return;
+  try{bgmPoolPrime()}catch(e){}
   try{const b=c.createBuffer(1,1,22050),src=c.createBufferSource();src.buffer=b;src.connect(c.destination);src.start(0)}catch(e){}
   if(IOS&&!silentEl){
     try{silentEl=new Audio('data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YUAGAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA');silentEl.loop=true;silentEl.volume=.01;silentEl.setAttribute('playsinline','');const pr=silentEl.play();if(pr&&pr.catch)pr.catch(()=>{silentEl=null})}catch(e){silentEl=null}
@@ -1102,6 +1121,7 @@ let parts=[],raf=0;
 function sizeFx(){
   const d=window.devicePixelRatio||1;
   fx.width=Math.round(innerWidth*d);fx.height=Math.round(innerHeight*d);
+  fx.style.width=innerWidth+'px';fx.style.height=innerHeight+'px';
   ctx.setTransform(d,0,0,d,0,0);
 }
 function confetti(n){
@@ -1121,7 +1141,7 @@ function confetti(n){
   if(!raf) raf=requestAnimationFrame(stepFx);
 }
 function stepFx(){
-  ctx.clearRect(0,0,innerWidth,innerHeight);
+  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,fx.width,fx.height);ctx.restore();
   parts=parts.filter(p=>p.y<innerHeight+30);
   for(const p of parts){
     p.vy+=0.38;p.vx*=0.992;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
@@ -1130,6 +1150,7 @@ function stepFx(){
     ctx.restore();
   }
   raf=parts.length?requestAnimationFrame(stepFx):0;
+  if(!parts.length){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,fx.width,fx.height);ctx.restore()}
 }
 
 /* ---------- gacha ---------- */
@@ -1343,6 +1364,19 @@ $('#csvTemplate').addEventListener('click',()=>{
   document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),4000);
   toast('フォーマットをダウンロードしました。例の3行を書き換えて「CSVから登録」で読み込んでください');
+});
+/* results as CSV: 職員番号,部署名,名前,順位,商品名 in draw order (UTF-8 with BOM for Excel) */
+const csvCell=v=>{v=String(v==null?'':v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+$('#histCsv').addEventListener('click',()=>{
+  if(!S.history.length){toast('ダウンロードする結果がまだありません');return}
+  const rows=[['職員番号','部署名','名前','順位','商品名']].concat(S.history.map(h=>[h.empno,h.dept,h.name,h.rank,h.item]));
+  const text='\ufeff'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n')+'\r\n';
+  const url=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));
+  const d=new Date(),p2=n=>String(n).padStart(2,'0');
+  const a=document.createElement('a');a.href=url;a.download='抽選結果_'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'.csv';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+  toast('結果をCSVでダウンロードしました');
 });
 async function readCSV(file){
   const buf=await file.arrayBuffer();
@@ -1790,8 +1824,8 @@ function bgmKillOld(){
   const o=bgmOld;bgmOld=null;
   clearTimeout(o.timer);
   try{o.a.onended=null;o.a.pause()}catch(e){}
-  try{o.node&&o.node.disconnect()}catch(e){}
-  try{o.tg&&o.tg.disconnect()}catch(e){}
+  if(o.el) o.el.busy=false;
+  else{try{o.node&&o.node.disconnect()}catch(e){}try{o.tg&&o.tg.disconnect()}catch(e){}}
 }
 /* leave the gacha screen: pause (not stop) so the track continues from the same spot when we come back */
 function bgmPause(){
@@ -1802,37 +1836,76 @@ function bgmPause(){
 function bgmStopAudio(){
   bgmKillOld();
   if(bgmAudio){try{bgmAudio.onended=null;bgmAudio.pause()}catch(e){}}
-  try{bgmNode&&bgmNode.disconnect()}catch(e){}
-  try{bgmTG&&bgmTG.disconnect()}catch(e){}
+  if(bgmEl){bgmEl.busy=false;bgmEl=null}
+  else{try{bgmNode&&bgmNode.disconnect()}catch(e){}try{bgmTG&&bgmTG.disconnect()}catch(e){}}
   bgmAudio=null;bgmNode=null;bgmTG=null;
 }
+/* iOS only lets an <audio> element start by itself (next track, no tap) if that very element was started from a tap before.
+   So two elements are made once, started silently inside a tap, and then reused for every track by changing their src. */
+const bgmPool=[];
+function bgmPoolInit(){
+  if(bgmPool.length) return true;
+  if(!ensureCtx()) return false;
+  try{
+    if(!bgmGain){bgmGain=ac.createGain();bgmGain.connect(ac.destination)}
+    for(let k=0;k<2;k++){
+      const a=new Audio();a.preload='auto';
+      const node=ac.createMediaElementSource(a),tg=ac.createGain();tg.gain.value=0.0001;
+      node.connect(tg);tg.connect(bgmGain);
+      bgmPool.push({a,node,tg,busy:false,primed:false});
+    }
+  }catch(e){bgmPool.length=0;return false}
+  return true;
+}
+function bgmPoolPrime(){
+  if(!bgmPoolInit()) return;
+  for(const el of bgmPool){
+    if(el.primed||el.busy) continue;
+    el.primed=true;
+    try{
+      el.a.src=SILENT_WAV;
+      const p=el.a.play();
+      if(p&&p.then) p.then(()=>{if(!el.busy) try{el.a.pause()}catch(e){}}).catch(()=>{el.primed=false});
+    }catch(e){el.primed=false}
+  }
+}
+let bgmEl=null;
 function bgmPlay(i,cross){
   const t=bgmTracks[i];
   if(!t) return;
   menuBgmStop();
-  const prev=(cross&&bgmAudio&&ac&&bgmTG)?{a:bgmAudio,node:bgmNode,tg:bgmTG}:null;
+  const prev=(cross&&bgmAudio&&ac&&bgmTG)?{a:bgmAudio,node:bgmNode,tg:bgmTG,el:bgmEl}:null;
   if(prev){
     /* crossfade: let the old track fade out and keep it playing until the fade is over */
     bgmKillOld();
     try{prev.a.onended=null;const g=prev.tg.gain,n=ac.currentTime;g.cancelScheduledValues(n);g.setValueAtTime(g.value,n);g.linearRampToValueAtTime(0.0001,n+XFADE)}catch(e){}
     prev.timer=setTimeout(()=>{if(bgmOld===prev)bgmKillOld()},XFADE*1000+300);
-    bgmOld=prev;bgmAudio=null;bgmNode=null;bgmTG=null;
+    bgmOld=prev;bgmAudio=null;bgmNode=null;bgmTG=null;bgmEl=null;
   }else bgmStopAudio();
   bgmIdx=i;
-  const a=new Audio(t.url);
+  let a,el=null;
+  if(bgmPoolInit()) el=bgmPool.find(e=>!e.busy)||null;
+  if(el){
+    el.busy=true;a=el.a;bgmEl=el;
+    a.onended=null;a.__x=false;
+    a.src=t.url;
+    bgmNode=el.node;bgmTG=el.tg;
+    try{const g=el.tg.gain,n=ac.currentTime;g.cancelScheduledValues(n);g.setValueAtTime(0.0001,n)}catch(e){}
+  }else{
+    a=new Audio(t.url);
+    if(ensureCtx()){
+      try{
+        if(!bgmGain){bgmGain=ac.createGain();bgmGain.connect(ac.destination)}
+        bgmNode=ac.createMediaElementSource(a);
+        bgmTG=ac.createGain();bgmTG.gain.value=0.0001;
+        bgmNode.connect(bgmTG);bgmTG.connect(bgmGain);
+      }catch(e){bgmGain=null;bgmNode=null;bgmTG=null}
+    }
+  }
   a.preload='auto';
   a.onended=()=>bgmNext();
-  a.onerror=()=>{bgmPlaying=false;renderBgm();toast('「'+t.name+'」を再生できませんでした')};
+  a.onerror=()=>{if(a.getAttribute('src')===SILENT_WAV)return;bgmPlaying=false;renderBgm();toast('「'+t.name+'」を再生できませんでした')};
   bgmAudio=a;
-  /* iPad Safari ignores audio.volume, so the volume goes through a WebAudio gain node */
-  if(ensureCtx()){
-    try{
-      if(!bgmGain){bgmGain=ac.createGain();bgmGain.connect(ac.destination)}
-      bgmNode=ac.createMediaElementSource(a);
-      bgmTG=ac.createGain();bgmTG.gain.value=0.0001;
-      bgmNode.connect(bgmTG);bgmTG.connect(bgmGain);
-    }catch(e){bgmGain=null;bgmNode=null;bgmTG=null}
-  }
   bgmApply();
   bgmPlaying=true;
   bgmFadeIn(prev?XFADE:2.5);
