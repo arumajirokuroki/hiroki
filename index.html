@@ -1718,7 +1718,8 @@ function bgmPlay(i){
   bgmApply();
   bgmPlaying=true;
   const p=a.play();
-  if(p&&p.catch) p.catch(()=>{bgmPlaying=false;renderBgm()});
+  if(p&&p.catch) p.catch(e=>{bgmPlaying=false;renderBgm();toast('再生できませんでした（'+(e&&e.name||'error')+'）。画面を一度タップしてからもう一度お試しください')});
+  if(ac&&ac.state!=='running') setTimeout(()=>{if(ac&&ac.state!=='running'&&bgmPlaying) toast('ブラウザが音の再生を許可していません。画面を一度クリックしてください（状態：'+ac.state+'）')},700);
   renderBgm();
 }
 function bgmNext(){
