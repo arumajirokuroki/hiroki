@@ -65,7 +65,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 .prize-banner{display:flex;justify-content:flex-start;align-items:center;gap:4px 20px;height:100px;min-height:100px;overflow:hidden}
 .rank{flex:none;white-space:nowrap;font-family:var(--f-display);font-size:clamp(36px,6vw,64px);line-height:1.1;color:var(--gold)}
-.item{flex:1 1 auto;text-align:center;padding-right:0;font-size:96px;line-height:1.15;font-weight:700;min-width:0;white-space:nowrap;overflow:hidden}
+.item{flex:1 1 auto;text-align:center;padding-right:0;font-size:96px;line-height:1.15;font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;padding:.05em .45em .07em .2em;box-sizing:border-box}
 .remain{margin-left:auto;font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
 .banner-empty{color:var(--mute);font-size:24px;font-weight:700}
 
@@ -948,7 +948,7 @@ function fitItem(){
   const el=document.querySelector('#banner .item');
   if(!el||!el.offsetParent) return;
   const cmp=window.matchMedia&&matchMedia('(max-height:520px) and (orientation:landscape)').matches;
-  let f=cmp?64:84;
+  let f=cmp?60:78;
   el.style.fontSize=f+'px';
   /* one line only: shrink until the name fits the box width */
   el.style.whiteSpace='nowrap';
