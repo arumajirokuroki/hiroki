@@ -379,6 +379,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 .tag{font-size:12px;color:var(--mute);text-decoration:none;display:inline-block}
 
 .csvbtn{width:auto;padding:0 18px;min-height:48px;border-radius:10px;font-weight:700}
+.row .csvbtn{flex:1 1 220px;justify-content:center;text-align:center}
 .ptable-wrap{margin-top:14px;border:1px solid var(--line);border-radius:12px;overflow:auto}
 .ptable{width:100%;border-collapse:collapse;font-size:16px}
 .ptable th,.ptable td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
@@ -533,6 +534,23 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 @media (orientation:portrait){
   .plate.idle .plate-note{top:15%;font-size:clamp(22px,6.4cqi,30px)}
 }
+
+/* ---------- bright look for the gacha screen ---------- */
+body.lite{background:#d7e9f8}
+#gachaApp{
+  --bg:#d7e9f8;--panel:#ffffff;--panel-2:#eaf3fc;--line:rgba(20,48,110,.2);
+  --fg:#14306e;--mute:#4a5f8f;--gold:#E8A100;--gold-soft:rgba(232,161,0,.5);
+  color-scheme:light;color:var(--fg);
+  background:linear-gradient(180deg,#8cc2ee 0%,#c4def5 45%,#e9f3fb 100%);
+}
+#gachaApp .plate{background:radial-gradient(ellipse at 66% 45%,#ffffff 0%,#d4e8fa 55%,#acd2f2 100%)}
+#gachaApp .rank{color:#D98200}
+#gachaApp .plate.idle .plate-note{color:#E2560B;text-shadow:0 2px 0 #fff,0 0 14px rgba(255,255,255,.95)}
+#gachaApp .name{color:#C46A00;text-shadow:0 0 16px rgba(255,255,255,.9)}
+#gachaApp .btn-ghost{background:rgba(255,255,255,.75)}
+#gachaApp .htable{color:var(--fg)}
+#gachaApp .htable tbody tr:nth-child(even) td{background:rgba(20,48,110,.05)}
+#gachaApp .htable th{color:#9a6200}
 </style>
 
 <div class="start" id="startScreen" role="button" tabindex="0" aria-label="タップしてはじめる">
@@ -701,6 +719,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
     <div class="panel" id="panel-people" role="tabpanel" aria-labelledby="tab-people" hidden>
       <div class="row">
         <label class="btn-ghost filebtn csvbtn" for="csvFile">CSVから登録</label>
+        <button class="btn-ghost csvbtn" type="button" id="csvTemplate">CSVのフォーマットをダウンロード</button>
         <input type="file" id="csvFile" accept=".csv,text/csv,text/plain" hidden></div>
       <div class="ptable-wrap"><table class="ptable" aria-label="参加者の登録">
         <thead>
@@ -869,7 +888,7 @@ function setEgg(o){
 function idlePlate(){
   awaitConfirm=false;
   const pz=currentPrize();
-  setPlate('idle',{note:pz?'しんわくんの手を\n下にひっぱろう！':(S.prizes.length?'':'景品を登録してね')});
+  setPlate('idle',{note:pz?'しんわくんの手を\n下にひっぱろう！':(S.prizes.length?'おわりだよ！':'景品を登録してね')});
   setEgg({hidden:true});
 }
 const shortMode=()=>reduced()||!!S.opts.fast;
@@ -997,6 +1016,17 @@ function unlockAudio(){
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ac&&ac.state!=='running'){try{ac.resume()}catch(e){}}});
 function startAudio(){ensureCtx()}
 const seG=()=>S.opts.vol.master*S.opts.vol.se;
+/* sound effects go through their own bus: boosted, then a compressor keeps the peaks from clipping, so they stay audible over the BGM */
+let seBusNode=null;
+function seOut(){
+  if(!seBusNode||seBusNode.context!==ac){
+    const g=ac.createGain();g.gain.value=4;
+    const c=ac.createDynamicsCompressor();
+    c.threshold.value=-20;c.knee.value=12;c.ratio.value=6;c.attack.value=.002;c.release.value=.18;
+    g.connect(c);c.connect(ac.destination);seBusNode=g;
+  }
+  return seBusNode;
+}
 function beep(freq,dur,type,vol,delay){
   if(!ac||!S.opts.sound) return;
   try{
@@ -1006,7 +1036,7 @@ function beep(freq,dur,type,vol,delay){
     o.frequency.setValueAtTime(freq,t);
     g.gain.setValueAtTime((vol||.05)*seG()+.0001,t);
     g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-    o.connect(g);g.connect(ac.destination);
+    o.connect(g);g.connect(seOut());
     o.start(t);o.stop(t+dur+.02);
   }catch(e){}
 }
@@ -1018,7 +1048,7 @@ function noise(dur,vol){
     for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*(1-i/len);
     const s=ac.createBufferSource(),g=ac.createGain();
     s.buffer=buf;g.gain.value=vol*seG();
-    s.connect(g);g.connect(ac.destination);s.start();
+    s.connect(g);g.connect(seOut());s.start();
   }catch(e){}
 }
 const tick=()=>beep(880,.06,'square',.11);
@@ -1032,7 +1062,7 @@ function sweep(f0,f1,dur,type,vol,delay){
     o.frequency.exponentialRampToValueAtTime(f1,t+dur);
     g.gain.setValueAtTime(vol*seG()+.0001,t);
     g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-    o.connect(g);g.connect(ac.destination);
+    o.connect(g);g.connect(seOut());
     o.start(t);o.stop(t+dur+.02);
   }catch(e){}
 }
@@ -1077,7 +1107,7 @@ function sizeFx(){
 function confetti(n){
   if(reduced()) return;
   sizeFx();
-  const cols=['#D93552','#F2BE4B','#FFFFFF','#7FA6FF','#FF9AB0'];
+  const cols=['#D93552','#F2BE4B','#8B6CFF','#3D8BFF','#FF7DA0'];
   for(let i=0;i<n;i++){
     const side=i%2===0;
     parts.push({
@@ -1304,6 +1334,16 @@ function csvToPeople(rows){
   }
   return body.map(r=>({empno:idx.empno>=0?(r[idx.empno]||''):'',dept:idx.dept>=0?(r[idx.dept]||''):'',name:r[idx.name]||''})).filter(p=>p.name);
 }
+/* a ready-to-fill CSV (UTF-8 with BOM so Excel shows the Japanese correctly) */
+$('#csvTemplate').addEventListener('click',()=>{
+  const rows=[['職員番号','所属部署','名前'],['1001','看護部','山田 花子'],['1002','事務部','佐藤 太郎'],['1003','リハビリテーション科','鈴木 一郎']];
+  const text='\ufeff'+rows.map(r=>r.join(',')).join('\r\n')+'\r\n';
+  const url=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));
+  const a=document.createElement('a');a.href=url;a.download='参加者登録フォーマット.csv';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+  toast('フォーマットをダウンロードしました。例の3行を書き換えて「CSVから登録」で読み込んでください');
+});
 async function readCSV(file){
   const buf=await file.arrayBuffer();
   let text;
@@ -1634,6 +1674,7 @@ let view='menu';
 function go(v){
   if(busy&&v!=='gacha'){toast('抽選中です。終わってから移動してください');return}
   view=v;
+  document.body.classList.toggle('lite',v==='gacha');
   $('#menu').hidden=v!=='menu';
   $('#gachaApp').hidden=v!=='gacha';
   ['prizes','people','bgm','settings'].forEach(n=>{$('#page-'+n).hidden=v!==n});
@@ -1722,7 +1763,7 @@ async function bgmDel(id){
   else if(i<bgmIdx) bgmIdx--;
   renderBgm();renderMenu();
 }
-function bgmVol(){return Math.max(0,Math.min(1,S.opts.vol.master*S.opts.vol.bgm))}
+function bgmVol(){return Math.max(0,Math.min(1,S.opts.vol.master*S.opts.vol.bgm))*.65}
 function bgmApply(){
   if(mbGain) mbGain.gain.value=bgmVol();
   if(mGainN) mGainN.gain.value=bgmVol();
@@ -1730,33 +1771,53 @@ function bgmApply(){
   else if(bgmAudio) bgmAudio.volume=bgmVol();
 }
 /* soft start: ramp the BGM volume up instead of starting at full level */
-let fadeIv=null;
+let fadeIv=null,bgmTG=null,bgmOld=null;
+const XFADE=3.5; /* seconds: the next track starts this long before the current one ends, and they overlap */
+/* every track has its own gain node (bgmTG) so tracks can be faded in and out separately; bgmGain is the master BGM volume */
 function bgmFadeIn(sec){
-  const target=bgmVol();
   if(fadeIv){clearInterval(fadeIv);fadeIv=null}
-  if(bgmGain&&ac){
-    try{const g=bgmGain.gain,t=ac.currentTime;g.cancelScheduledValues(t);g.setValueAtTime(0.0001,t);g.linearRampToValueAtTime(Math.max(target,0.0001),t+sec);return}catch(e){}
+  if(bgmTG&&ac){
+    try{const g=bgmTG.gain,t=ac.currentTime;g.cancelScheduledValues(t);g.setValueAtTime(0.0001,t);g.linearRampToValueAtTime(1,t+sec);return}catch(e){}
   }
   if(bgmAudio){
     const a=bgmAudio,t0=performance.now();a.volume=0;
     fadeIv=setInterval(()=>{const k=Math.min(1,(performance.now()-t0)/(sec*1000));a.volume=bgmVol()*k;if(k>=1){clearInterval(fadeIv);fadeIv=null}},60);
   }
 }
+/* the track that is fading out while the next one fades in */
+function bgmKillOld(){
+  if(!bgmOld) return;
+  const o=bgmOld;bgmOld=null;
+  clearTimeout(o.timer);
+  try{o.a.onended=null;o.a.pause()}catch(e){}
+  try{o.node&&o.node.disconnect()}catch(e){}
+  try{o.tg&&o.tg.disconnect()}catch(e){}
+}
 /* leave the gacha screen: pause (not stop) so the track continues from the same spot when we come back */
 function bgmPause(){
+  bgmKillOld();
   if(bgmAudio&&bgmPlaying){try{bgmAudio.pause()}catch(e){}}
   bgmPlaying=false;renderBgm();
 }
 function bgmStopAudio(){
+  bgmKillOld();
   if(bgmAudio){try{bgmAudio.onended=null;bgmAudio.pause()}catch(e){}}
   try{bgmNode&&bgmNode.disconnect()}catch(e){}
-  bgmAudio=null;bgmNode=null;
+  try{bgmTG&&bgmTG.disconnect()}catch(e){}
+  bgmAudio=null;bgmNode=null;bgmTG=null;
 }
-function bgmPlay(i){
+function bgmPlay(i,cross){
   const t=bgmTracks[i];
   if(!t) return;
   menuBgmStop();
-  bgmStopAudio();
+  const prev=(cross&&bgmAudio&&ac&&bgmTG)?{a:bgmAudio,node:bgmNode,tg:bgmTG}:null;
+  if(prev){
+    /* crossfade: let the old track fade out and keep it playing until the fade is over */
+    bgmKillOld();
+    try{prev.a.onended=null;const g=prev.tg.gain,n=ac.currentTime;g.cancelScheduledValues(n);g.setValueAtTime(g.value,n);g.linearRampToValueAtTime(0.0001,n+XFADE)}catch(e){}
+    prev.timer=setTimeout(()=>{if(bgmOld===prev)bgmKillOld()},XFADE*1000+300);
+    bgmOld=prev;bgmAudio=null;bgmNode=null;bgmTG=null;
+  }else bgmStopAudio();
   bgmIdx=i;
   const a=new Audio(t.url);
   a.preload='auto';
@@ -1767,23 +1828,33 @@ function bgmPlay(i){
   if(ensureCtx()){
     try{
       if(!bgmGain){bgmGain=ac.createGain();bgmGain.connect(ac.destination)}
-      bgmNode=ac.createMediaElementSource(a);bgmNode.connect(bgmGain);
-    }catch(e){bgmGain=null;bgmNode=null}
+      bgmNode=ac.createMediaElementSource(a);
+      bgmTG=ac.createGain();bgmTG.gain.value=0.0001;
+      bgmNode.connect(bgmTG);bgmTG.connect(bgmGain);
+    }catch(e){bgmGain=null;bgmNode=null;bgmTG=null}
   }
   bgmApply();
   bgmPlaying=true;
-  bgmFadeIn(2.5);
+  bgmFadeIn(prev?XFADE:2.5);
   const p=a.play();
   if(p&&p.catch) p.catch(e=>{bgmPlaying=false;renderBgm();toast('再生できませんでした（'+(e&&e.name||'error')+'）。画面を一度タップしてからもう一度お試しください')});
   if(ac&&ac.state!=='running') setTimeout(()=>{if(ac&&ac.state!=='running'&&bgmPlaying) toast('ブラウザが音の再生を許可していません。画面を一度クリックしてください（状態：'+ac.state+'）')},700);
   renderBgm();
 }
-function bgmNext(){
+/* watch the playing track: shortly before it ends, start the next one so there is no silence between songs */
+setInterval(()=>{
+  const a=bgmAudio;
+  if(!a||!bgmPlaying||a.paused||a.__x||!bgmTG) return;
+  const d=a.duration;
+  if(!isFinite(d)||d<XFADE*2+2) return;
+  if(d-a.currentTime<=XFADE){a.__x=true;bgmNext(true)}
+},250);
+function bgmNext(cross){
   if(!bgmTracks.length){bgmStop();return}
   let i;
   if(S.opts.shuffle&&bgmTracks.length>1){do{i=rand(bgmTracks.length)}while(i===bgmIdx)}
   else i=(bgmIdx+1)%bgmTracks.length;
-  bgmPlay(i);
+  bgmPlay(i,cross===true);
 }
 function bgmStart(){
   if(bgmPlaying||!S.opts.bgm||!bgmTracks.length) return;
