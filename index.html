@@ -118,7 +118,6 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   --ox:calc(96cqi - var(--mw) / 2 - 54cqi);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133);
   width:var(--bw);height:auto;aspect-ratio:1/1;
   border-radius:50%;
-  box-shadow:0 0 42px var(--egg-glow);
   transform-origin:50% 92%;
 }
 .egg.roll{transform-origin:50% 50%;animation:rollOut 1.6s linear both}
@@ -136,22 +135,17 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 /* the ball is two halves with a seam; the logo patch from the dragon's belly sits across the middle */
 .ball-half{
   position:absolute;inset:0;border-radius:50%;background:var(--egg-bg);
-  box-shadow:inset -14px -18px 30px rgba(0,0,0,.22),inset 10px 12px 24px rgba(255,255,255,.45);
 }
-.ball-half.top{clip-path:inset(0 0 50% 0);transform-origin:50% 100%;
+.ball-half.top{clip-path:inset(0 0 49% 0);transform-origin:50% 100%;
   background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.6) 0 7%,transparent 8%),var(--egg-bg)}
-.ball-half.bot{clip-path:inset(50% 0 0 0);transform-origin:50% 0}
-.egg::before{
-  content:"";position:absolute;left:0;right:0;top:calc(50% - 2.5px);height:5px;border-radius:3px;
-  background:rgba(20,22,48,.38);z-index:1;
-}
+.ball-half.bot{clip-path:none;transform-origin:50% 0}
+.egg::before{display:none}
 .ball-face{
   position:absolute;inset:8%;border-radius:50%;overflow:hidden;background:#fff;
-  box-shadow:inset -12px -16px 26px rgba(20,40,90,.22),inset 8px 10px 20px rgba(255,255,255,.7);
 }
 .ball-face img{position:absolute;left:50%;top:50%;height:104%;width:auto;transform:translate(-50%,-50%)}
 .ball-face::after{content:"";position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.65) 0 7%,transparent 9%),radial-gradient(circle at 70% 78%,rgba(30,60,130,.18),transparent 55%)}
+  background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.65) 0 7%,transparent 9%)}
 .egg::after{
   content:"";position:absolute;inset:0;border-radius:inherit;opacity:0;z-index:3;
   background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.65) 50%,transparent 65%);
@@ -175,6 +169,8 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .egg.gone{animation:none}
 .egg.gone .ball-half,.egg.gone::before,.egg.gone::after{opacity:0}
 .egg.gone{box-shadow:none}
+.egg.gone .ball-half.bot{clip-path:inset(50% 0 0 0)}
+.egg.gone .ball-half.top{clip-path:inset(0 0 50% 0)}
 .egg.gone .ball-half.top{animation:splitT .5s cubic-bezier(.2,.8,.3,1) forwards}
 .egg.gone .ball-half.bot{animation:splitB .5s cubic-bezier(.2,.8,.3,1) forwards}
 @keyframes splitT{from{opacity:1;transform:translateY(0) rotate(0)}to{opacity:0;transform:translateY(-70%) rotate(-28deg)}}
@@ -235,6 +231,11 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .spark{position:absolute;width:15%;aspect-ratio:1;background:#fff;opacity:0;pointer-events:none;z-index:5;
   clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);filter:drop-shadow(0 0 5px #fff)}
 .egg.col-rainbow .spark{animation:twinkle 1.1s ease-in-out infinite}
+.egg.col-silver .spark,.egg.col-gold .spark{animation:twinkle 1s ease-in-out infinite}
+.egg.col-silver .spark,.egg.col-gold .spark,.egg.col-rainbow .spark{width:21%;filter:drop-shadow(0 0 8px #fff) drop-shadow(0 0 3px #fff)}
+.egg.col-rainbow .spark{animation-duration:.8s}
+.egg.col-silver::after,.egg.col-gold::after,.egg.col-rainbow::after{opacity:1;background:linear-gradient(115deg,transparent 28%,rgba(255,255,255,.98) 50%,transparent 72%);background-size:260% 100%;animation:sheen 1s linear infinite}
+.egg.col-silver .ball-half,.egg.col-gold .ball-half,.egg.col-rainbow .ball-half{filter:brightness(1.12) saturate(1.2)}
 .spark.s1{left:-6%;top:12%}.spark.s2{right:-4%;top:2%;animation-delay:-.4s!important}.spark.s3{right:6%;bottom:6%;animation-delay:-.8s!important}.spark.s4{left:8%;bottom:2%;animation-delay:-.2s!important}
 /* the whole capsule is tinted, not just the ring */
 .egg.col-lime .ball-face{background:radial-gradient(circle at 35% 30%,#F6FFD2,#B8EC58 65%,#8CCB2E)}
@@ -245,7 +246,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 /* let the colour show through the logo's white patch so the whole capsule is tinted */
 .egg[class*="col-"] .ball-face img{mix-blend-mode:multiply}
 /* 1位 finale: bigger glow and spinning rays while the capsule takes its time */
-.egg.fin{box-shadow:0 0 70px 14px rgba(255,255,255,.75),0 0 140px 36px var(--egg-glow)}
+.egg.fin{box-shadow:none}
 .plate.finale .rays{opacity:1;animation-duration:6s}
 .plate.finale{animation:finalePulse .9s ease-in-out infinite}
 @keyframes finalePulse{0%,100%{border-color:var(--gold)}50%{border-color:#ff7ad9;box-shadow:inset 0 0 0 9px var(--bg),inset 0 0 0 10px var(--gold-soft),0 0 40px rgba(255,122,217,.7)}}
@@ -533,8 +534,11 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   -webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 46%,rgba(0,0,0,.6) 68%,transparent 100%);
   mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 46%,rgba(0,0,0,.6) 68%,transparent 100%)}
 .menu>*:not(.menu-bg){position:relative;z-index:1}
-/* the menu title is not shown (kept for screen readers) */
-.menu-title{position:absolute!important;width:1px;height:1px;margin:0!important;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* title in a cute rounded face, orange with a white edge so it reads on the sky */
+.menu-title{font-family:"Mochiy Pop One","Zen Maru Gothic",var(--f-display);font-weight:400;color:#E2560B;text-align:center;letter-spacing:.06em;line-height:1.2;font-size:clamp(34px,10vw,58px);margin:0 0 20px;-webkit-text-stroke:7px #fff;paint-order:stroke fill;text-shadow:0 4px 0 rgba(255,255,255,.9),0 0 20px rgba(255,255,255,.9)}
+.menu-list[hidden]{display:none}
+.menu-btn.back{min-height:50px;font-size:17px;background:rgba(255,255,255,.8);color:#14306e;border-color:rgba(20,48,110,.25)}
+@media (max-height:520px) and (orientation:landscape){.menu-title{font-size:clamp(26px,5vw,38px);margin:0 0 8px}.menu-btn.back{min-height:34px;font-size:14px}}
 @media (max-width:760px) and (orientation:portrait){.menu-bg::before{width:max(170vw,calc(100dvh * 1.05))}}
 
 /* portrait: the "pull his hand" hint goes to the top centre, a bit larger */
@@ -552,6 +556,9 @@ body.lite{background:#d7e9f8}
 }
 #gachaApp .plate{background:radial-gradient(ellipse at 66% 45%,#ffffff 0%,#d4e8fa 55%,#acd2f2 100%)}
 #gachaApp .rank{color:#D98200}
+#gachaApp .plate.idle[data-end="1"] .plate-note{font-size:clamp(40px,13.5cqi,76px);letter-spacing:.08em;line-height:1.25}
+@media (max-height:520px) and (orientation:landscape){#gachaApp .plate.idle[data-end="1"] .plate-note{font-size:clamp(30px,7cqi,52px)}}
+@media (orientation:portrait){#gachaApp .plate.idle[data-end="1"] .plate-note{top:24%}}
 #gachaApp .plate.idle .plate-note{color:#E2560B;text-shadow:0 2px 0 #fff,0 0 14px rgba(255,255,255,.95)}
 #gachaApp .name{color:#C46A00;text-shadow:0 0 16px rgba(255,255,255,.9)}
 #gachaApp .btn-ghost{background:rgba(255,255,255,.75)}
@@ -570,8 +577,12 @@ body.lite{background:#d7e9f8}
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
-    <div class="menu-list">
+    <div class="menu-list" id="menuMain">
       <button class="menu-btn primary" type="button" data-go="gacha"><span>ガチャ画面へ<small id="mGacha"></small></span><span class="go" aria-hidden="true">›</span></button>
+      <button class="menu-btn" type="button" data-menu="sub"><span>各種設定<small>商品・参加者・BGM・設定</small></span><span class="go" aria-hidden="true">›</span></button>
+    </div>
+    <div class="menu-list" id="menuSub" hidden>
+      <button class="menu-btn back" type="button" data-menu="main"><span>‹ もどる</span></button>
       <button class="menu-btn" type="button" data-go="prizes"><span>商品を登録<small id="mPrizes"></small></span><span class="go" aria-hidden="true">›</span></button>
       <button class="menu-btn" type="button" data-go="people"><span>参加者を登録<small id="mPeople"></small></span><span class="go" aria-hidden="true">›</span></button>
       <button class="menu-btn" type="button" data-go="bgm"><span>BGMを登録<small id="mBgm"></small></span><span class="go" aria-hidden="true">›</span></button>
@@ -749,10 +760,8 @@ body.lite{background:#d7e9f8}
         <tbody id="histList"></tbody>
       </table></div>
       <div class="row">
-        <button class="btn-ghost" type="button" data-act="copy">結果をコピー</button>
         <button class="btn-ghost" type="button" id="histCsv">結果をCSVでダウンロード</button>
       </div>
-      <textarea class="field fallback" id="copyFallback" rows="6" readonly hidden></textarea>
     </div>
   </aside>
 </div>
@@ -878,6 +887,7 @@ function setName(text){
 function setPlate(mode,o){
   o=o||{};
   plate.className='plate '+mode;
+  delete plate.dataset.end;
   plate.dataset.tier=String(o.tier||0);
   if(o.name!==undefined) setName(o.name);
   rankEl.textContent=o.rank||'';
@@ -897,6 +907,7 @@ function idlePlate(){
   awaitConfirm=false;
   const pz=currentPrize();
   setPlate('idle',{note:pz?'しんわくんの手を\n下にひっぱろう！':(S.prizes.length?'おわりだよ！':'景品を登録してね')});
+  if(!pz&&S.prizes.length) plate.dataset.end='1';
   setEgg({hidden:true});
 }
 const shortMode=()=>reduced()||!!S.opts.fast;
@@ -1705,6 +1716,8 @@ $('#body-people').appendChild($('#panel-people'));
 $('#panel-people').hidden=false;
 $('#panel-prizes').hidden=false;
 let view='menu';
+function setMenuSub(on){$('#menuMain').hidden=on;$('#menuSub').hidden=!on}
+document.addEventListener('click',e=>{const m=e.target.closest('[data-menu]');if(m)setMenuSub(m.dataset.menu==='sub')});
 function go(v){
   if(busy&&v!=='gacha'){toast('抽選中です。終わってから移動してください');return}
   view=v;
@@ -1712,6 +1725,7 @@ function go(v){
   $('#menu').hidden=v!=='menu';
   $('#gachaApp').hidden=v!=='gacha';
   ['prizes','people','bgm','settings'].forEach(n=>{$('#page-'+n).hidden=v!==n});
+  if(['prizes','people','bgm','settings'].includes(v)) setMenuSub(true); else if(v==='gacha') setMenuSub(false);
   if(v==='menu'){if(S.opts.menuBgm&&bgmPlaying)bgmPause();menuBgmStart()}else menuBgmStop();
   if(v==='gacha'){fitItem();ensureCtx();if(!S.opts.bgm){S.opts.bgm=true;save()}bgmStart();renderBgm()}
   const sc=document.scrollingElement;if(sc)sc.scrollTop=0;
