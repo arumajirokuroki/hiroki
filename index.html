@@ -537,6 +537,13 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 /* title in a cute rounded face, orange with a white edge so it reads on the sky */
 .menu-title{font-family:"Mochiy Pop One","Zen Maru Gothic",var(--f-display);font-weight:400;color:#E2560B;text-align:center;letter-spacing:.06em;line-height:1.2;font-size:clamp(34px,10vw,58px);margin:0 0 20px;-webkit-text-stroke:7px #fff;paint-order:stroke fill;text-shadow:0 4px 0 rgba(255,255,255,.9),0 0 20px rgba(255,255,255,.9);position:relative;top:-26px}
 .menu-list[hidden]{display:none}
+.quit-btn{position:absolute!important;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));z-index:5;min-height:44px;padding:0 18px;border-radius:999px;border:2px solid #14306e;background:#fff;color:#14306e;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 3px 10px rgba(20,48,110,.25)}
+.quit-btn:active{transform:scale(.97)}
+.endscr{position:fixed;inset:0;z-index:300;background:radial-gradient(ellipse at 50% 40%,#22336f 0%,#0E1730 75%);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
+.endscr[hidden]{display:none}
+.end-t{font-family:"Mochiy Pop One","Zen Maru Gothic",var(--f-display);font-size:clamp(28px,8vw,48px);color:#FFE58A}
+.end-s{font-size:15px;line-height:1.8;color:#cdd8f5}
+.endscr .btn-gold{margin-top:10px;min-height:52px;padding:0 28px;font-size:18px;font-weight:700;border-radius:14px}
 .ask{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(10,20,50,.5)}
 .ask[hidden]{display:none}
 .ask-box{width:min(360px,100%);background:#fff;color:#14306e;border-radius:20px;padding:24px 20px 18px;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.4)}
@@ -582,6 +589,7 @@ body.lite{background:#d7e9f8}
 </div>
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
+  <button class="quit-btn" type="button" id="quitBtn">終了</button>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -610,11 +618,7 @@ body.lite{background:#d7e9f8}
 <section class="page" id="page-bgm" hidden>
   <div class="page-head"><button class="btn-ghost" type="button" data-go="menu">‹ メニュー</button><h2>BGMを登録</h2></div>
   <div class="page-body">
-    <div class="tabs" role="tablist" aria-label="BGMを流す画面">
-      <button class="tab" role="tab" id="btab-gacha" aria-selected="true" aria-controls="bpanel-gacha" data-btab="gacha" type="button">ガチャ画面</button>
-      <button class="tab" role="tab" id="btab-menu" aria-selected="false" aria-controls="bpanel-menu" data-btab="menu" type="button">メニュー画面</button>
-    </div>
-    <div class="panel" id="bpanel-gacha" role="tabpanel" aria-labelledby="btab-gacha">
+    <div class="panel" id="bpanel-gacha">
       <label class="switch"><input type="checkbox" id="optBgm"><span>ガチャ画面でBGMを流す</span></label>
       <label class="switch"><input type="checkbox" id="optShuffle"><span>ランダムに再生する</span></label>
       <div class="row"><label class="btn-gold filebtn" for="bgmFile">BGMファイルを追加</label>
@@ -622,13 +626,6 @@ body.lite{background:#d7e9f8}
       <p class="hint">iPadの「ファイル」アプリにある音楽ファイル(mp3 / m4a など)を選べます。登録した曲は上から順に繰り返し流れます。</p>
       <ul class="bgm-list" id="bgmList"></ul>
       <p class="hint" id="bgmNote" style="margin-top:12px"></p>
-    </div>
-    <div class="panel" id="bpanel-menu" role="tabpanel" aria-labelledby="btab-menu" hidden>
-      <label class="switch"><input type="checkbox" id="optMenuBgm"><span>メニュー画面でBGMを流す</span></label>
-      <label class="switch"><input type="checkbox" id="optMenuShuffle"><span>ランダムに再生する</span></label>
-      <div class="row"><label class="btn-gold filebtn" for="bgmFileM">BGMファイルを追加</label>
-        <input type="file" id="bgmFileM" multiple hidden></div>
-      <ul class="bgm-list" id="mList"></ul>
     </div>
   </div>
 </section>
@@ -775,11 +772,23 @@ body.lite{background:#d7e9f8}
 </div>
 
 <canvas id="fx" aria-hidden="true"></canvas>
+<div class="ask" id="quitAsk" role="dialog" aria-modal="true" aria-labelledby="quitAskT" hidden>
+  <div class="ask-box">
+    <div class="ask-t" id="quitAskT">アプリを終了しますか？</div>
+    <div class="ask-s">BGMを止めて、終了画面を表示します</div>
+    <div class="ask-b"><button class="btn-gold" type="button" id="quitYes">はい</button><button class="btn-ghost" type="button" id="quitNo">いいえ</button></div>
+  </div>
+</div>
+<div class="endscr" id="endScr" hidden>
+  <div class="end-t">おつかれさまでした</div>
+  <div class="end-s">アプリを閉じるには、<br>画面の下から上へスワイプして<br>このアプリを上へ消してください</div>
+  <button class="btn-gold" type="button" id="endBack">もう一度はじめる</button>
+</div>
 <div class="ask" id="backAsk" role="dialog" aria-modal="true" aria-labelledby="backAskT" hidden>
   <div class="ask-box">
     <div class="ask-t" id="backAskT">本当に戻りますか？</div>
     <div class="ask-s">ガチャ画面からメニューに移動します</div>
-    <div class="ask-b"><button class="btn-ghost" type="button" id="backNo">やめる</button><button class="btn-gold" type="button" id="backYes">戻る</button></div>
+    <div class="ask-b"><button class="btn-gold" type="button" id="backYes">はい</button><button class="btn-ghost" type="button" id="backNo">いいえ</button></div>
   </div>
 </div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
@@ -1733,10 +1742,29 @@ $('#body-people').appendChild($('#panel-people'));
 $('#panel-people').hidden=false;
 $('#panel-prizes').hidden=false;
 let view='menu';
+/* the end button: a web app cannot close itself, so stop everything and show an end screen */
+{
+  const qa=document.querySelector('#quitAsk'),es=document.querySelector('#endScr');
+  document.querySelector('#quitBtn').addEventListener('click',()=>{qa.hidden=false;document.querySelector('#quitYes').focus()});
+  document.querySelector('#quitNo').addEventListener('click',()=>{qa.hidden=true});
+  qa.addEventListener('click',e=>{if(e.target===qa)qa.hidden=true});
+  document.querySelector('#quitYes').addEventListener('click',()=>{
+    qa.hidden=true;appEnded=true;
+    try{menuBgmStop();bgmStop()}catch(e){}
+    try{ac&&ac.suspend()}catch(e){}
+    es.hidden=false;
+    try{window.close()}catch(e){}
+  });
+  document.querySelector('#endBack').addEventListener('click',()=>{
+    es.hidden=true;appEnded=false;
+    try{ac&&ac.resume()}catch(e){}
+    menuBgmStart(true,2.5);
+  });
+}
 /* leaving the gacha screen asks first */
 {
   const ask=document.querySelector('#backAsk');
-  const open=()=>{ask.hidden=false;document.querySelector('#backNo').focus()};
+  const open=()=>{ask.hidden=false;document.querySelector('#backYes').focus()};
   const close=()=>{ask.hidden=true};
   document.addEventListener('click',e=>{
     const b=e.target.closest('#gachaApp [data-go="menu"]');
@@ -1797,7 +1825,8 @@ function idbDo(mode,fn){return idb().then(db=>new Promise((res,rej)=>{
 }))}
 function addTrack(rec){
   const blob=new Blob([rec.buf],{type:rec.type||'audio/mpeg'});
-  (rec.scene==='menu'?mTracks:bgmTracks).push({id:rec.id,name:rec.name,at:rec.at,type:rec.type,scene:rec.scene||'gacha',url:URL.createObjectURL(blob)});
+  if(rec.scene==='menu') return; /* the menu music is fixed now */
+  bgmTracks.push({id:rec.id,name:rec.name,at:rec.at,type:rec.type,scene:rec.scene||'gacha',url:URL.createObjectURL(blob)});
 }
 async function bgmLoad(){
   try{
@@ -2045,51 +2074,51 @@ function mStopAudio(){
   else{try{mNode&&mNode.disconnect()}catch(e){}}
   mAudio=null;mNode=null;
 }
+/* menu music: one fixed file. It fades in, plays, fades out at the end (cut at 10 minutes at the latest) and starts again with a fade-in. */
+const MENU_BGM='menu_bgm.mp3',MENU_MAX=600,MENU_FO=3.5,MENU_FI=3;
 let mEl=null;
-function mPlay(i,fade){
-  const t=mTracks[i];
-  if(!t) return;
+function mRamp(el,from,to,sec){
+  try{const g=el.tg.gain,n=ac.currentTime;g.cancelScheduledValues(n);g.setValueAtTime(from,n);if(sec>0)g.linearRampToValueAtTime(to,n+sec);else g.setValueAtTime(to,n)}catch(e){}
+}
+function mPlay(fade){
   mbStop();mStopAudio();
   if(bgmPlaying) bgmStop();
-  mIdx=i;
-  /* the same two pre-started elements as the gacha BGM, so the next menu track may start by itself on iOS */
-  let a,el=null;
+  let el=null;
   if(bgmPoolInit()) el=bgmPool.find(e=>!e.busy)||null;
-  if(el){
-    el.busy=true;mEl=el;a=el.a;a.onended=null;a.src=t.url;mNode=el.node;
-    try{const g=el.tg.gain,n=ac.currentTime;g.cancelScheduledValues(n);
-      if(fade){g.setValueAtTime(0.0001,n);g.linearRampToValueAtTime(1,n+fade)}else g.setValueAtTime(1,n)}catch(e){}
-  }else{
-    a=new Audio(t.url);
-    if(ensureCtx()){
-      try{
-        if(!mGainN){mGainN=ac.createGain();mGainN.connect(ac.destination)}
-        mNode=ac.createMediaElementSource(a);mNode.connect(mGainN);
-        if(fade){const n=ac.currentTime;mGainN.gain.cancelScheduledValues(n);mGainN.gain.setValueAtTime(0.0001,n);mGainN.gain.linearRampToValueAtTime(Math.max(.0002,bgmVol()),n+fade)}
-      }catch(e){mGainN=null;mNode=null}
-    }
-  }
-  a.preload='auto';
-  a.onended=()=>mNext();
-  a.onerror=()=>{if(a.getAttribute('src')===SILENT_WAV)return;mPlaying=false;renderBgm();toast('「'+t.name+'」を再生できませんでした')};
-  mAudio=a;
+  if(!el){mbStart(fade);return}          /* no audio engine: use the built-in tune */
+  el.busy=true;mEl=el;
+  const a=el.a;a.__fo=false;a.__x=false;
+  a.src=MENU_BGM;mNode=el.node;mAudio=a;
+  a.onended=()=>mLoop();
+  a.onerror=()=>{if(a.getAttribute('src')!==MENU_BGM)return;mStopAudio();mPlaying=false;mbStart(fade)};
+  mRamp(el,0.0001,1,fade===undefined?MENU_FI:fade);
   bgmApply();
   mPlaying=true;
   const p=a.play();
   if(p&&p.catch) p.catch(()=>{mPlaying=false;renderBgm()});
   renderBgm();
 }
-function mNext(fade){
-  if(!mTracks.length){menuBgmStop();return}
-  let i;
-  if(S.opts.menuShuffle&&mTracks.length>1){do{i=rand(mTracks.length)}while(i===mIdx)}
-  else i=(mIdx+1)%mTracks.length;
-  mPlay(i,fade);
+function mLoop(){
+  const a=mAudio,el=mEl;
+  if(!a||!el||!mPlaying) return;
+  a.__fo=false;
+  try{a.currentTime=0}catch(e){}
+  mRamp(el,0.0001,1,MENU_FI);
+  const p=a.play();if(p&&p.catch)p.catch(()=>{});
 }
+setInterval(()=>{
+  const a=mAudio;
+  if(!a||!mEl||!mPlaying||a.paused) return;
+  const d=a.duration;
+  if(!isFinite(d)||d<=0) return;
+  const L=Math.min(d,MENU_MAX),t=a.currentTime;
+  if(!a.__fo&&t>=L-MENU_FO){a.__fo=true;mRamp(mEl,1,0.0001,Math.max(.5,L-t-.4))}
+  if(a.__fo&&t>=L-0.3) mLoop();
+},200);
 function menuBgmStart(force,fade){
   if(mPlaying||mbOn||(!force&&!S.opts.menuBgm)) return;
   if(!ensureCtx()) return;
-  if(mTracks.length) mNext(fade); else mbStart(fade);
+  mPlay(fade);
 }
 function menuBgmStop(){
   const was=mPlaying;
@@ -2097,8 +2126,9 @@ function menuBgmStop(){
   if(was) renderBgm();
 }
 /* start on its own: try right away, and retry on the first tap / key (browsers only allow sound after a gesture) */
+let appEnded=false; /* true while the end screen is shown */
 function menuBgmKick(){
-  if(view!=='menu') return;
+  if(view!=='menu'||appEnded) return;
   if(mbOn){ensureCtx();return}
   menuBgmStart();
 }
@@ -2119,19 +2149,8 @@ setTimeout(menuBgmKick,300);
   st.addEventListener('touchend',e=>{e.preventDefault();begin(e)},{passive:false});
   document.addEventListener('keydown',begin);
 }
-$('#optMenuBgm').addEventListener('change',e=>{
-  S.opts.menuBgm=e.target.checked;save();
-  if(S.opts.menuBgm){if(view==='menu')menuBgmStart()}else if(view==='menu')menuBgmStop();
-});
 
 function renderBgm(){
-  $('#optMenuBgm').checked=!!S.opts.menuBgm;
-  $('#optMenuShuffle').checked=!!S.opts.menuShuffle;
-  $('#mList').innerHTML=mTracks.length?mTracks.map((t,i)=>
-    '<li><span class="nm">'+esc(t.name)+(mPlaying&&i===mIdx?'<small>再生中</small>':'')+'</span>'
-    +'<button class="btn-ghost" type="button" data-act="menu-play" data-id="'+t.id+'">'+(mPlaying&&i===mIdx?'停止':'試聴')+'</button>'
-    +'<button class="btn-ghost" type="button" data-act="bgm-del" data-id="'+t.id+'">削除</button></li>'
-  ).join(''):'<li class="empty" style="background:none">登録した曲はありません。</li>';
   $('#optBgm').checked=!!S.opts.bgm;
   $('#optShuffle').checked=!!S.opts.shuffle;
   $('#bgmList').innerHTML=bgmTracks.length?bgmTracks.map((t,i)=>
@@ -2147,16 +2166,6 @@ function renderBgm(){
 $('#bgmFile').addEventListener('change',e=>{const f=Array.from(e.target.files||[]);e.target.value='';if(f.length)bgmAdd(f)});
 $('#optBgm').addEventListener('change',e=>{S.opts.bgm=e.target.checked;save();if(S.opts.bgm){if(view==='gacha')bgmStart()}else bgmStop();renderBgm()});
 $('#optShuffle').addEventListener('change',e=>{S.opts.shuffle=e.target.checked;save()});
-$('#bgmFileM').addEventListener('change',e=>{const f=Array.from(e.target.files||[]);e.target.value='';if(f.length)bgmAdd(f,'menu')});
-$('#optMenuShuffle').addEventListener('change',e=>{S.opts.menuShuffle=e.target.checked;save()});
-document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-btab]');
-  if(!t) return;
-  bgmTab=t.dataset.btab;
-  $$('#page-bgm .tabs .tab').forEach(x=>x.setAttribute('aria-selected',String(x===t)));
-  $('#bpanel-gacha').hidden=bgmTab!=='gacha';
-  $('#bpanel-menu').hidden=bgmTab!=='menu';
-});
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');
   if(!t) return;
@@ -2175,13 +2184,9 @@ document.addEventListener('click',e=>{
     ensureCtx();
     if(!S.opts.sound){toast('効果音がOFFです。ガチャ画面の「設定」でONにできます');return}
     fanfare(1);
-  }else if(a==='menu-play'){
-    ensureCtx();
-    const i=mTracks.findIndex(x=>x.id===t.dataset.id);
-    if(mPlaying&&i===mIdx) menuBgmStop(); else mPlay(i);
   }else if(a==='test-menubgm'){
     ensureCtx();
-    if(mbOn){menuBgmStop();toast('組み込みBGMを止めました')}else{menuBgmStop();if(bgmPlaying)bgmStop();mbStart();toast('組み込みBGMを再生中。もう一度押すと止まります')}
+    if(mbOn||mPlaying){menuBgmStop();toast('メニューBGMを止めました')}else{menuBgmStop();if(bgmPlaying)bgmStop();mPlay(2);toast('メニューBGMを再生中。もう一度押すと止まります')}
   }else if(a==='test-bgm'){
     ensureCtx();
     if(!bgmTracks.length){toast('BGMが登録されていません');return}
