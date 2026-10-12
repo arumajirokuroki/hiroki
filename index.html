@@ -64,7 +64,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .sample-bar span{flex:1 1 220px;min-width:0}
 
 .prize-banner{display:flex;justify-content:flex-start;align-items:center;gap:4px 20px;height:100px;min-height:100px;overflow:hidden}
-.rank{flex:none;white-space:nowrap;font-family:var(--f-display);font-size:clamp(36px,6vw,64px);line-height:1.1;color:var(--gold)}
+.rank{flex:none;white-space:nowrap;font-family:var(--f-display);font-size:clamp(50px,9.5vw,88px);line-height:1.1;color:var(--gold)}
 .item{flex:1 1 auto;text-align:center;padding-right:0;font-size:96px;line-height:1.15;font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;padding:.05em .45em .07em .2em;box-sizing:border-box}
 .remain{margin-left:auto;font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
 .banner-empty{color:var(--mute);font-size:24px;font-weight:700}
@@ -501,7 +501,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .hist-btn{display:inline-flex;align-items:center;margin-right:6px}
   .head-btns{display:flex;align-items:center}
   .prize-banner{height:78px;min-height:78px;gap:2px 12px}
-  .rank{font-size:44px}
+  .rank{font-size:58px}
   .plate{--ph:calc(100dvh - 140px);--mw:calc(var(--ph) * .5);--bw:calc(var(--ph) * .4);--lv:12px;--zl:30%;min-height:0;border-radius:16px;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--gold-soft)}
   .rig{height:min(calc(100% - 52px),60cqi);bottom:8px}
   .mach{bottom:8px}
@@ -1131,8 +1131,8 @@ function sweep(f0,f1,dur,type,vol,delay){
   }catch(e){}
 }
 /* capsule opening: a rising whistle just before, then a pop with sparkly chimes */
-function openWind(){sweep(300,1400,.35,'sine',.32);beep(2000,.03,'square',.08,.34)}
-function bigWind(){sweep(180,2600,2.4,'sine',.4);sweep(90,1300,2.4,'triangle',.3);}
+function openWind(){sweep(300,1400,.35,'sine',.5);beep(2000,.03,'square',.12,.34)}
+function bigWind(){sweep(180,2600,2.4,'sine',.6);sweep(90,1300,2.4,'triangle',.45);}
 function bigPop(){
   sweep(1200,90,.3,'sine',.9);noise(.15,.5);
   [1046.5,1318.5,1568,2093,2637,3136,4186].forEach((f,i)=>beep(f,.45,'triangle',.26,.05+i*.07));
@@ -1215,6 +1215,7 @@ async function hatch(tier,ready){
   setEgg({hidden:true});
   machEl.style.setProperty('--spin',(.475*k).toFixed(3)+'s');
   machEl.classList.add('run');
+  setPull(0);                      /* the hand returns to its place while the capsule machine spins */
   /* fallback for browsers that do not run the CSS crank animation (iOS Safari): turn the crank from script as well */
   {const t0=performance.now(),per=Math.max(120,475*k);
    const spinCrank=now=>{if(!machEl.classList.contains('run')||id!==hatchId) return;
@@ -1241,7 +1242,7 @@ async function hatch(tier,ready){
     setEgg({tier:base,wob:1,fin:true});
     for(let st=1;st<=5;st++){
       await w(1300);
-      flash();upgrade();beep(440+st*110,.3,'triangle',.2);
+      flash();beep(660,.16,'triangle',.2);beep(990,.28,'triangle',.2,.1);beep(440+st*110,.3,'triangle',.32);
       curWob=Math.min(3,1+Math.floor(st/2));
       setEgg({tier:base,wob:curWob,fin:true});
     }
@@ -1300,7 +1301,7 @@ async function draw(){
   setEgg({tier:tier,gone:true});
   fanfare(tier);
   confetti(110+tier*70);
-  if(ballCol==='rainbow'){[250,600,1000,1500].forEach(ms=>setTimeout(()=>confetti(220),ms));fanfare(3);setTimeout(()=>fanfare(3),700)}
+  if(ballCol==='rainbow'){[800,1600].forEach(ms=>setTimeout(()=>confetti(260),ms));fanfare(3);setTimeout(()=>fanfare(3),700)}
   render();
 }
 
