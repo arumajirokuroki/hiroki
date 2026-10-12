@@ -63,7 +63,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 }
 .sample-bar span{flex:1 1 220px;min-width:0}
 
-.prize-banner{display:flex;justify-content:flex-start;align-items:center;gap:4px 20px;min-height:64px}
+.prize-banner{display:flex;justify-content:flex-start;align-items:center;gap:4px 20px;height:100px;min-height:100px;overflow:hidden}
 .rank{flex:none;white-space:nowrap;font-family:var(--f-display);font-size:clamp(36px,6vw,64px);line-height:1.1;color:var(--gold)}
 .item{flex:1 1 auto;text-align:center;padding-right:0;font-size:96px;line-height:1.15;font-weight:700;min-width:0;white-space:nowrap;overflow:hidden}
 .remain{margin-left:auto;font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
@@ -500,7 +500,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .stage-head .btn-ghost{min-height:34px;padding:0 12px;font-size:14px}
   .hist-btn{display:inline-flex;align-items:center;margin-right:6px}
   .head-btns{display:flex;align-items:center}
-  .prize-banner{min-height:64px;gap:2px 12px}
+  .prize-banner{height:78px;min-height:78px;gap:2px 12px}
   .rank{font-size:44px}
   .plate{--ph:calc(100dvh - 140px);--mw:calc(var(--ph) * .5);--bw:calc(var(--ph) * .4);--lv:12px;--zl:30%;min-height:0;border-radius:16px;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--gold-soft)}
   .rig{height:min(calc(100% - 52px),60cqi);bottom:8px}
@@ -943,7 +943,7 @@ function flash(){
 }
 
 /* ---------- render ---------- */
-/* make the prize name as large as the screen allows (at most two lines) */
+/* make the prize name as large as the screen allows (one line; two lines for very long names). The banner has a fixed height so the gacha never moves. */
 function fitItem(){
   const el=document.querySelector('#banner .item');
   if(!el||!el.offsetParent) return;
@@ -951,7 +951,15 @@ function fitItem(){
   let f=cmp?64:84;
   el.style.fontSize=f+'px';
   /* one line only: shrink until the name fits the box width */
+  el.style.whiteSpace='nowrap';
   while(f>12&&el.scrollWidth>el.clientWidth){f-=1;el.style.fontSize=f+'px'}
+  /* a very long name would get tiny on one line: use two lines instead, still inside the fixed banner height */
+  const bh=document.querySelector('#banner').clientHeight;
+  if(f<(cmp?26:30)){
+    el.style.whiteSpace='normal';el.style.overflow='hidden';
+    f=cmp?32:44;el.style.fontSize=f+'px';
+    while(f>12&&(el.scrollWidth>el.clientWidth||el.offsetHeight>bh)){f-=1;el.style.fontSize=f+'px'}
+  }
 }
 window.addEventListener('resize',()=>fitItem());
 window.addEventListener('orientationchange',()=>setTimeout(fitItem,250));
