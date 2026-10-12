@@ -836,7 +836,7 @@ function setEgg(o){
 function idlePlate(){
   awaitConfirm=false;
   const pz=currentPrize();
-  setPlate('idle',{note:pz?'しんわくんの手を\nひっぱろう！':(S.prizes.length?'すべて終了しました':'景品を登録してね')});
+  setPlate('idle',{note:pz?'しんわくんの手を\nひっぱろう！':(S.prizes.length?'':'景品を登録してね')});
   setEgg({hidden:true});
 }
 const shortMode=()=>reduced()||!!S.opts.fast;
@@ -881,7 +881,7 @@ function renderStage(){
     $('#banner').innerHTML='<span class="rank">'+esc(rk(bpz))+'</span><span class="item">'+esc(bpz.item)+'</span>';
     fitItem();
   }else{
-    $('#banner').innerHTML='<span class="banner-empty">'+(S.prizes.length?'すべての景品の抽選が終わりました':'景品が登録されていません')+'</span>';
+    $('#banner').innerHTML='<span class="banner-empty">'+(S.prizes.length?'':'景品が登録されていません')+'</span>';
   }
 
   const canDraw=!busy&&!awaitConfirm&&!!pz&&cand.length>0;
@@ -1145,7 +1145,7 @@ async function hatch(tier,ready){
 async function draw(){
   if(busy) return;
   const pz=currentPrize();
-  if(!pz){toast('すべての景品の抽選が終わりました');resetKnob();return}
+  if(!pz){resetKnob();return}
   const cand=pool();
   if(!cand.length){toast('抽選できる参加者がいません');resetKnob();return}
   busy=true;
