@@ -272,7 +272,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .plate.won .reveal{opacity:1;animation:cardIn .6s cubic-bezier(.2,.9,.3,1.2) both}
 @keyframes cardIn{0%{transform:translateY(-50%) scale(.55);opacity:0}60%{transform:translateY(-50%) scale(1.07);opacity:1}100%{transform:translateY(-50%) scale(1);opacity:1}}
 .reveal-rank{font-family:var(--f-display);font-size:clamp(18px,3.4cqi,32px);color:var(--gold);letter-spacing:.1em}
-.reveal-dept{color:var(--fg);font-weight:700;font-size:max(20px,calc(min(64px,(72cqi - var(--lv) - 50px) / var(--dlen,4))));letter-spacing:.04em;overflow-wrap:anywhere;margin-top:2px}
+.reveal-dept{white-space:nowrap;color:var(--fg);font-weight:700;font-size:max(20px,calc(min(64px,(72cqi - var(--lv) - 50px) / var(--dlen,4))));letter-spacing:.04em;overflow-wrap:anywhere;margin-top:2px}
 .reveal-dept:empty{display:none}
 .reveal-rank,.reveal-item{display:none}
 .reveal-ok{position:absolute;right:18px;bottom:18px;z-index:70;min-width:104px;min-height:48px;padding:0 20px;font-size:17px;letter-spacing:.12em;box-shadow:0 4px 12px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s}
@@ -281,7 +281,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   font-family:var(--f-display);
   font-size:48px;
   font-size:max(22px,calc(min(140px,(72cqi - var(--lv) - 40px) / var(--len,3))));
-  line-height:1.2;max-width:100%;overflow-wrap:anywhere;
+  line-height:1.2;white-space:nowrap;
   color:var(--gold);text-shadow:0 0 24px rgba(242,190,75,.5);
 }
 .reveal-item{color:var(--mute);font-weight:700;font-size:clamp(14px,2.4cqi,20px);overflow-wrap:anywhere}
@@ -643,9 +643,8 @@ body.lite{background:#d7e9f8}
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_crack"><span>カプセルが割れるまでの音</span></label><output id="svO_crack"></output><input type="range" id="svV_crack" min="0" max="200" step="5" aria-label="カプセルが割れるまでの音の音量"></div>
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_tick"><span>ハンドルを回すカチカチ音</span></label><output id="svO_tick"></output><input type="range" id="svV_tick" min="0" max="200" step="5" aria-label="ハンドルを回すカチカチ音の音量"></div>
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_roll"><span>カプセルが転がる音</span></label><output id="svO_roll"></output><input type="range" id="svV_roll" min="0" max="200" step="5" aria-label="カプセルが転がる音の音量"></div>
-      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_wob"><span>ゆれる音</span></label><output id="svO_wob"></output><input type="range" id="svV_wob" min="0" max="200" step="5" aria-label="ゆれる音の音量"></div>
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_build"><span>1位の盛り上がりの音</span></label><output id="svO_build"></output><input type="range" id="svV_build" min="0" max="200" step="5" aria-label="1位の盛り上がりの音の音量"></div>
-      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_wind"><span>割れる直前の風の音</span></label><output id="svO_wind"></output><input type="range" id="svV_wind" min="0" max="200" step="5" aria-label="割れる直前の風の音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_wind"><span>ゆれる音・割れる直前の風の音</span></label><output id="svO_wind"></output><input type="range" id="svV_wind" min="0" max="200" step="5" aria-label="ゆれる音・風の音の音量"></div>
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_btn"><span>ボタンのタップ音</span></label><output id="svO_btn"></output><input type="range" id="svV_btn" min="0" max="200" step="5" aria-label="ボタンのタップ音の音量"></div>
       <label class="switch"><input type="checkbox" id="optFast"><span>ガチャ演出を短くする</span></label>
       <p class="hint">人数が多くて時間がかかるときは、演出を短くすると進行が早くなります。</p>
@@ -839,7 +838,7 @@ function sampleState(){
     sample:{people:true,prizes:true}
   };
 }
-function svDefault(){return {crack:{on:true,v:1},tick:{on:true,v:1},roll:{on:true,v:1},wob:{on:true,v:1},build:{on:true,v:1},wind:{on:true,v:1},btn:{on:true,v:1}}}
+function svDefault(){return {crack:{on:true,v:1},tick:{on:true,v:1},roll:{on:true,v:1},build:{on:true,v:1},wind:{on:true,v:1},btn:{on:true,v:1}}}
 function load(){
   try{
     const raw=localStorage.getItem(KEY);
@@ -929,6 +928,7 @@ function setPlate(mode,o){
   deptEl.style.setProperty('--dlen',Math.max(4,Array.from(o.dept||'').length));
   itemEl.textContent=o.item||'';
   noteEl.textContent=o.note||'';
+  fitReveal();
 }
 function setEgg(o){
   o=o||{};
@@ -972,8 +972,22 @@ function fitItem(){
     while(f>12&&(el.scrollWidth>el.clientWidth||el.offsetHeight>bh)){f-=1;el.style.fontSize=f+'px'}
   }
 }
-window.addEventListener('resize',()=>fitItem());
-window.addEventListener('orientationchange',()=>setTimeout(fitItem,250));
+/* winner's department and name: always one line each, shrunk to fit the card */
+function fitReveal(){
+  const rv=document.querySelector('.reveal');
+  if(!rv||!rv.offsetParent&&getComputedStyle(rv).position!=='absolute') return;
+  const cs=getComputedStyle(rv);
+  const avail=rv.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  if(avail<=0) return;
+  [deptEl,nameEl].forEach(el=>{
+    if(!el.textContent) return;
+    el.style.fontSize='';
+    let f=parseFloat(getComputedStyle(el).fontSize);
+    while(f>9&&el.offsetWidth>avail){f-=1;el.style.fontSize=f+'px'}
+  });
+}
+window.addEventListener('resize',()=>{fitItem();fitReveal()});
+window.addEventListener('orientationchange',()=>setTimeout(()=>{fitItem();fitReveal()},250));
 const btnSnd=()=>sv('btn',()=>{beep(1250,.05,'square',.1);beep(1850,.06,'triangle',.1,.035)});
 document.addEventListener('click',e=>{
   const m=e.target.closest('#sideMin');
@@ -993,7 +1007,7 @@ document.addEventListener('click',e=>{
   b.textContent=on?'閉じる':'履歴';
   if(on){const hw=document.querySelector('#histWrap');hw.scrollTop=0}
 });
-if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>fitItem());
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{fitItem();fitReveal()});
 if(window.ResizeObserver) new ResizeObserver(()=>fitItem()).observe(document.querySelector('#banner'));
 function renderStage(){
   const cand=pool();
@@ -1173,12 +1187,39 @@ function openPop(){sv('crack',()=>{
   noise(.07,.4);
   [1318,1568,2093,2637].forEach((f,i)=>beep(f,.22,'triangle',.24,.06+i*.07));
 })}
-function thud(level,key){sv(key||'wob',()=>loud(()=>{
-  beep(90+level*14,.18,'sine',1.3);
-  beep(220+level*30,.07,'triangle',.5);
-  beep(160+level*20,.1,'square',.12);noise(.06,.35);
-}))}
+/* wobbling uses the same whoosh as the pre-crack wind, a little stronger as the shaking grows */
+function thud(level){
+  level=level||1;
+  sv('wind',()=>loud(()=>{
+    sweep(260+level*40,1000+level*250,.3,'sine',.55+level*.12);
+    sweep(120,520+level*120,.3,'triangle',.4+level*.08);
+  }));
+}
 function buildSnd(st){sv('build',()=>loud(()=>{beep(660,.16,'triangle',.4);beep(990,.28,'triangle',.4,.1);beep(440+(st||1)*110,.3,'triangle',.6)}))}
+/* capsule rolling out: quick bouncy "koro-koro" taps that slow down as it settles */
+function rollSnd(k){sv('roll',()=>loud(()=>{
+  if(!ac||!S.opts.sound) return;
+  try{
+    k=k||1;const dur=1.6*k,t0=ac.currentTime+.03;
+    const len=Math.floor(ac.sampleRate*dur),buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
+    const src=ac.createBufferSource();src.buffer=buf;
+    const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=380;bp.Q.value=.9;
+    const g=ac.createGain();
+    /* a rumble that pulses as the capsule turns, getting slower and quieter as it settles */
+    let t=0,gap=.06*k;g.gain.setValueAtTime(.0001,t0);
+    while(t<dur){
+      const a=(1-t/dur)*(.55+Math.random()*.45);
+      g.gain.linearRampToValueAtTime(a*1.6*seG()*SVM+.0001,t0+t+gap*.35);
+      g.gain.linearRampToValueAtTime(a*.35*seG()*SVM+.0001,t0+t+gap);
+      t+=gap;gap*=1.06;
+    }
+    g.gain.linearRampToValueAtTime(.0001,t0+dur);
+    src.connect(bp);bp.connect(g);g.connect(OUT());src.start(t0);
+    /* a few soft bumps as it rolls over the floor */
+    [.18,.42,.7,1.02,1.4].forEach((x,i)=>beep(170+Math.random()*50,.09,'sine',.6-i*.08,x*k));
+  }catch(e){}
+}))}
 function upgrade(){sv('crack',()=>{
   beep(660,.16,'triangle',.11);
   beep(990,.28,'triangle',.11,.1);
@@ -1261,8 +1302,7 @@ async function hatch(tier,ready){
   /* ranked capsules (1位-5位) come out in their final colour from the start; no colour upgrades */
   const base=ballCol?tier:0;
   setEgg({tier:base,roll:true});
-  w(380).then(()=>{if(id===hatchId)thud(1,'roll')});
-  w(900).then(()=>{if(id===hatchId)thud(1,'roll')});
+  rollSnd(k);
   await w(1650);
   curWob=1;
   setEgg({tier:base,wob:1});
@@ -2254,7 +2294,7 @@ function volSync(){
 
 
 /* ---------- per-sound settings ---------- */
-const SV_PREVIEW={crack:()=>openPop(),tick:()=>tick(),roll:()=>thud(1,'roll'),wob:()=>thud(2,'wob'),build:()=>buildSnd(2),wind:()=>openWind(),btn:()=>btnSnd()};
+const SV_PREVIEW={crack:()=>openPop(),tick:()=>tick(),roll:()=>rollSnd(1),build:()=>buildSnd(2),wind:()=>openWind(),btn:()=>btnSnd()};
 function svSync(){
   Object.keys(SV_PREVIEW).forEach(k=>{
     const o=S.opts.sv[k];
