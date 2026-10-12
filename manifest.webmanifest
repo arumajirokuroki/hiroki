@@ -1,6 +1,6 @@
 {
-  "name": "大抽選会ガチャ",
-  "short_name": "大抽選会ガチャ",
+  "name": "親和会ガチャ",
+  "short_name": "親和会ガチャ",
   "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",
