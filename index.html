@@ -258,9 +258,9 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .reveal{
   --edge:linear-gradient(#B9C6EA,#B9C6EA);
   --glow:rgba(185,198,234,.35);
-  position:absolute;left:calc(var(--zl) - 3%);right:var(--lv);top:44%;transform:translateY(-50%);
+  position:absolute;left:calc(var(--zl) - 6%);right:var(--lv);top:44%;transform:translateY(-50%);
   display:flex;flex-direction:column;align-items:center;gap:6px;
-  padding:16px 20px 18px;border-radius:20px;text-align:center;
+  padding:22px 26px 24px;border-radius:22px;text-align:center;
   border:3px solid transparent;
   background:linear-gradient(160deg,var(--panel-2),var(--panel)) padding-box,var(--edge) border-box;
   box-shadow:0 0 44px var(--glow);
@@ -272,7 +272,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .plate.won .reveal{opacity:1;animation:cardIn .6s cubic-bezier(.2,.9,.3,1.2) both}
 @keyframes cardIn{0%{transform:translateY(-50%) scale(.55);opacity:0}60%{transform:translateY(-50%) scale(1.07);opacity:1}100%{transform:translateY(-50%) scale(1);opacity:1}}
 .reveal-rank{font-family:var(--f-display);font-size:clamp(18px,3.4cqi,32px);color:var(--gold);letter-spacing:.1em}
-.reveal-dept{color:var(--fg);font-weight:700;font-size:clamp(24px,5cqi,48px);letter-spacing:.06em;overflow-wrap:anywhere;margin-top:2px}
+.reveal-dept{color:var(--fg);font-weight:700;font-size:max(20px,calc(min(64px,(72cqi - var(--lv) - 50px) / var(--dlen,4))));letter-spacing:.04em;overflow-wrap:anywhere;margin-top:2px}
 .reveal-dept:empty{display:none}
 .reveal-rank,.reveal-item{display:none}
 .reveal-ok{position:absolute;right:18px;bottom:18px;z-index:70;min-width:104px;min-height:48px;padding:0 20px;font-size:17px;letter-spacing:.12em;box-shadow:0 4px 12px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s}
@@ -280,7 +280,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .name{
   font-family:var(--f-display);
   font-size:48px;
-  font-size:max(22px,calc(min(112px,(69cqi - var(--lv) - 50px) / var(--len,3))));
+  font-size:max(22px,calc(min(140px,(72cqi - var(--lv) - 40px) / var(--len,3))));
   line-height:1.2;max-width:100%;overflow-wrap:anywhere;
   color:var(--gold);text-shadow:0 0 24px rgba(242,190,75,.5);
 }
@@ -508,9 +508,9 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .egg{width:var(--bw);left:calc(54% - var(--bw) / 2);bottom:calc(8px + .9cqi);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133)}
   .plate-note{font-size:14px}
   .plate.idle .plate-note{font-size:clamp(14px,3cqi,22px)}
-  .reveal{padding:8px 14px 10px;gap:2px;border-radius:14px;border-width:2px}
-  .reveal-dept{font-size:clamp(16px,3.4cqi,28px)}
-  .name{font-size:max(18px,calc(min(54px,(66cqi - var(--lv) - 30px) / var(--len,3))))}
+  .reveal{padding:12px 18px 14px;gap:3px;border-radius:14px;border-width:2px}
+  .reveal-dept{font-size:max(15px,calc(min(40px,(70cqi - var(--lv) - 36px) / var(--dlen,4))))}
+  .name{font-size:max(18px,calc(min(76px,(70cqi - var(--lv) - 24px) / var(--len,3))))}
   .reveal-ok{right:10px;bottom:10px;min-width:76px;min-height:36px;padding:0 12px;font-size:14px}
 
   .side{display:none;position:fixed;z-index:60;top:48px;right:8px;bottom:8px;left:8px;min-height:0;box-shadow:0 12px 40px rgba(0,0,0,.6)}
@@ -638,8 +638,15 @@ body.lite{background:#d7e9f8}
       <button class="tab" role="tab" id="stab-data" aria-selected="false" aria-controls="spanel-data" data-stab="data" type="button">データの管理</button>
     </div>
     <div class="panel" id="spanel-draw" role="tabpanel" aria-labelledby="stab-draw">
-      <label class="switch"><input type="checkbox" id="optExclude"><span>当選した人は次から除外する</span></label>
-      <label class="switch"><input type="checkbox" id="optSound"><span>効果音を鳴らす</span></label>
+      <h3 class="mini" style="margin-top:22px">効果音の詳細設定</h3>
+      <p class="hint">チェックを外すとその音が鳴りません。スライダーで音量を調整できます（100%が標準、最大200%）。動かすと試し鳴りします。</p>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_crack"><span>カプセルが割れるまでの音</span></label><output id="svO_crack"></output><input type="range" id="svV_crack" min="0" max="200" step="5" aria-label="カプセルが割れるまでの音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_tick"><span>ハンドルを回すカチカチ音</span></label><output id="svO_tick"></output><input type="range" id="svV_tick" min="0" max="200" step="5" aria-label="ハンドルを回すカチカチ音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_roll"><span>カプセルが転がる音</span></label><output id="svO_roll"></output><input type="range" id="svV_roll" min="0" max="200" step="5" aria-label="カプセルが転がる音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_wob"><span>ゆれる音</span></label><output id="svO_wob"></output><input type="range" id="svV_wob" min="0" max="200" step="5" aria-label="ゆれる音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_build"><span>1位の盛り上がりの音</span></label><output id="svO_build"></output><input type="range" id="svV_build" min="0" max="200" step="5" aria-label="1位の盛り上がりの音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_wind"><span>割れる直前の風の音</span></label><output id="svO_wind"></output><input type="range" id="svV_wind" min="0" max="200" step="5" aria-label="割れる直前の風の音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_btn"><span>ボタンのタップ音</span></label><output id="svO_btn"></output><input type="range" id="svV_btn" min="0" max="200" step="5" aria-label="ボタンのタップ音の音量"></div>
       <label class="switch"><input type="checkbox" id="optFast"><span>ガチャ演出を短くする</span></label>
       <p class="hint">人数が多くて時間がかかるときは、演出を短くすると進行が早くなります。</p>
     </div>
@@ -647,6 +654,7 @@ body.lite{background:#d7e9f8}
       <div class="vol"><b>全体の音量</b><output id="oMaster"></output><input type="range" id="volMaster" min="0" max="100" step="1" aria-label="全体の音量"></div>
       <div class="vol"><b>BGM</b><output id="oBgm"></output><input type="range" id="volBgm" min="0" max="100" step="1" aria-label="BGMの音量"></div>
       <div class="vol"><b>効果音</b><output id="oSe"></output><input type="range" id="volSe" min="0" max="100" step="1" aria-label="効果音の音量"></div>
+      <label class="switch"><input type="checkbox" id="optSound"><span>効果音を鳴らす</span></label>
       <div class="row">
         <button class="btn-gold" type="button" data-act="test-se">効果音を試す</button>
         <button class="btn-ghost" type="button" data-act="test-bgm">BGMを試し聴き</button>
@@ -827,10 +835,11 @@ function sampleState(){
     prizes:SAMPLE_PRIZES.map((n,i)=>({id:uid(),rank:SAMPLE_PRIZES.length-i,item:n,count:1})),
     history:[],
     currentPrizeId:null,
-    opts:{exclude:true,sound:true,fast:false,bgm:true,menuBgm:true,menuShuffle:false,shuffle:false,vol:{master:1,bgm:.5,se:1}},
+    opts:{exclude:true,sound:true,fast:false,bgm:true,menuBgm:true,menuShuffle:false,shuffle:false,vol:{master:1,bgm:.5,se:1},sv:svDefault()},
     sample:{people:true,prizes:true}
   };
 }
+function svDefault(){return {crack:{on:true,v:1},tick:{on:true,v:1},roll:{on:true,v:1},wob:{on:true,v:1},build:{on:true,v:1},wind:{on:true,v:1},btn:{on:true,v:1}}}
 function load(){
   try{
     const raw=localStorage.getItem(KEY);
@@ -840,6 +849,7 @@ function load(){
         d.opts=Object.assign({exclude:true,sound:true,fast:false,bgm:true,menuBgm:true,menuShuffle:false,shuffle:false},d.opts||{});
         d.opts.menuBgm=true; /* the menu music is always on when the app starts */
         d.opts.vol=Object.assign({master:1,bgm:.5,se:1},d.opts.vol||{});
+        {const dv=svDefault(),o=d.opts.sv||{};Object.keys(dv).forEach(k=>{dv[k]=Object.assign(dv[k],o[k]||{})});d.opts.sv=dv}
         d.sample=Object.assign({people:false,prizes:false},d.sample||{});
         /* older saves: prizes had no numeric rank */
         if(d.prizes.some(p=>typeof p.rank!=='number')){
@@ -869,7 +879,7 @@ let lastResultId=null,awaitConfirm=false,lastPrizeId=null;
 const winnerIds=()=>new Set(S.history.map(h=>h.personId));
 function pool(){
   const w=winnerIds();
-  return S.people.filter(p=>p.status==='in'&&(!S.opts.exclude||!w.has(p.id)));
+  return S.people.filter(p=>p.status==='in'&&!w.has(p.id));
 }
 /* rank is the countdown position: the first prize in the list is N位, the last one is 1位 */
 const rk=pz=>pz.rank+'位';
@@ -916,6 +926,7 @@ function setPlate(mode,o){
   if(o.name!==undefined) setName(o.name);
   rankEl.textContent=o.rank||'';
   deptEl.textContent=o.dept||'';
+  deptEl.style.setProperty('--dlen',Math.max(4,Array.from(o.dept||'').length));
   itemEl.textContent=o.item||'';
   noteEl.textContent=o.note||'';
 }
@@ -963,6 +974,7 @@ function fitItem(){
 }
 window.addEventListener('resize',()=>fitItem());
 window.addEventListener('orientationchange',()=>setTimeout(fitItem,250));
+const btnSnd=()=>sv('btn',()=>{beep(1250,.05,'square',.1);beep(1850,.06,'triangle',.1,.035)});
 document.addEventListener('click',e=>{
   const m=e.target.closest('#sideMin');
   if(m){
@@ -1039,7 +1051,6 @@ function renderHistory(){
 }
 
 function renderSettings(){
-  $('#optExclude').checked=!!S.opts.exclude;
   $('#optSound').checked=!!S.opts.sound;
   $('#optFast').checked=!!S.opts.fast;
 }
@@ -1091,6 +1102,20 @@ function seOut(){
   }
   return seBusNode;
 }
+/* big sounds (rolling/wobble thuds, 1st-place build-up, pre-crack wind) use a looser limiter so they are really louder */
+let LOUD=false,loudNode=null,SVM=1;
+function sv(key,fn){const o=S.opts.sv&&S.opts.sv[key];if(!o||!o.on)return;SVM=o.v;try{fn()}finally{SVM=1}}
+function loud(fn){LOUD=true;try{fn()}finally{LOUD=false}}
+function loudOut(){
+  if(!loudNode||loudNode.context!==ac){
+    const g=ac.createGain();g.gain.value=5;
+    const c=ac.createDynamicsCompressor();
+    c.threshold.value=-4;c.knee.value=6;c.ratio.value=12;c.attack.value=.002;c.release.value=.12;
+    g.connect(c);c.connect(ac.destination);loudNode=g;
+  }
+  return loudNode;
+}
+const OUT=()=>LOUD?loudOut():seOut();
 function beep(freq,dur,type,vol,delay){
   if(!ac||!S.opts.sound) return;
   try{
@@ -1098,9 +1123,9 @@ function beep(freq,dur,type,vol,delay){
     const o=ac.createOscillator(),g=ac.createGain();
     o.type=type||'square';
     o.frequency.setValueAtTime(freq,t);
-    g.gain.setValueAtTime((vol||.05)*seG()+.0001,t);
+    g.gain.setValueAtTime((vol||.05)*seG()*SVM+.0001,t);
     g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-    o.connect(g);g.connect(seOut());
+    o.connect(g);g.connect(OUT());
     o.start(t);o.stop(t+dur+.02);
   }catch(e){}
 }
@@ -1111,16 +1136,16 @@ function noise(dur,vol){
     const buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
     for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*(1-i/len);
     const s=ac.createBufferSource(),g=ac.createGain();
-    s.buffer=buf;g.gain.value=vol*seG();
-    s.connect(g);g.connect(seOut());s.start();
+    s.buffer=buf;g.gain.value=vol*seG()*SVM;
+    s.connect(g);g.connect(OUT());s.start();
   }catch(e){}
 }
-const tick=()=>beep(880,.06,'square',.11);
+const tick=()=>sv('tick',()=>beep(880,.06,'square',.11));
 /* button click sound for every button */
 document.addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('button,[role=button],.menu-btn,.tab,summary');
   if(!b||b.disabled||b.dataset.nosound) return;
-  if(ensureCtx()){beep(1250,.05,'square',.1);beep(1850,.06,'triangle',.1,.035)}
+  if(ensureCtx()) btnSnd();
 },true);
 function sweep(f0,f1,dur,type,vol,delay){
   if(!ac||!S.opts.sound) return;
@@ -1130,32 +1155,34 @@ function sweep(f0,f1,dur,type,vol,delay){
     o.type=type||'sine';
     o.frequency.setValueAtTime(f0,t);
     o.frequency.exponentialRampToValueAtTime(f1,t+dur);
-    g.gain.setValueAtTime(vol*seG()+.0001,t);
+    g.gain.setValueAtTime(vol*seG()*SVM+.0001,t);
     g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-    o.connect(g);g.connect(seOut());
+    o.connect(g);g.connect(OUT());
     o.start(t);o.stop(t+dur+.02);
   }catch(e){}
 }
 /* capsule opening: a rising whistle just before, then a pop with sparkly chimes */
-function openWind(){sweep(300,1400,.35,'sine',.9);beep(2000,.03,'square',.2,.34)}
-function bigWind(){sweep(180,2600,2.4,'sine',1.1);sweep(90,1300,2.4,'triangle',.85);}
-function bigPop(){
+function openWind(){sv('wind',()=>loud(()=>{sweep(300,1400,.35,'sine',.9);beep(2000,.03,'square',.2,.34)}))}
+function bigWind(){sv('wind',()=>loud(()=>{sweep(180,2600,2.4,'sine',1.1);sweep(90,1300,2.4,'triangle',.85)}))}
+function bigPop(){sv('crack',()=>{
   sweep(1200,90,.3,'sine',.9);noise(.15,.5);
   [1046.5,1318.5,1568,2093,2637,3136,4186].forEach((f,i)=>beep(f,.45,'triangle',.26,.05+i*.07));
-}
-function openPop(){
+})}
+function openPop(){sv('crack',()=>{
   sweep(900,120,.16,'sine',.85);
   noise(.07,.4);
   [1318,1568,2093,2637].forEach((f,i)=>beep(f,.22,'triangle',.24,.06+i*.07));
-}
-function thud(level){
+})}
+function thud(level,key){sv(key||'wob',()=>loud(()=>{
   beep(90+level*14,.18,'sine',1.3);
-  beep(220+level*30,.07,'triangle',.35);
-}
-function upgrade(){
+  beep(220+level*30,.07,'triangle',.5);
+  beep(160+level*20,.1,'square',.12);noise(.06,.35);
+}))}
+function buildSnd(st){sv('build',()=>loud(()=>{beep(660,.16,'triangle',.4);beep(990,.28,'triangle',.4,.1);beep(440+(st||1)*110,.3,'triangle',.6)}))}
+function upgrade(){sv('crack',()=>{
   beep(660,.16,'triangle',.11);
   beep(990,.28,'triangle',.11,.1);
-}
+})}
 function fanfare(tier){
   const seq=[523.25,659.25,783.99,1046.5];
   if(tier>=2) seq.push(1318.5);
@@ -1234,8 +1261,8 @@ async function hatch(tier,ready){
   /* ranked capsules (1位-5位) come out in their final colour from the start; no colour upgrades */
   const base=ballCol?tier:0;
   setEgg({tier:base,roll:true});
-  w(380).then(()=>{if(id===hatchId)thud(1)});
-  w(900).then(()=>{if(id===hatchId)thud(1)});
+  w(380).then(()=>{if(id===hatchId)thud(1,'roll')});
+  w(900).then(()=>{if(id===hatchId)thud(1,'roll')});
   await w(1650);
   curWob=1;
   setEgg({tier:base,wob:1});
@@ -1248,7 +1275,7 @@ async function hatch(tier,ready){
     setEgg({tier:base,wob:1,fin:true});
     for(let st=1;st<=5;st++){
       await w(1300);
-      flash();beep(660,.16,'triangle',.4);beep(990,.28,'triangle',.4,.1);beep(440+st*110,.3,'triangle',.6);
+      flash();buildSnd(st);
       curWob=Math.min(3,1+Math.floor(st/2));
       setEgg({tier:base,wob:curWob,fin:true});
     }
@@ -1654,7 +1681,6 @@ $('#npNo').addEventListener('paste',onPeoplePaste);
 $('#npName').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();addOnePerson()}});
 $('#npDept').addEventListener('paste',onPeoplePaste);
 $('#npName').addEventListener('paste',onPeoplePaste);
-$('#optExclude').addEventListener('change',e=>{S.opts.exclude=e.target.checked;save();render()});
 $('#optFast').addEventListener('change',e=>{S.opts.fast=e.target.checked;save()});
 $('#optSound').addEventListener('change',e=>{
   S.opts.sound=e.target.checked;save();
@@ -2225,6 +2251,24 @@ function volSync(){
   });
   $('#vol'+id).addEventListener('change',()=>{if(k==='se'&&S.opts.sound){ensureCtx();tick()}});
 });
+
+
+/* ---------- per-sound settings ---------- */
+const SV_PREVIEW={crack:()=>openPop(),tick:()=>tick(),roll:()=>thud(1,'roll'),wob:()=>thud(2,'wob'),build:()=>buildSnd(2),wind:()=>openWind(),btn:()=>btnSnd()};
+function svSync(){
+  Object.keys(SV_PREVIEW).forEach(k=>{
+    const o=S.opts.sv[k];
+    $('#svOn_'+k).checked=!!o.on;
+    $('#svV_'+k).value=Math.round(o.v*100);$('#svV_'+k).disabled=!o.on;
+    $('#svO_'+k).textContent=Math.round(o.v*100)+'%';
+  });
+}
+Object.keys(SV_PREVIEW).forEach(k=>{
+  $('#svOn_'+k).addEventListener('change',e=>{S.opts.sv[k].on=e.target.checked;save();svSync();if(e.target.checked&&S.opts.sound){ensureCtx();SV_PREVIEW[k]()}});
+  $('#svV_'+k).addEventListener('input',e=>{S.opts.sv[k].v=Math.max(0,Math.min(2,(+e.target.value)/100));$('#svO_'+k).textContent=Math.round(S.opts.sv[k].v*100)+'%';save()});
+  $('#svV_'+k).addEventListener('change',()=>{if(S.opts.sound){ensureCtx();SV_PREVIEW[k]()}});
+});
+svSync();
 
 /* ---------- boot ---------- */
 volSync();renderBgm();
