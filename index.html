@@ -535,10 +535,18 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 46%,rgba(0,0,0,.6) 68%,transparent 100%)}
 .menu>*:not(.menu-bg){position:relative;z-index:1}
 /* title in a cute rounded face, orange with a white edge so it reads on the sky */
-.menu-title{font-family:"Mochiy Pop One","Zen Maru Gothic",var(--f-display);font-weight:400;color:#E2560B;text-align:center;letter-spacing:.06em;line-height:1.2;font-size:clamp(34px,10vw,58px);margin:0 0 20px;-webkit-text-stroke:7px #fff;paint-order:stroke fill;text-shadow:0 4px 0 rgba(255,255,255,.9),0 0 20px rgba(255,255,255,.9)}
+.menu-title{font-family:"Mochiy Pop One","Zen Maru Gothic",var(--f-display);font-weight:400;color:#E2560B;text-align:center;letter-spacing:.06em;line-height:1.2;font-size:clamp(34px,10vw,58px);margin:0 0 20px;-webkit-text-stroke:7px #fff;paint-order:stroke fill;text-shadow:0 4px 0 rgba(255,255,255,.9),0 0 20px rgba(255,255,255,.9);position:relative;top:-26px}
 .menu-list[hidden]{display:none}
-.menu-btn.back{min-height:50px;font-size:17px;background:rgba(255,255,255,.8);color:#14306e;border-color:rgba(20,48,110,.25)}
-@media (max-height:520px) and (orientation:landscape){.menu-title{font-size:clamp(26px,5vw,38px);margin:0 0 8px}.menu-btn.back{min-height:34px;font-size:14px}}
+.ask{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(10,20,50,.5)}
+.ask[hidden]{display:none}
+.ask-box{width:min(360px,100%);background:#fff;color:#14306e;border-radius:20px;padding:24px 20px 18px;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.4)}
+.ask-t{font-family:"Mochiy Pop One","Zen Maru Gothic",var(--f-display);font-size:24px;line-height:1.3;color:#E2560B}
+.ask-s{margin:10px 0 18px;font-size:14px;color:#4a5f8f}
+.ask-b{display:flex;gap:10px}
+.ask-b button{flex:1;min-height:52px;font-size:18px;font-weight:700;border-radius:14px}
+.ask-b .btn-ghost{background:#eaf3fc;color:#14306e;border:1px solid rgba(20,48,110,.25)}
+.menu-btn.back{min-height:54px;font-size:19px;background:#fff;color:#14306e;border:2px solid #14306e;box-shadow:0 3px 10px rgba(20,48,110,.25)}
+@media (max-height:520px) and (orientation:landscape){.menu-title{font-size:clamp(26px,5vw,38px);margin:0 0 8px;top:-8px}.menu-btn.back{min-height:34px;font-size:14px}}
 @media (max-width:760px) and (orientation:portrait){.menu-bg::before{width:max(170vw,calc(100dvh * 1.05))}}
 
 /* portrait: the "pull his hand" hint goes to the top centre, a bit larger */
@@ -715,7 +723,7 @@ body.lite{background:#d7e9f8}
         <div class="name" id="name" style="--len:3">？？？</div>
         <div class="reveal-item" id="revealItem"></div>
       </div>
-      <button class="btn-gold reveal-ok" id="confirmBtn" type="button">確定</button>
+      <button class="btn-gold reveal-ok" id="confirmBtn" type="button">次へ</button>
       <div class="flash" id="flash" aria-hidden="true"></div>
     </section>
 
@@ -767,6 +775,13 @@ body.lite{background:#d7e9f8}
 </div>
 
 <canvas id="fx" aria-hidden="true"></canvas>
+<div class="ask" id="backAsk" role="dialog" aria-modal="true" aria-labelledby="backAskT" hidden>
+  <div class="ask-box">
+    <div class="ask-t" id="backAskT">本当に戻りますか？</div>
+    <div class="ask-s">ガチャ画面からメニューに移動します</div>
+    <div class="ask-b"><button class="btn-ghost" type="button" id="backNo">やめる</button><button class="btn-gold" type="button" id="backYes">戻る</button></div>
+  </div>
+</div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
@@ -938,7 +953,7 @@ document.addEventListener('click',e=>{
     const side=m.closest('.side'),on=side.classList.toggle('min');
     m.setAttribute('aria-expanded',String(!on));
     document.querySelector('#minHint').textContent=on?'ひらく ▸':'最小化 ▾';
-    if(!on){const hw=document.querySelector('#histWrap');if(hw)hw.scrollTop=hw.scrollHeight}
+    if(!on){const hw=document.querySelector('#histWrap');if(hw)hw.scrollTop=0}
     return;
   }
   const b=e.target.closest('#histBtn');
@@ -947,14 +962,14 @@ document.addEventListener('click',e=>{
   const on=app.classList.toggle('hist-open');
   b.setAttribute('aria-expanded',on);
   b.textContent=on?'閉じる':'履歴';
-  if(on){const hw=document.querySelector('#histWrap');hw.scrollTop=hw.scrollHeight}
+  if(on){const hw=document.querySelector('#histWrap');hw.scrollTop=0}
 });
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>fitItem());
 if(window.ResizeObserver) new ResizeObserver(()=>fitItem()).observe(document.querySelector('#banner'));
 function renderStage(){
   const cand=pool();
   const pz=currentPrize();
-  /* until 確定 is pressed, keep showing the prize that was just drawn */
+  /* until 次へ is pressed, keep showing the prize that was just drawn */
   const bpz=(awaitConfirm&&S.prizes.find(p=>p.id===lastPrizeId))||pz;
 
   if(bpz){
@@ -997,11 +1012,13 @@ function renderPeople(){
 }
 
 function renderHistory(){
-  const items=S.history.slice();
+  /* ascending by rank (1位 first); the same rank keeps the order it was drawn in */
+  const rn=h=>{const n=parseInt(h.rank,10);return isNaN(n)?1e9:n};
+  const items=S.history.map((h,i)=>[h,i]).sort((a,b)=>rn(a[0])-rn(b[0])||a[1]-b[1]).map(x=>x[0]);
   $('#histList').innerHTML=items.length?items.map(h=>
     '<tr><td class="h-rank">'+esc(h.rank)+'</td><td>'+esc(h.dept||'')+'</td><td>'+esc(h.name)+'</td><td>'+esc(h.item)+'</td></tr>'
   ).join(''):'<tr><td class="empty" colspan="4">まだ抽選していません。</td></tr>';
-  const hw=$('#histWrap');hw.scrollTop=hw.scrollHeight;
+  const hw=$('#histWrap');hw.scrollTop=0;
 }
 
 function renderSettings(){
@@ -1716,6 +1733,21 @@ $('#body-people').appendChild($('#panel-people'));
 $('#panel-people').hidden=false;
 $('#panel-prizes').hidden=false;
 let view='menu';
+/* leaving the gacha screen asks first */
+{
+  const ask=document.querySelector('#backAsk');
+  const open=()=>{ask.hidden=false;document.querySelector('#backNo').focus()};
+  const close=()=>{ask.hidden=true};
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('#gachaApp [data-go="menu"]');
+    if(!b||busy) return;
+    e.stopImmediatePropagation();e.preventDefault();open();
+  },true);
+  document.querySelector('#backNo').addEventListener('click',close);
+  document.querySelector('#backYes').addEventListener('click',()=>{close();go('menu')});
+  ask.addEventListener('click',e=>{if(e.target===ask)close()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ask.hidden)close()});
+}
 function setMenuSub(on){$('#menuMain').hidden=on;$('#menuSub').hidden=!on}
 document.addEventListener('click',e=>{const m=e.target.closest('[data-menu]');if(m)setMenuSub(m.dataset.menu==='sub')});
 function go(v){
@@ -1726,7 +1758,7 @@ function go(v){
   $('#gachaApp').hidden=v!=='gacha';
   ['prizes','people','bgm','settings'].forEach(n=>{$('#page-'+n).hidden=v!==n});
   if(['prizes','people','bgm','settings'].includes(v)) setMenuSub(true); else if(v==='gacha') setMenuSub(false);
-  if(v==='menu'){if(S.opts.menuBgm&&bgmPlaying)bgmPause();menuBgmStart()}else menuBgmStop();
+  if(v==='menu'){if(S.opts.menuBgm&&bgmPlaying)bgmPause();menuBgmStart(false,2.5)}else menuBgmStop();
   if(v==='gacha'){fitItem();ensureCtx();if(!S.opts.bgm){S.opts.bgm=true;save()}bgmStart();renderBgm()}
   const sc=document.scrollingElement;if(sc)sc.scrollTop=0;
   renderMenu();
@@ -1990,10 +2022,12 @@ function mbSched(){
     mbNext+=MB_STEP;mbStep++;
   }
 }
-function mbStart(){
+function mbStart(fade){
   if(mbOn) return;
   if(!ensureCtx()) return;
-  mbGain=ac.createGain();mbGain.gain.value=bgmVol();mbGain.connect(ac.destination);
+  mbGain=ac.createGain();
+  if(fade){const t=ac.currentTime;mbGain.gain.setValueAtTime(0.0001,t);mbGain.gain.linearRampToValueAtTime(Math.max(.0002,bgmVol()),t+fade)}else mbGain.gain.value=bgmVol();
+  mbGain.connect(ac.destination);
   mbOn=true;mbStep=0;mbNext=ac.currentTime+.1;
   mbSched();mbTimer=setInterval(mbSched,120);
 }
@@ -2007,43 +2041,55 @@ function mbStop(){
 /* menu screen player: registered menu tracks, or the built-in tune when none are registered */
 function mStopAudio(){
   if(mAudio){try{mAudio.onended=null;mAudio.pause()}catch(e){}}
-  try{mNode&&mNode.disconnect()}catch(e){}
+  if(mEl){mEl.busy=false;mEl=null}
+  else{try{mNode&&mNode.disconnect()}catch(e){}}
   mAudio=null;mNode=null;
 }
-function mPlay(i){
+let mEl=null;
+function mPlay(i,fade){
   const t=mTracks[i];
   if(!t) return;
   mbStop();mStopAudio();
   if(bgmPlaying) bgmStop();
   mIdx=i;
-  const a=new Audio(t.url);
+  /* the same two pre-started elements as the gacha BGM, so the next menu track may start by itself on iOS */
+  let a,el=null;
+  if(bgmPoolInit()) el=bgmPool.find(e=>!e.busy)||null;
+  if(el){
+    el.busy=true;mEl=el;a=el.a;a.onended=null;a.src=t.url;mNode=el.node;
+    try{const g=el.tg.gain,n=ac.currentTime;g.cancelScheduledValues(n);
+      if(fade){g.setValueAtTime(0.0001,n);g.linearRampToValueAtTime(1,n+fade)}else g.setValueAtTime(1,n)}catch(e){}
+  }else{
+    a=new Audio(t.url);
+    if(ensureCtx()){
+      try{
+        if(!mGainN){mGainN=ac.createGain();mGainN.connect(ac.destination)}
+        mNode=ac.createMediaElementSource(a);mNode.connect(mGainN);
+        if(fade){const n=ac.currentTime;mGainN.gain.cancelScheduledValues(n);mGainN.gain.setValueAtTime(0.0001,n);mGainN.gain.linearRampToValueAtTime(Math.max(.0002,bgmVol()),n+fade)}
+      }catch(e){mGainN=null;mNode=null}
+    }
+  }
   a.preload='auto';
   a.onended=()=>mNext();
-  a.onerror=()=>{mPlaying=false;renderBgm();toast('「'+t.name+'」を再生できませんでした')};
+  a.onerror=()=>{if(a.getAttribute('src')===SILENT_WAV)return;mPlaying=false;renderBgm();toast('「'+t.name+'」を再生できませんでした')};
   mAudio=a;
-  if(ensureCtx()){
-    try{
-      if(!mGainN){mGainN=ac.createGain();mGainN.connect(ac.destination)}
-      mNode=ac.createMediaElementSource(a);mNode.connect(mGainN);
-    }catch(e){mGainN=null;mNode=null}
-  }
   bgmApply();
   mPlaying=true;
   const p=a.play();
   if(p&&p.catch) p.catch(()=>{mPlaying=false;renderBgm()});
   renderBgm();
 }
-function mNext(){
+function mNext(fade){
   if(!mTracks.length){menuBgmStop();return}
   let i;
   if(S.opts.menuShuffle&&mTracks.length>1){do{i=rand(mTracks.length)}while(i===mIdx)}
   else i=(mIdx+1)%mTracks.length;
-  mPlay(i);
+  mPlay(i,fade);
 }
-function menuBgmStart(force){
+function menuBgmStart(force,fade){
   if(mPlaying||mbOn||(!force&&!S.opts.menuBgm)) return;
   if(!ensureCtx()) return;
-  if(mTracks.length) mNext(); else mbStart();
+  if(mTracks.length) mNext(fade); else mbStart(fade);
 }
 function menuBgmStop(){
   const was=mPlaying;
