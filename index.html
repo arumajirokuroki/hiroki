@@ -71,7 +71,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 /* ---------- gacha scene ---------- */
 .plate{
-  --zl:34%;--lv:24px;--mw:32cqi;
+  --zl:34%;--lv:24px;--mw:min(32cqi,calc((100dvh - 232px) * .56));--bw:min(22cqi,calc(var(--mw) * .6875));
   position:relative;
   flex:1 1 auto;
   min-height:300px;
@@ -114,9 +114,9 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 .egg-wrap{position:absolute;inset:0;pointer-events:none}
 .egg{
-  position:absolute;left:calc(54% - 11cqi);bottom:calc(12px + .9cqi);
-  --ox:calc(96cqi - var(--mw) / 2 - 54cqi);--oy:calc(11.9cqi - var(--mw) * .2133);
-  width:22cqi;height:auto;aspect-ratio:1/1;
+  position:absolute;left:calc(54% - var(--bw) / 2);bottom:calc(12px + .9cqi);
+  --ox:calc(96cqi - var(--mw) / 2 - 54cqi);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133);
+  width:var(--bw);height:auto;aspect-ratio:1/1;
   border-radius:50%;
   box-shadow:0 0 42px var(--egg-glow);
   transform-origin:50% 92%;
@@ -430,7 +430,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .app{height:auto;min-height:100%;grid-template-columns:minmax(0,1fr)}
   .stage{overflow:visible}
   .side{min-height:0;height:362px}
-  .plate{min-height:420px;--mw:26cqi}
+  .plate{min-height:420px;--mw:26cqi;--bw:min(22cqi,calc(var(--mw) * .6875))}
 }
 @media (max-width:520px){
   .plate{--zl:36%;--lv:16px;min-height:360px}
@@ -948,6 +948,20 @@ function ensureCtx(){
   }catch(e){ac=null}
   return ac;
 }
+let silentEl=null;
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+/* browsers only allow sound after a tap/click: resume the context and play one silent sample from inside the gesture.
+   On iOS also keep a silent media element playing so Web Audio is audible even with the silent switch on. */
+function unlockAudio(){
+  const c=ensureCtx();
+  if(!c) return;
+  try{const b=c.createBuffer(1,1,22050),src=c.createBufferSource();src.buffer=b;src.connect(c.destination);src.start(0)}catch(e){}
+  if(IOS&&!silentEl){
+    try{silentEl=new Audio('data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YUAGAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA');silentEl.loop=true;silentEl.volume=.01;silentEl.setAttribute('playsinline','');const pr=silentEl.play();if(pr&&pr.catch)pr.catch(()=>{silentEl=null})}catch(e){silentEl=null}
+  }
+}
+['click','touchend','keydown','pointerup'].forEach(t=>document.addEventListener(t,unlockAudio,{passive:true,capture:true}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ac&&ac.state!=='running'){try{ac.resume()}catch(e){}}});
 function startAudio(){ensureCtx()}
 const seG=()=>S.opts.vol.master*S.opts.vol.se;
 function beep(freq,dur,type,vol,delay){
