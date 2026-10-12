@@ -99,7 +99,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 .rig{
   position:absolute;left:2%;bottom:12px;
-  height:min(84%,59cqi);aspect-ratio:459/720;width:auto;
+  height:min(84%,59cqi,calc(100% - 56px));aspect-ratio:459/720;width:auto;
   transform-origin:50% 100%;
   filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 10px 14px rgba(0,0,0,.4));
   user-select:none;pointer-events:none;
@@ -203,7 +203,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .mach.run .cap{animation:capHop .3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 .mach.run .cap:nth-child(2n){animation-delay:-.1s}
 .mach.run .cap:nth-child(3n){animation-delay:-.2s;animation-duration:.24s}
-@keyframes crankSpin{to{transform:rotate(360deg)}}
+@keyframes crankSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes capsShake{0%,100%{transform:translate(-3px,0) rotate(-2deg)}50%{transform:translate(3px,-2px) rotate(2deg)}}
 @keyframes capHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px) rotate(18deg)}}
 
@@ -491,10 +491,10 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .stage-head .btn-ghost{min-height:34px;padding:0 12px;font-size:14px}
   .hist-btn{display:inline-flex;align-items:center;margin-right:6px}
   .head-btns{display:flex;align-items:center}
-  .prize-banner{min-height:40px;gap:2px 12px}
-  .rank{font-size:26px}
-  .plate{--ph:calc(100dvh - 108px);--mw:calc(var(--ph) * .5);--bw:calc(var(--ph) * .4);--lv:12px;--zl:30%;min-height:0;border-radius:16px;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--gold-soft)}
-  .rig{height:min(92%,60cqi);bottom:8px}
+  .prize-banner{min-height:64px;gap:2px 12px}
+  .rank{font-size:44px}
+  .plate{--ph:calc(100dvh - 140px);--mw:calc(var(--ph) * .5);--bw:calc(var(--ph) * .4);--lv:12px;--zl:30%;min-height:0;border-radius:16px;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--gold-soft)}
+  .rig{height:min(calc(100% - 52px),60cqi);bottom:8px}
   .mach{bottom:8px}
   .egg{width:var(--bw);left:calc(54% - var(--bw) / 2);bottom:calc(8px + .9cqi);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133)}
   .plate-note{font-size:14px}
@@ -853,7 +853,7 @@ function fitItem(){
   const el=document.querySelector('#banner .item');
   if(!el||!el.offsetParent) return;
   const cmp=window.matchMedia&&matchMedia('(max-height:520px) and (orientation:landscape)').matches;
-  let f=cmp?36:84;
+  let f=cmp?64:84;
   el.style.fontSize=f+'px';
   /* one line only: shrink until the name fits the box width */
   while(f>12&&el.scrollWidth>el.clientWidth){f-=1;el.style.fontSize=f+'px'}
@@ -1086,6 +1086,11 @@ async function hatch(tier,ready){
   setEgg({hidden:true});
   machEl.style.setProperty('--spin',(.475*k).toFixed(3)+'s');
   machEl.classList.add('run');
+  /* fallback for browsers that do not run the CSS crank animation (iOS Safari): turn the crank from script as well */
+  {const t0=performance.now(),per=Math.max(120,475*k);
+   const spinCrank=now=>{if(!machEl.classList.contains('run')||id!==hatchId) return;
+     machEl.style.setProperty('--crank',(((now-t0)%per)/per*360).toFixed(1)+'deg');requestAnimationFrame(spinCrank)};
+   requestAnimationFrame(spinCrank)}
   let n=0;const iv=setInterval(()=>{tick();if(++n>=17)clearInterval(iv)},Math.max(40,110*k));
   await w(1900);
   machEl.classList.remove('run');
@@ -1168,7 +1173,6 @@ async function draw(){
   confetti(110+tier*70);
   if(ballCol==='rainbow'){[250,600,1000,1500].forEach(ms=>setTimeout(()=>confetti(220),ms));fanfare(3);setTimeout(()=>fanfare(3),700)}
   render();
-  if(!isOpen(pz)) toast(rk(pz)+'の抽選が終わりました');
 }
 
 $('#confirmBtn').addEventListener('click',()=>{
