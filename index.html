@@ -336,14 +336,14 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .tabs.stabs{grid-template-columns:repeat(3,1fr)}
 .side-title{padding:14px 16px;border:0;border-bottom:1px solid var(--line);color:var(--gold);font-weight:700;font-size:inherit;font-family:inherit;background:none;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
 .side-title .min-hint{font-size:13px;color:var(--mute);font-weight:700}
-@media not all and (max-height:520px) and (orientation:landscape){
+@media all{
   .app.side-min{grid-template-columns:minmax(0,1fr) 150px}
   .side.min{height:auto;align-self:start}
   .side.min .side-title{padding:12px 12px;font-size:15px}
   .side.min>:not(.side-title){display:none!important}
   .side.min .side-title{border-bottom:0}
 }
-@media (max-height:520px) and (orientation:landscape){.side-title{cursor:default}.side-title .min-hint{display:none}}
+@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){.side-title{cursor:default}.side-title .min-hint{display:none}}
 .tabs{display:grid;grid-template-columns:repeat(2,1fr);border-bottom:1px solid var(--line)}
 .tab{min-height:54px;background:none;border:0;border-bottom:3px solid transparent;color:var(--mute);font-weight:700;cursor:pointer}
 .tab[aria-selected="true"]{color:var(--gold);border-bottom-color:var(--gold)}
@@ -443,6 +443,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .side{min-height:0;height:362px}
   .plate{min-height:420px;--mw:26cqi;--bw:min(22cqi,calc(var(--mw) * .6875))}
 }
+@media (orientation:portrait) and (min-width:700px) and (max-width:899px){.plate{min-height:58dvh}}
 @media (max-width:520px){
   .plate{--zl:36%;--lv:16px;min-height:360px}
   .rig{height:min(70%,53cqi)}
@@ -486,7 +487,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 
 /* ---------- compact landscape (phones turned sideways) ---------- */
 .hist-btn{display:none}
-@media (max-height:520px) and (orientation:landscape){
+@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){
   .menu{grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:16px;padding:8px max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left));min-height:100dvh}
   .menu-hero img{max-height:78dvh}
   .menu-title{font-size:clamp(26px,5.4vw,40px);margin:0 0 10px}
@@ -497,6 +498,8 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .menu-btn.primary{min-height:54px;font-size:22px;margin-bottom:2px}
   .menu-btn.primary small{font-size:11px}
 
+  .app.side-min{grid-template-columns:minmax(0,1fr)}
+  .side.min{height:auto}
   .app{height:100dvh;min-height:0;padding:6px max(8px,env(safe-area-inset-right)) 6px max(8px,env(safe-area-inset-left));grid-template-columns:minmax(0,1fr);gap:0}
   .stage{gap:6px;overflow:hidden}
   .stage-head .btn-ghost{min-height:34px;padding:0 12px;font-size:14px}
@@ -526,7 +529,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 .start-title{font-family:var(--f-display);color:var(--gold);font-size:clamp(32px,8vw,64px);line-height:1.15;letter-spacing:.06em}
 .start-tap{margin-top:8px;padding:14px 34px;border-radius:999px;background:var(--gold);color:#2A1D00;font-weight:700;font-size:clamp(18px,4vw,26px);letter-spacing:.12em;animation:tapPulse 1.6s ease-in-out infinite;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 @keyframes tapPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-@media (max-height:520px) and (orientation:landscape){.start{flex-direction:row;gap:28px}.start img{max-height:80dvh;max-width:34vw}.start-title{font-size:clamp(28px,5vw,44px)}.start-tap{padding:10px 26px;font-size:18px}}
+@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){.start{flex-direction:row;gap:28px}.start img{max-height:80dvh;max-width:34vw}.start-title{font-size:clamp(28px,5vw,44px)}.start-tap{padding:10px 26px;font-size:18px}}
 @media (prefers-reduced-motion:reduce){.start-tap{animation:none}.start{transition:none}}
 
 /* ---------- menu background photo on a light sky, faded softly into the page ---------- */
@@ -555,7 +558,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 .ask-b button{flex:1;min-height:52px;font-size:18px;font-weight:700;border-radius:14px}
 .ask-b .btn-ghost{background:#eaf3fc;color:#14306e;border:1px solid rgba(20,48,110,.25)}
 .menu-btn.back{min-height:54px;font-size:19px;background:#fff;color:#14306e;border:2px solid #14306e;box-shadow:0 3px 10px rgba(20,48,110,.25)}
-@media (max-height:520px) and (orientation:landscape){.menu-title{font-size:clamp(26px,5vw,38px);margin:0 0 8px;top:-8px}.menu-btn.back{min-height:34px;font-size:14px}}
+@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){.menu-title{font-size:clamp(26px,5vw,38px);margin:0 0 8px;top:-8px}.menu-btn.back{min-height:34px;font-size:14px}}
 @media (max-width:760px) and (orientation:portrait){.menu-bg::before{width:max(170vw,calc(100dvh * 1.05))}}
 
 /* portrait: the "pull his hand" hint goes to the top centre, a bit larger */
@@ -574,7 +577,7 @@ body.lite{background:#d7e9f8}
 #gachaApp .plate{background:radial-gradient(ellipse at 66% 45%,#ffffff 0%,#d4e8fa 55%,#acd2f2 100%)}
 #gachaApp .rank{color:#D98200}
 #gachaApp .plate.idle[data-end="1"] .plate-note{font-size:clamp(40px,13.5cqi,76px);letter-spacing:.08em;line-height:1.25}
-@media (max-height:520px) and (orientation:landscape){#gachaApp .plate.idle[data-end="1"] .plate-note{font-size:clamp(30px,7cqi,52px)}}
+@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){#gachaApp .plate.idle[data-end="1"] .plate-note{font-size:clamp(30px,7cqi,52px)}}
 @media (orientation:portrait){#gachaApp .plate.idle[data-end="1"] .plate-note{top:24%}}
 #gachaApp .plate.idle .plate-note{color:#E2560B;text-shadow:0 2px 0 #fff,0 0 14px rgba(255,255,255,.95)}
 #gachaApp .name{color:#C46A00;text-shadow:0 0 16px rgba(255,255,255,.9)}
@@ -960,7 +963,7 @@ function flash(){
 function fitItem(){
   const el=document.querySelector('#banner .item');
   if(!el||!el.offsetParent) return;
-  const cmp=window.matchMedia&&matchMedia('(max-height:520px) and (orientation:landscape)').matches;
+  const cmp=window.matchMedia&&matchMedia('(max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse)').matches;
   let f=cmp?60:78;
   el.style.fontSize=f+'px';
   /* one line only: shrink until the name fits the box width */
@@ -999,13 +1002,20 @@ function preloadGlyphs(text){
   }catch(e){}
 }
 if(document.fonts&&document.fonts.addEventListener) document.fonts.addEventListener('loadingdone',()=>fitReveal());
+try{matchMedia('(max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse)').addEventListener('change',()=>{
+  const ap=document.querySelector('#gachaApp'),sd=document.querySelector('.side');
+  if(ap) ap.classList.remove('side-min','hist-open');
+  if(sd) sd.classList.remove('min');
+  const mh=document.querySelector('#minHint');if(mh) mh.textContent='最小化 ▾';
+  setTimeout(()=>{fitItem();fitReveal()},100);
+})}catch(e){}
 window.addEventListener('resize',()=>{fitItem();fitReveal()});
 window.addEventListener('orientationchange',()=>setTimeout(()=>{fitItem();fitReveal()},250));
 const btnSnd=()=>sv('btn',()=>{beep(1250,.05,'square',.1);beep(1850,.06,'triangle',.1,.035)});
 document.addEventListener('click',e=>{
   const m=e.target.closest('#sideMin');
   if(m){
-    if(matchMedia('(max-height:520px) and (orientation:landscape)').matches) return;
+    if(matchMedia('(max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse)').matches) return;
     const side=m.closest('.side'),on=side.classList.toggle('min');
     document.querySelector('#gachaApp').classList.toggle('side-min',on);
     m.setAttribute('aria-expanded',String(!on));
