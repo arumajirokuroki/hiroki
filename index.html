@@ -63,7 +63,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 }
 .sample-bar span{flex:1 1 220px;min-width:0}
 
-.prize-banner{display:flex;justify-content:flex-start;align-items:center;gap:4px 20px;height:100px;min-height:100px;overflow:hidden}
+.prize-banner{display:flex;justify-content:flex-start;align-items:center;gap:4px 20px;height:130px;min-height:130px;overflow:hidden}
 .rank{flex:none;white-space:nowrap;font-family:var(--f-display);font-size:clamp(50px,9.5vw,88px);line-height:1.1;color:var(--gold)}
 .item{flex:1 1 auto;text-align:center;padding-right:0;font-size:96px;line-height:1.15;font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;padding:.05em .45em .07em .2em;box-sizing:border-box}
 .remain{margin-left:auto;font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
@@ -505,9 +505,9 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .stage-head .btn-ghost{min-height:34px;padding:0 12px;font-size:14px}
   .hist-btn{display:inline-flex;align-items:center;margin-right:6px}
   .head-btns{display:flex;align-items:center}
-  .prize-banner{height:78px;min-height:78px;gap:2px 12px}
+  .prize-banner{height:108px;min-height:108px;gap:2px 12px}
   .rank{font-size:58px}
-  .plate{--ph:calc(100dvh - 140px);--mw:calc(var(--ph) * .5);--bw:calc(var(--ph) * .4);--lv:12px;--zl:30%;min-height:0;border-radius:16px;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--gold-soft)}
+  .plate{--ph:calc(100dvh - 170px);--mw:calc(var(--ph) * .5);--bw:calc(var(--ph) * .4);--lv:12px;--zl:30%;min-height:0;border-radius:16px;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--gold-soft)}
   .rig{height:min(calc(100% - 52px),60cqi);bottom:8px}
   .mach{bottom:8px}
   .egg{width:var(--bw);left:calc(54% - var(--bw) / 2);bottom:calc(8px + .9cqi);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133)}
@@ -743,6 +743,10 @@ body.lite{background:#d7e9f8}
     <button class="side-title" id="sideMin" type="button" aria-expanded="true"><span>履歴</span><span class="min-hint" id="minHint">最小化 ▾</span></button>
 
     <div class="panel" id="panel-prizes" role="tabpanel" aria-labelledby="tab-prizes">
+      <div class="row">
+        <label class="btn-ghost filebtn csvbtn" for="pzCsvFile">CSVから登録</label>
+        <button class="btn-ghost csvbtn" type="button" id="pzCsvTemplate">CSVのフォーマットをダウンロード</button>
+        <input type="file" id="pzCsvFile" accept=".csv,text/csv,text/plain" hidden></div>
       <ul class="prize-list" id="prizeList"></ul>
       <form class="add-prize" id="addPrize" autocomplete="off">
         <label class="fld"><span>商品名</span><input class="field" id="pzItem" type="text" maxlength="40" placeholder="例 ホテルディナー券"></label>
@@ -964,16 +968,16 @@ function fitItem(){
   const el=document.querySelector('#banner .item');
   if(!el||!el.offsetParent) return;
   const cmp=window.matchMedia&&matchMedia('(max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse)').matches;
-  let f=cmp?60:78;
+  let f=cmp?84:106;
   el.style.fontSize=f+'px';
   /* one line only: shrink until the name fits the box width */
   el.style.whiteSpace='nowrap';
   while(f>12&&el.scrollWidth>el.clientWidth){f-=1;el.style.fontSize=f+'px'}
   /* a very long name would get tiny on one line: use two lines instead, still inside the fixed banner height */
   const bh=document.querySelector('#banner').clientHeight;
-  if(f<(cmp?26:30)){
+  if(f<(cmp?30:36)){
     el.style.whiteSpace='normal';el.style.overflow='hidden';
-    f=cmp?32:44;el.style.fontSize=f+'px';
+    f=cmp?38:54;el.style.fontSize=f+'px';
     while(f>12&&(el.scrollWidth>el.clientWidth||el.offsetHeight>bh)){f-=1;el.style.fontSize=f+'px'}
   }
 }
@@ -1537,6 +1541,51 @@ $('#csvFile').addEventListener('change',async e=>{
     const list=csvToPeople(parseCSV(await readCSV(f)));
     if(!list.length){toast('CSVから参加者を読み取れませんでした。「職員番号,所属部署,名前」の列で作ってください');return}
     if(addPeople(list)) toast('CSVから'+list.length+'名を追加しました(全部で'+S.people.length+'名)');
+  }catch(err){toast('CSVを読み込めませんでした')}
+});
+
+/* ---------- prizes from CSV: 順位,景品 ---------- */
+const zen2han=t=>String(t).replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
+const parseRank=t=>{const m=zen2han(t).match(/\d+/);return m?parseInt(m[0],10):NaN};
+function csvToPrizes(rows){
+  if(!rows.length) return [];
+  let ri=0,ii=1,body=rows;
+  const head=rows[0];
+  const hr=head.findIndex(h=>/順位|位|rank/i.test(h)),hi=head.findIndex(h=>/景品|商品|賞品|name|item/i.test(h));
+  if(hr>=0&&hi>=0&&hr!==hi){ri=hr;ii=hi;body=rows.slice(1)}
+  else if(isNaN(parseRank(head[0]||''))&&!isNaN(parseRank(head[1]||''))&&rows.length>1&&/順位|景品|商品/.test(head.join(''))) body=rows.slice(1);
+  else if(isNaN(parseRank(head[0]||''))) body=rows.slice(1);
+  return body.map(r=>({rank:parseRank(r[ri]||''),item:(r[ii]||'').trim().slice(0,40)}));
+}
+$('#pzCsvTemplate').addEventListener('click',()=>{
+  const rows=[['順位','景品'],['1','ホテルディナー券'],['2','お米2kg'],['3','ハンドタオル']];
+  const text='\ufeff'+rows.map(r=>r.join(',')).join('\r\n')+'\r\n';
+  const url=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));
+  const a=document.createElement('a');a.href=url;a.download='景品登録フォーマット.csv';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+  toast('フォーマットをダウンロードしました。例の3行を書き換えて「CSVから登録」で読み込んでください');
+});
+$('#pzCsvFile').addEventListener('change',async e=>{
+  const f=e.target.files&&e.target.files[0];
+  e.target.value='';
+  if(!f) return;
+  try{
+    const list=csvToPrizes(parseCSV(await readCSV(f)));
+    const ok=list.filter(x=>x.item&&x.rank>=1&&x.rank<=999);
+    if(!ok.length){toast('CSVから景品を読み取れませんでした。「順位,景品」の列で作ってください');return}
+    const base=S.sample.prizes?[]:S.prizes.slice();
+    const used=new Set(base.map(p=>p.rank));
+    const add=[];let dup=0;
+    ok.forEach(x=>{if(used.has(x.rank)){dup++;return}used.add(x.rank);add.push({id:uid(),rank:x.rank,item:x.item,count:1})});
+    if(!add.length){toast('すべて登録済みの順位でした（'+dup+'件）。順位を変えるか、先に削除してください');return}
+    if(S.sample.prizes){S.prizes=[];S.sample.prizes=false}
+    add.forEach(p=>S.prizes.push(p));
+    sortPrizes();
+    S.currentPrizeId=null;
+    save();render();idlePlate();
+    const bad=list.length-ok.length;
+    toast('CSVから'+add.length+'件を登録しました'+(dup?'（順位が重複の'+dup+'件は除外）':'')+(bad?'（読み取れない'+bad+'行は除外）':''));
   }catch(err){toast('CSVを読み込めませんでした')}
 });
 
