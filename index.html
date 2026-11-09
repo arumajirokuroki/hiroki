@@ -307,9 +307,8 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 }
 /* the pull target: a ring that keeps growing and fading away */
 
-.hand::after{animation-delay:.8s}
-.rig:not(.disabled):not(.dragging):not(.busy) .hand::before,.rig:not(.disabled):not(.dragging):not(.busy) .hand::after{animation:ring 1.8s ease-out infinite}
-.rig:not(.disabled):not(.dragging):not(.busy) .hand::after{animation-delay:.9s}
+.rig:not(.disabled):not(.dragging):not(.busy) .hand::before,.rig:not(.disabled):not(.dragging):not(.busy) .hand::after{animation:ring 2.8s ease-out infinite}
+.rig:not(.disabled):not(.dragging):not(.busy) .hand::after{animation-delay:1.4s}
 @keyframes ring{0%{transform:scale(.4);opacity:.95}70%{opacity:.5}100%{transform:scale(1.75);opacity:0}}
 .hand:active{cursor:grabbing}
 .hand:disabled{cursor:default}
@@ -593,6 +592,14 @@ body.lite{background:#d7e9f8}
 @media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){#gachaApp .plate.idle[data-end="1"] .plate-note{font-size:clamp(30px,7cqi,52px)}}
 @media (orientation:portrait){#gachaApp .plate.idle[data-end="1"] .plate-note{top:24%}}
 #gachaApp .plate.idle .plate-note{color:#E2560B;text-shadow:0 2px 0 #fff,0 0 14px rgba(255,255,255,.95)}
+.menu-btn.practice{background:#fff;color:#14306e;border:2px dashed #E2560B}
+.menu-btn.practice small{color:#E2560B}
+.practice-tag{flex:0 1 auto;align-self:center;padding:6px 16px;border-radius:999px;background:#E2560B;color:#fff;font-weight:700;font-size:16px;line-height:1.2;text-align:center;box-shadow:0 3px 10px rgba(226,86,11,.4)}
+.practice-tag small{display:block;font-size:11px;font-weight:700;opacity:.9}
+.practice-tag[hidden]{display:none}
+body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
+@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){.practice-tag{padding:3px 12px;font-size:13px}.practice-tag small{font-size:10px}}
+
 /* product photo: sits in the space between the mascot and the machine */
 .pz-photo{
   position:absolute;left:54%;top:52%;transform:translate(-50%,-50%);z-index:0;
@@ -633,6 +640,7 @@ body.lite{background:#d7e9f8}
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
     <div class="menu-list" id="menuMain">
+      <button class="menu-btn practice" type="button" id="practiceBtn"><span>練習画面へ</span><span class="go" aria-hidden="true">›</span></button>
       <button class="menu-btn primary" type="button" data-go="gacha"><span>ガチャ画面へ<small id="mGacha"></small></span><span class="go" aria-hidden="true">›</span></button>
       <button class="menu-btn" type="button" data-menu="sub"><span>各種設定<small>商品・参加者・BGM・設定</small></span><span class="go" aria-hidden="true">›</span></button>
     </div>
@@ -720,6 +728,7 @@ body.lite{background:#d7e9f8}
       <div class="head-left">
         <button class="btn-ghost" type="button" data-go="menu">‹ メニュー</button>
       </div>
+      <div class="practice-tag" id="practiceTag" hidden>れんしゅう中<small>結果は記録されません</small></div>
       <div class="head-btns"><button class="btn-ghost hist-btn" type="button" id="histBtn" aria-expanded="false">履歴</button><button class="btn-ghost" type="button" id="bgmBtn" data-act="bgm-toggle" aria-pressed="false">BGM</button></div>
     </header>
 
@@ -917,7 +926,8 @@ function load(){
   return sampleState();
 }
 let S=load();
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+let practice=false,realS=null;
+function save(){if(practice) return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
 let busy=false;
 let lastResultId=null,awaitConfirm=false,lastPrizeId=null;
@@ -1454,6 +1464,7 @@ async function draw(){
 
 $('#confirmBtn').addEventListener('click',()=>{
   if(!awaitConfirm||busy) return;
+  if(practice){S.history=[];S.currentPrizeId=null;lastPrizeId=null} /* practice can be repeated as often as you like */
   idlePlate();
   render();
 });
@@ -2012,7 +2023,7 @@ let view='menu';
 /* leaving the gacha screen asks first */
 {
   const ask=document.querySelector('#backAsk');
-  const open=()=>{ask.hidden=false;document.querySelector('#backYes').focus()};
+  const open=()=>{ask.hidden=false;document.querySelector('#backYes').focus();document.querySelector('#backAskT').textContent=practice?'練習を終わりますか？':'本当に戻りますか？'};
   const close=()=>{ask.hidden=true};
   document.addEventListener('click',e=>{
     const b=e.target.closest('#gachaApp [data-go="menu"]');
@@ -2026,7 +2037,32 @@ let view='menu';
 }
 function setMenuSub(on){$('#menuMain').hidden=on;$('#menuSub').hidden=!on}
 document.addEventListener('click',e=>{const m=e.target.closest('[data-menu]');if(m)setMenuSub(m.dataset.menu==='sub')});
+/* practice mode: the gacha screen runs on throw-away data and never touches the real registrations or results */
+function practiceState(){
+  return {
+    people:[{id:uid(),empno:'0000',dept:'事業本部',name:'しんわくん',status:'in'}],
+    prizes:[{id:uid(),rank:30,item:'ポケットティッシュ',count:1}],
+    history:[],currentPrizeId:null,
+    opts:S.opts,sample:{people:false,prizes:false}
+  };
+}
+function enterPractice(){
+  if(practice||busy) return;
+  realS=S;S=practiceState();practice=true;
+  document.body.classList.add('practice');
+  lastPrizeId=null;awaitConfirm=false;
+  go('gacha');render();idlePlate();
+}
+function exitPractice(){
+  if(!practice) return;
+  practice=false;S=realS;realS=null;
+  document.body.classList.remove('practice');
+  lastPrizeId=null;awaitConfirm=false;
+  render();idlePlate();
+}
+$('#practiceBtn').addEventListener('click',enterPractice);
 function go(v){
+  if(practice&&v!=='gacha'&&!busy) exitPractice();
   if(busy&&v!=='gacha'){toast('抽選中です。終わってから移動してください');return}
   view=v;
   document.body.classList.toggle('lite',v==='gacha');
