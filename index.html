@@ -337,7 +337,9 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .side-title{padding:14px 16px;border:0;border-bottom:1px solid var(--line);color:var(--gold);font-weight:700;font-size:inherit;font-family:inherit;background:none;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
 .side-title .min-hint{font-size:13px;color:var(--mute);font-weight:700}
 @media not all and (max-height:520px) and (orientation:landscape){
+  .app.side-min{grid-template-columns:minmax(0,1fr) 150px}
   .side.min{height:auto;align-self:start}
+  .side.min .side-title{padding:12px 12px;font-size:15px}
   .side.min>:not(.side-title){display:none!important}
   .side.min .side-title{border-bottom:0}
 }
@@ -986,6 +988,17 @@ function fitReveal(){
     while(f>9&&el.offsetWidth>avail){f-=1;el.style.fontSize=f+'px'}
   });
 }
+/* load the web-font glyphs for the winner's text while the capsule is still rolling, so the text does not flash in a fallback font and then jump when the real font arrives */
+function preloadGlyphs(text){
+  try{
+    if(!document.fonts||!document.fonts.load||!text) return;
+    [[nameEl,'400'],[deptEl,'700']].forEach(([el,wt])=>{
+      const fam=getComputedStyle(el).fontFamily;
+      document.fonts.load(wt+' 40px '+fam,text).then(()=>fitReveal()).catch(()=>{});
+    });
+  }catch(e){}
+}
+if(document.fonts&&document.fonts.addEventListener) document.fonts.addEventListener('loadingdone',()=>fitReveal());
 window.addEventListener('resize',()=>{fitItem();fitReveal()});
 window.addEventListener('orientationchange',()=>setTimeout(()=>{fitItem();fitReveal()},250));
 const btnSnd=()=>sv('btn',()=>{beep(1250,.05,'square',.1);beep(1850,.06,'triangle',.1,.035)});
@@ -994,6 +1007,7 @@ document.addEventListener('click',e=>{
   if(m){
     if(matchMedia('(max-height:520px) and (orientation:landscape)').matches) return;
     const side=m.closest('.side'),on=side.classList.toggle('min');
+    document.querySelector('#gachaApp').classList.toggle('side-min',on);
     m.setAttribute('aria-expanded',String(!on));
     document.querySelector('#minHint').textContent=on?'ひらく ▸':'最小化 ▾';
     if(!on){const hw=document.querySelector('#histWrap');if(hw)hw.scrollTop=0}
@@ -1357,6 +1371,7 @@ async function draw(){
   renderStage();
   startAudio();
   const winner=cand[rand(cand.length)];
+  preloadGlyphs((winner.dept||'')+(winner.name||''));
   const tier=tierOf(pz);
   ballTier=tier;ballCol=colOf(pz);
   const ready=eggReady;eggReady=false;
