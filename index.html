@@ -102,7 +102,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   height:min(84%,59cqi,calc(100% - 56px));aspect-ratio:459/720;width:auto;
   transform-origin:50% 100%;
   filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 10px 14px rgba(0,0,0,.4));
-  user-select:none;pointer-events:none;
+  user-select:none;pointer-events:none;z-index:3;
 }
 .plate.idle .rig{animation:bob 2.6s ease-in-out infinite}
 .plate.spinning .rig{animation:hop .5s ease-in-out infinite}
@@ -402,7 +402,18 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 
 .csvbtn{width:auto;padding:0 18px;min-height:48px;border-radius:10px;font-weight:700}
 .row .csvbtn{flex:1 1 220px;justify-content:center;text-align:center}
-.ptable-wrap{margin-top:14px;border:1px solid var(--line);border-radius:12px;overflow:auto}
+.page-tools{flex:0 0 auto;margin:0;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+.page-add{flex:0 0 auto;margin:0!important;padding:10px 16px 12px!important;border-top:0!important;border-bottom:1px solid var(--line);background:var(--panel)}
+.add-prize.page-add{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px 12px;align-items:end}
+.add-prize.page-add .full{grid-column:auto}
+.add-prize.page-add .pz-pick{grid-column:1}
+.add-prize.page-add .btn-gold{grid-column:2;min-height:48px}
+.person-add.page-add{display:grid;grid-template-columns:120px minmax(0,1fr) minmax(0,1fr) auto;gap:8px 12px;align-items:end}
+.person-add .field{min-height:44px;padding:6px 10px}
+.person-add .add-btn{min-height:48px;padding:0 22px;border-radius:10px;font-weight:700;border:0;cursor:pointer}
+@media (max-width:560px){.ptable .no{display:none}.ptable th,.ptable td{padding:9px 8px;font-size:15px}.ptable th.emp,.ptable td.emp{width:76px}.ptable th.del,.ptable td.del{width:56px;padding:6px 4px}}
+@media (max-width:560px){.person-add.page-add{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.ptable-wrap{margin-top:0;border:1px solid var(--line);border-radius:12px;overflow:auto}
 .ptable{width:100%;border-collapse:collapse;font-size:16px}
 .ptable th,.ptable td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
 .ptable th:last-child,.ptable td:last-child{border-right:0}
@@ -485,6 +496,26 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 .page-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}
 .head-left{display:flex;align-items:center;gap:14px;min-width:0}
 .head-btns{display:flex;gap:8px;align-items:center}
+.stage-head{position:relative}
+.stage-head .gear-btn,.gear-btn{font-size:26px!important;line-height:1;min-width:48px;padding:0 12px}
+.gear-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:270px;background:#fff;border:2px solid #14306e;border-radius:16px;box-shadow:0 10px 28px rgba(20,48,110,.35);padding:12px 14px;display:flex;flex-direction:column;gap:12px;color:#14306e}
+.gear-pop[hidden]{display:none}
+.gp-row{display:flex;align-items:center;justify-content:space-between;gap:14px;font-weight:700;font-size:16px}
+.gp-pair{display:flex;gap:6px}
+.gp-seg{min-height:44px;min-width:84px;padding:0 14px;border-radius:999px;border:2px solid #14306e;background:#fff;color:#14306e;font:inherit;font-weight:700;cursor:pointer}
+.gp-seg.on,.gp-seg[aria-pressed="true"]{background:#14306e;color:#fff}
+.gp-seg:active{transform:scale(.97)}
+.gp-sel{min-height:44px;min-width:150px;max-width:210px;padding:0 10px;border-radius:12px;border:2px solid #14306e;background:#fff;color:#14306e;font:inherit;font-weight:700;font-size:16px}
+.gp-skip[hidden]{display:none}
+.gp-skt{font-weight:700;font-size:16px;margin-bottom:8px}
+.gp-grid[hidden]{display:none}
+.gp-skt[hidden]{display:none}
+.gp-skt{margin:8px 0 6px}
+.gp-skt small{margin-left:0;font-size:12px;font-weight:400;color:#4a5f8f}
+.gp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.gp-grid .gp-seg{min-width:0;padding:0;font-size:15px}
+.gear-pop{max-height:calc(100dvh - 90px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.gear-pop:has(.gp-grid .gp-seg){min-width:min(340px,calc(100vw - 24px))}
 .vol{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;margin:0 0 18px}
 .vol b{font-size:18px}
 .vol output{font-family:var(--f-display);color:var(--gold);font-size:20px;font-variant-numeric:tabular-nums}
@@ -600,6 +631,7 @@ body.lite{background:#d7e9f8}
 .practice-tag{flex:0 1 auto;align-self:center;padding:6px 16px;border-radius:999px;background:#E2560B;color:#fff;font-weight:700;font-size:16px;line-height:1.2;text-align:center;box-shadow:0 3px 10px rgba(226,86,11,.4)}
 .practice-tag small{display:block;font-size:11px;font-weight:700;opacity:.9}
 .practice-tag[hidden]{display:none}
+body.practice .gear-btn,body.practice .gear-pop{display:none!important}
 body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 @media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){.practice-tag{padding:3px 12px;font-size:13px}.practice-tag small{font-size:10px}}
 
@@ -639,7 +671,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v153</div>
+  <div class="ver-tag" id="verTag">v161</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -697,8 +729,6 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_build"><span>1位の盛り上がりの音</span></label><output id="svO_build"></output><input type="range" id="svV_build" min="0" max="200" step="5" aria-label="1位の盛り上がりの音の音量"></div>
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_wind"><span>ゆれる音・割れる直前の風の音</span></label><output id="svO_wind"></output><input type="range" id="svV_wind" min="0" max="200" step="5" aria-label="ゆれる音・風の音の音量"></div>
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_btn"><span>ボタンのタップ音</span></label><output id="svO_btn"></output><input type="range" id="svV_btn" min="0" max="200" step="5" aria-label="ボタンのタップ音の音量"></div>
-      <label class="switch"><input type="checkbox" id="optFast"><span>ガチャ演出を短くする</span></label>
-      <p class="hint">人数が多くて時間がかかるときは、演出を短くすると進行が早くなります。</p>
     </div>
     <div class="panel" id="spanel-sound" role="tabpanel" aria-labelledby="stab-sound" hidden>
       <div class="vol"><b>全体の音量</b><output id="oMaster"></output><input type="range" id="volMaster" min="0" max="100" step="1" aria-label="全体の音量"></div>
@@ -733,7 +763,12 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
         <button class="btn-ghost" type="button" data-go="menu">‹ メニュー</button>
       </div>
       <div class="practice-tag" id="practiceTag" hidden>れんしゅう中<small>結果は記録されません</small></div>
-      <div class="head-btns"><button class="btn-ghost hist-btn" type="button" id="histBtn" aria-expanded="false">履歴</button><button class="btn-ghost" type="button" id="bgmBtn" data-act="bgm-toggle" aria-pressed="false">BGM</button></div>
+      <div class="head-btns"><button class="btn-ghost hist-btn" type="button" id="histBtn" aria-expanded="false">履歴</button><button class="btn-ghost gear-btn" type="button" id="gearBtn" aria-label="ガチャの設定" aria-expanded="false" aria-controls="gearPop">⚙</button></div>
+      <div class="gear-pop" id="gearPop" hidden>
+        <div class="gp-row"><span>BGM</span><button class="gp-seg" type="button" id="bgmBtn" data-act="bgm-toggle" aria-pressed="false">BGM ON</button></div>
+        <div class="gp-row"><span>ガチャ速度</span><div class="gp-pair" role="group" aria-label="ガチャ速度"><button type="button" class="gp-seg" id="spdNormal" data-spd="0">ふつう</button><button type="button" class="gp-seg" id="spdFast" data-spd="1">はやい</button></div></div>
+        <div class="gp-skip" id="gpSkip"><div class="gp-row"><span>スキップ</span><button type="button" class="gp-seg" id="skipOpen" aria-expanded="false" aria-controls="skipGrid">スキップ</button></div><div class="gp-skt" id="skipHint" hidden><small>押した順位まで進みます</small></div><div class="gp-grid" id="skipGrid" hidden></div></div>
+      </div>
     </header>
 
 
@@ -812,16 +847,15 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
         <label class="btn-ghost filebtn csvbtn" for="csvFile">CSVから登録</label>
         <button class="btn-ghost csvbtn" type="button" id="csvTemplate">CSVのフォーマットをダウンロード</button>
         <input type="file" id="csvFile" accept=".csv,text/csv,text/plain" hidden></div>
+      <div class="person-add" id="personAdd">
+        <label class="fld"><span>職員番号</span><input class="field" id="npNo" type="text" inputmode="numeric" maxlength="12" placeholder="職員番号" aria-label="職員番号" autocomplete="off"></label>
+        <label class="fld"><span>所属部署</span><input class="field" id="npDept" type="text" maxlength="30" placeholder="所属部署" aria-label="所属部署" autocomplete="off"></label>
+        <label class="fld"><span>名前</span><input class="field" id="npName" type="text" maxlength="30" placeholder="名前" aria-label="名前" autocomplete="off"></label>
+        <button class="btn-gold add-btn" type="button" data-act="add-person">追加</button>
+      </div>
       <div class="ptable-wrap"><table class="ptable" aria-label="参加者の登録">
         <thead>
           <tr><th class="no">No.</th><th class="emp">職員番号</th><th>所属部署</th><th>名前</th><th class="del"></th></tr>
-          <tr class="add-row">
-            <td class="no">＋</td>
-            <td class="emp"><input class="field" id="npNo" type="text" inputmode="numeric" maxlength="12" placeholder="職員番号" aria-label="職員番号" autocomplete="off"></td>
-            <td><input class="field" id="npDept" type="text" maxlength="30" placeholder="所属部署" aria-label="所属部署" autocomplete="off"></td>
-            <td><input class="field" id="npName" type="text" maxlength="30" placeholder="名前" aria-label="名前" autocomplete="off"></td>
-            <td class="del"><button class="btn-gold add-btn" type="button" data-act="add-person">追加</button></td>
-          </tr>
         </thead>
         <tbody id="peopleBody"></tbody>
       </table></div>
@@ -857,6 +891,13 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
     <div class="ask-t" id="backAskT">本当に戻りますか？</div>
     <div class="ask-s">ガチャ画面からメニューに移動します</div>
     <div class="ask-b"><button class="btn-gold" type="button" id="backYes">はい</button><button class="btn-ghost" type="button" id="backNo">いいえ</button></div>
+  </div>
+</div>
+<div class="ask" id="skipAsk" role="dialog" aria-modal="true" aria-labelledby="skipAskT" hidden>
+  <div class="ask-box">
+    <div class="ask-t" id="skipAskT">スキップしますか？</div>
+    <div class="ask-s" id="skipAskS"></div>
+    <div class="ask-b"><button class="btn-gold" type="button" id="skipYes">はい</button><button class="btn-ghost" type="button" id="skipNo">いいえ</button></div>
   </div>
 </div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
@@ -1103,10 +1144,10 @@ function renderStage(){
     $('#banner').innerHTML='<span class="banner-empty">'+(S.prizes.length?'':'景品が登録されていません')+'</span>';
   }
 
-  {const ph=$('#pzPhoto'),im=$('#pzPhotoImg');
-   if(bpz&&bpz.img){if(im.getAttribute('src')!==bpz.img) im.src=bpz.img;ph.classList.add('has')}
+  try{const ph=$('#pzPhoto'),im=$('#pzPhotoImg');
+   if(bpz&&typeof bpz.img==='string'&&bpz.img.indexOf('data:image')===0){if(im.getAttribute('src')!==bpz.img) im.src=bpz.img;ph.classList.add('has')}
    else{im.removeAttribute('src');ph.classList.remove('has')}
-   ph.style.visibility=bpz?'visible':'hidden'}
+   ph.style.visibility=bpz?'visible':'hidden'}catch(e){}
   const canDraw=!busy&&!awaitConfirm&&!!pz&&cand.length>0;
   const label=busy?'ガチャ中…':!pz?'抽選おわり':cand.length===0?'対象者なし':'下へひっぱる';
   pullEl.classList.toggle('disabled',!canDraw);
@@ -1153,7 +1194,6 @@ function renderHistory(){
 
 function renderSettings(){
   $('#optSound').checked=!!S.opts.sound;
-  $('#optFast').checked=!!S.opts.fast;
 }
 
 function render(){renderStage();renderPrizes();renderPeople();renderHistory();renderSettings()}
@@ -1903,7 +1943,6 @@ $('#npNo').addEventListener('paste',onPeoplePaste);
 $('#npName').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();addOnePerson()}});
 $('#npDept').addEventListener('paste',onPeoplePaste);
 $('#npName').addEventListener('paste',onPeoplePaste);
-$('#optFast').addEventListener('change',e=>{S.opts.fast=e.target.checked;save()});
 $('#optSound').addEventListener('change',e=>{
   S.opts.sound=e.target.checked;save();
   if(S.opts.sound){startAudio();tick()}
@@ -2000,8 +2039,14 @@ knob.addEventListener('click',e=>{
 });
 
 /* ---------- screens ---------- */
-$('#body-prizes').appendChild($('#panel-prizes'));
-$('#body-people').appendChild($('#panel-people'));
+/* the CSV buttons sit above the scrolling list, not inside it */
+[['prizes'],['people']].forEach(([n])=>{
+  const body=$('#body-'+n),panel=$('#panel-'+n),row=panel.querySelector(':scope > .row');
+  if(row){row.classList.add('page-tools');body.appendChild(row)}
+  const add=panel.querySelector(':scope > .add-prize, :scope > .person-add');
+  if(add){add.classList.add('page-add');body.appendChild(add)}
+  body.appendChild(panel);
+});
 $('#panel-people').hidden=false;
 $('#panel-prizes').hidden=false;
 let view='menu';
@@ -2075,7 +2120,7 @@ function go(v){
   ['prizes','people','bgm','settings'].forEach(n=>{$('#page-'+n).hidden=v!==n});
   if(['prizes','people','bgm','settings'].includes(v)) setMenuSub(true); else if(v==='gacha') setMenuSub(false);
   if(v==='menu'){if(S.opts.menuBgm&&bgmPlaying)bgmPause();menuBgmStart(false,2.5)}else menuBgmStop();
-  if(v==='gacha'){fitItem();ensureCtx();if(!S.opts.bgm){S.opts.bgm=true;save()}bgmStart();renderBgm()}
+  if(v==='gacha'){fitItem();ensureCtx();if(!practice){if(!S.opts.bgm){S.opts.bgm=true;save()}bgmStart()}renderBgm()}
   const sc=document.scrollingElement;if(sc)sc.scrollTop=0;
   renderMenu();
 }
@@ -2450,7 +2495,60 @@ function renderBgm(){
   const b=$('#bgmBtn');
   b.textContent=S.opts.bgm&&bgmPlaying?'BGM ON':'BGM OFF';
   b.setAttribute('aria-pressed',String(!!(S.opts.bgm&&bgmPlaying)));
+  gearSync();
 }
+function skipTargets(){const o=S.prizes.filter(isOpen);return o.length>1?o.slice(1):[]}
+let skipId=null;
+function skipShow(on){$('#skipGrid').hidden=!on;$('#skipHint').hidden=!on;$('#skipOpen').setAttribute('aria-expanded',String(on));$('#skipOpen').classList.toggle('on',on)}
+$('#skipOpen').addEventListener('click',()=>skipShow($('#skipGrid').hidden));
+function gearSkipSync(){
+  const row=$('#gpSkip');
+  const t=practice?[]:skipTargets();
+  row.hidden=!t.length;
+  if(!t.length) skipShow(false);
+  $('#skipGrid').innerHTML=t.map(p=>'<button type="button" class="gp-seg" data-skip="'+p.id+'" title="'+esc(p.item)+'">'+esc(rk(p))+'</button>').join('');
+}
+function skipPlan(id){
+  const t=S.prizes.filter(isOpen),i=t.findIndex(p=>p.id===id);
+  return {target:t[i],skipped:i>0?t.slice(0,i):[]};
+}
+$('#skipGrid').addEventListener('click',e=>{
+  const b=e.target.closest('[data-skip]');if(!b) return;
+  if(busy||awaitConfirm){toast('結果を「次へ」で閉じてからスキップしてください');return}
+  const pl=skipPlan(b.dataset.skip);if(!pl.target||!pl.skipped.length) return;
+  skipId=b.dataset.skip;
+  const n=pl.skipped.reduce((a,p)=>a+p.count-wonCount(p),0);
+  $('#skipAskT').textContent=rk(pl.target)+'までスキップ？';
+  $('#skipAskS').textContent=rk(pl.skipped[0])+'〜'+rk(pl.skipped[pl.skipped.length-1])+'の'+n+'件を演出なしで自動抽選して、結果を記録します。元に戻せません。';
+  gearClose();$('#skipAsk').hidden=false;$('#skipYes').focus();
+});
+$('#skipNo').addEventListener('click',()=>{$('#skipAsk').hidden=true});
+$('#skipAsk').addEventListener('click',e=>{if(e.target===$('#skipAsk'))$('#skipAsk').hidden=true});
+$('#skipYes').addEventListener('click',()=>{
+  $('#skipAsk').hidden=true;
+  if(busy||awaitConfirm) return;
+  const pl=skipPlan(skipId);if(!pl.target) return;
+  let n=0,short=false;
+  for(const pz of pl.skipped){
+    while(isOpen(pz)){
+      const cand=pool();
+      if(!cand.length){short=true;break}
+      const w=cand[rand(cand.length)];
+      S.history.push({id:uid(),personId:w.id,empno:w.empno||'',dept:w.dept||'',name:w.name,prizeId:pz.id,rank:rk(pz),item:pz.item,at:Date.now()});
+      n++;
+    }
+    if(short) break;
+  }
+  S.currentPrizeId=short?null:pl.target.id;lastResultId=null;lastPrizeId=null;
+  save();idlePlate();render();
+  toast(short?'対象者が足りなくなったため、'+n+'件でスキップを止めました':n+'件をスキップしました。次は'+rk(pl.target)+'です');
+});
+function gearSync(){gearSkipSync();const f=!!S.opts.fast;$('#spdNormal').classList.toggle('on',!f);$('#spdFast').classList.toggle('on',f);$('#spdNormal').setAttribute('aria-pressed',String(!f));$('#spdFast').setAttribute('aria-pressed',String(f))}
+function gearClose(){const p=$('#gearPop');if(p.hidden)return;skipShow(false);p.hidden=true;$('#gearBtn').setAttribute('aria-expanded','false')}
+$('#gearBtn').addEventListener('click',e=>{const p=$('#gearPop');p.hidden=!p.hidden;$('#gearBtn').setAttribute('aria-expanded',String(!p.hidden));gearSync()});
+$('#gearPop').addEventListener('click',e=>{const t=e.target.closest('[data-spd]');if(t){S.opts.fast=t.dataset.spd==='1';save();gearSync()}});
+document.addEventListener('click',e=>{if(!e.target.closest('#gearPop,#gearBtn'))gearClose()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')gearClose()});
 $('#bgmFile').addEventListener('change',e=>{const f=Array.from(e.target.files||[]);e.target.value='';if(f.length)bgmAdd(f)});
 $('#optBgm').addEventListener('change',e=>{S.opts.bgm=e.target.checked;save();if(S.opts.bgm){if(view==='gacha')bgmStart()}else bgmStop();renderBgm()});
 $('#optShuffle').addEventListener('change',e=>{S.opts.shuffle=e.target.checked;save()});
