@@ -631,7 +631,7 @@ body.lite{background:#d7e9f8}
 .practice-tag{flex:0 1 auto;align-self:center;padding:6px 16px;border-radius:999px;background:#E2560B;color:#fff;font-weight:700;font-size:16px;line-height:1.2;text-align:center;box-shadow:0 3px 10px rgba(226,86,11,.4)}
 .practice-tag small{display:block;font-size:11px;font-weight:700;opacity:.9}
 .practice-tag[hidden]{display:none}
-body.practice .gear-btn,body.practice .gear-pop{display:none!important}
+body.practice .gear-btn,body.practice .gear-pop,body.practice #histBtn{display:none!important}
 body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 @media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){.practice-tag{padding:3px 12px;font-size:13px}.practice-tag small{font-size:10px}}
 
@@ -671,7 +671,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v165</div>
+  <div class="ver-tag" id="verTag">v166</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1044,7 +1044,7 @@ function setEgg(o){
 function idlePlate(){
   awaitConfirm=false;
   const pz=currentPrize();
-  setPlate('idle',{note:pz?'しんわくんの手を\n下にひっぱろう！':(S.prizes.length?'おわりだよ！':'景品を登録してね')});
+  setPlate('idle',{note:pz?'しんわくんの手を\n下にひっぱろう！':(S.prizes.length?'':'景品を登録してね')});
   if(!pz&&S.prizes.length) plate.dataset.end='1';
   setEgg({hidden:true});
 }
