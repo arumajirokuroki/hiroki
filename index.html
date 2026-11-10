@@ -600,6 +600,14 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 .ask-t{font-family:"Mochiy Pop One","Zen Maru Gothic",var(--f-display);font-size:24px;line-height:1.3;color:#E2560B}
 .ask-s{margin:10px 0 18px;font-size:14px;color:#4a5f8f}
 .ask-b{display:flex;gap:10px}
+.bulk-box{width:min(560px,100%);max-height:90dvh;display:flex;flex-direction:column;text-align:left}
+.bulk-box .ask-t,.bulk-box .ask-s{text-align:center}
+.bulk-list{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.bulk-row{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;align-items:center;padding:6px;border:1px solid rgba(20,48,110,.2);border-radius:12px}
+.bulk-row.dup{border-color:#d33;background:#fff2f2}
+.bulk-row img{width:64px;height:56px;object-fit:contain;background:#eef4fb;border-radius:8px}
+.bulk-row select{width:100%;min-height:44px;border-radius:10px;border:2px solid #14306e;background:#fff;color:#14306e;font:inherit;font-weight:700;font-size:15px;padding:0 8px}
+.bulk-row small{display:block;font-size:11px;color:#d33;min-height:0}
 .ask-b button{flex:1;min-height:52px;font-size:18px;font-weight:700;border-radius:14px}
 .ask-b .btn-ghost{background:#eaf3fc;color:#14306e;border:1px solid rgba(20,48,110,.25)}
 .menu-btn.back{min-height:54px;font-size:19px;background:#fff;color:#14306e;border:2px solid #14306e;box-shadow:0 3px 10px rgba(20,48,110,.25)}
@@ -671,7 +679,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v166</div>
+  <div class="ver-tag" id="verTag">v168</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -748,7 +756,9 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
         <button class="btn-ghost" type="button" data-act="sample-people">サンプルの参加者200名を登録</button>
       </div>
       <div class="danger">
-        <button class="btn-ghost" type="button" id="resetResults" data-act="reset-results">当選結果をリセット</button>
+        <button class="btn-ghost" type="button" id="resetPeople" data-act="reset-people">参加者を削除</button>
+        <button class="btn-ghost" type="button" id="resetPrizes" data-act="reset-prizes">景品を削除</button>
+        <button class="btn-ghost" type="button" id="resetResults" data-act="reset-results">結果を削除</button>
         <button class="btn-ghost" type="button" id="resetAll" data-act="reset-all">参加者・景品・結果をすべて消す</button>
       </div>
       <p class="hint">入力した内容はこのiPadのSafariに保存されます。Safariの履歴やWebサイトデータを消すと一緒に消えるので、本番前に参加者を控えておくと安心です。</p>
@@ -829,6 +839,8 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <div class="row">
         <label class="btn-ghost filebtn csvbtn" for="pzCsvFile">CSVから登録</label>
         <button class="btn-ghost csvbtn" type="button" id="pzCsvTemplate">CSVのフォーマットをダウンロード</button>
+        <label class="btn-ghost filebtn csvbtn" for="pzBulkFile">画像をまとめて登録</label>
+        <input type="file" id="pzBulkFile" accept="image/*" multiple hidden>
         <input type="file" id="pzCsvFile" accept=".csv,text/csv,text/plain" hidden></div>
       <input type="file" id="pzImgFile" accept="image/*" hidden>
       <ul class="prize-list" id="prizeList"></ul>
@@ -898,6 +910,14 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
     <div class="ask-t" id="skipAskT">スキップしますか？</div>
     <div class="ask-s" id="skipAskS"></div>
     <div class="ask-b"><button class="btn-gold" type="button" id="skipYes">はい</button><button class="btn-ghost" type="button" id="skipNo">いいえ</button></div>
+  </div>
+</div>
+<div class="ask" id="bulkAsk" role="dialog" aria-modal="true" aria-labelledby="bulkAskT" hidden>
+  <div class="ask-box bulk-box">
+    <div class="ask-t" id="bulkAskT">画像をまとめて登録</div>
+    <div class="ask-s" id="bulkAskS">それぞれの画像を、どの景品にするか選んでください</div>
+    <div class="bulk-list" id="bulkList"></div>
+    <div class="ask-b"><button class="btn-gold" type="button" id="bulkYes">登録する</button><button class="btn-ghost" type="button" id="bulkNo">キャンセル</button></div>
   </div>
 </div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
@@ -1669,6 +1689,50 @@ $('#pzImgFile').addEventListener('change',async e=>{
   }catch(err){toast('画像を読み込めませんでした')}
 });
 
+/* register many photos at once: pick them all, then match each one to a prize */
+let bulkItems=[];
+function bulkRender(){
+  const used={};bulkItems.forEach(it=>{if(it.pid) used[it.pid]=(used[it.pid]||0)+1});
+  $('#bulkList').innerHTML=bulkItems.map((it,i)=>{
+    const opts='<option value="">登録しない</option>'+S.prizes.map(p=>'<option value="'+p.id+'"'+(it.pid===p.id?' selected':'')+'>'+esc(rk(p))+' '+esc(p.item)+(p.img?'（画像あり）':'')+'</option>').join('');
+    const dup=it.pid&&used[it.pid]>1;
+    return '<div class="bulk-row'+(dup?' dup':'')+'"><img src="'+it.img+'" alt=""><div><select data-bi="'+i+'" aria-label="'+esc(it.name)+'の景品">'+opts+'</select>'+(dup?'<small>同じ景品が重複しています（あとの画像が使われます）</small>':'')+'</div></div>';
+  }).join('');
+}
+$('#pzBulkFile').addEventListener('change',async e=>{
+  const files=Array.from(e.target.files||[]);e.target.value='';
+  if(!files.length) return;
+  if(!S.prizes.length){toast('先に商品を登録してください');return}
+  toast('画像を読み込んでいます…');
+  const items=[];
+  for(const f of files){try{items.push({name:f.name||'',img:await shrinkImage(f,520),pid:''})}catch(err){}}
+  if(!items.length){toast('画像を読み込めませんでした');return}
+  const taken=new Set();
+  /* a file named like "5" or "5位" goes to that rank */
+  items.forEach(it=>{
+    const m=it.name.replace(/\.[^.]*$/,'').trim().match(/^(\d{1,3})\s*位?$/)||it.name.match(/(\d{1,3})位/);
+    if(!m) return;
+    const p=S.prizes.find(p=>p.rank===parseInt(m[1],10)&&!taken.has(p.id));
+    if(p){it.pid=p.id;taken.add(p.id)}
+  });
+  /* the rest follow the list order, prizes without a photo first */
+  const free=S.prizes.filter(p=>!taken.has(p.id)),order=free.filter(p=>!p.img).concat(free.filter(p=>p.img));
+  let k=0;items.forEach(it=>{if(!it.pid&&k<order.length){it.pid=order[k++].id}});
+  bulkItems=items;bulkRender();
+  $('#bulkAsk').hidden=false;
+  toast(items.length+'枚の画像を読み込みました');
+});
+$('#bulkList').addEventListener('change',e=>{const sel=e.target.closest('[data-bi]');if(!sel) return;bulkItems[+sel.dataset.bi].pid=sel.value;bulkRender()});
+$('#bulkNo').addEventListener('click',()=>{$('#bulkAsk').hidden=true;bulkItems=[]});
+$('#bulkAsk').addEventListener('click',e=>{if(e.target===$('#bulkAsk')){$('#bulkAsk').hidden=true;bulkItems=[]}});
+$('#bulkYes').addEventListener('click',()=>{
+  const done=new Set();
+  bulkItems.forEach(it=>{const p=it.pid&&S.prizes.find(p=>p.id===it.pid);if(p){p.img=it.img;done.add(p.id)}});
+  $('#bulkAsk').hidden=true;bulkItems=[];
+  save();render();
+  toast(done.size?done.size+'件の商品画像を登録しました':'登録する画像がありませんでした');
+});
+
 /* choose a photo while registering a new prize */
 let pzNewImg=null;
 function setNewTh(){
@@ -1865,12 +1929,28 @@ document.addEventListener('click',e=>{
       toast('サンプルを消しました。参加者と景品を入力してください');
       break;
     }
+    case 'reset-people':
+      if(busy) break;
+      armConfirm(t,()=>{
+        S.people=[];S.sample.people=false;
+        save();syncPeopleText();render();idlePlate();
+        toast('参加者をすべて削除しました');
+      });
+      break;
+    case 'reset-prizes':
+      if(busy) break;
+      armConfirm(t,()=>{
+        S.prizes=[];S.sample.prizes=false;S.currentPrizeId=null;lastPrizeId=null;
+        save();render();idlePlate();
+        toast('景品をすべて削除しました');
+      });
+      break;
     case 'reset-results':
       armConfirm(t,()=>{
         S.history=[];lastResultId=null;S.currentPrizeId=null;
         S.people.forEach(p=>{if(p.status==='absent')p.status='in'});
         save();render();idlePlate();
-        toast('当選結果をリセットしました');
+        toast('結果をすべて削除しました');
       });
       break;
     case 'reset-all':
