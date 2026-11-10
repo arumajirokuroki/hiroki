@@ -98,8 +98,8 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 @keyframes spinRays{to{transform:rotate(360deg)}}
 
 .rig{
-  position:absolute;left:2%;bottom:12px;
-  height:min(84%,59cqi,calc(100% - 56px));aspect-ratio:459/720;width:auto;
+  position:absolute;left:calc(100% / 6);translate:-50% 0;bottom:12px;
+  height:min(84%,52cqi,calc(100% - 56px));aspect-ratio:459/720;width:auto;
   transform-origin:50% 100%;
   filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 10px 14px rgba(0,0,0,.4));
   user-select:none;pointer-events:none;z-index:3;
@@ -114,8 +114,8 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 .egg-wrap{position:absolute;inset:0;pointer-events:none}
 .egg{
-  position:absolute;left:calc(54% - var(--bw) / 2);bottom:calc(12px + .9cqi);
-  --ox:calc(96cqi - var(--mw) / 2 - 54cqi);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133);
+  position:absolute;left:calc(50% - var(--bw) / 2);bottom:calc(12px + .9cqi);
+  --ox:calc(100cqi / 3);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133);
   width:var(--bw);height:auto;aspect-ratio:1/1;
   border-radius:50%;
   transform-origin:50% 92%;
@@ -186,7 +186,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 /* ---------- the capsule machine ---------- */
 .mach{
-  position:absolute;right:4%;bottom:12px;width:var(--mw);aspect-ratio:300/520;
+  position:absolute;left:calc(100% * 5 / 6 - var(--mw) / 2);bottom:12px;width:var(--mw);aspect-ratio:300/520;
   filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 10px 14px rgba(0,0,0,.4));
   pointer-events:none;transition:opacity .4s;
 }
@@ -469,7 +469,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 @media (orientation:portrait) and (min-width:700px) and (max-width:899px){.plate{min-height:58dvh}}
 @media (max-width:520px){
   .plate{--zl:36%;--lv:16px;min-height:360px}
-  .rig{height:min(70%,53cqi)}
+  .rig{height:min(70%,50cqi)}
   .plate-note{font-size:15px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -553,9 +553,9 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .prize-banner{height:108px;min-height:108px;gap:2px 12px}
   .rank{font-size:58px}
   .plate{--ph:calc(100dvh - 170px);--mw:calc(var(--ph) * .5);--bw:calc(var(--ph) * .4);--lv:12px;--zl:30%;min-height:0;border-radius:16px;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--gold-soft)}
-  .rig{height:min(calc(100% - 52px),60cqi);bottom:8px}
+  .rig{height:min(calc(100% - 52px),52cqi);bottom:8px}
   .mach{bottom:8px}
-  .egg{width:var(--bw);left:calc(54% - var(--bw) / 2);bottom:calc(8px + .9cqi);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133)}
+  .egg{width:var(--bw);left:calc(50% - var(--bw) / 2);bottom:calc(8px + .9cqi);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133)}
   .plate-note{font-size:14px}
   .plate.idle .plate-note{font-size:clamp(14px,3cqi,22px)}
   .reveal{padding:12px 18px 14px;gap:3px;border-radius:14px;border-width:2px}
@@ -637,9 +637,9 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 
 /* product photo: sits in the space between the mascot and the machine */
 .pz-photo{
-  position:absolute;left:54%;top:52%;transform:translate(-50%,-50%);z-index:0;
-  width:min(40cqi,48dvh);aspect-ratio:1/1;border-radius:20px;overflow:hidden;
-  background:rgba(255,255,255,.92);border:4px solid var(--gold);box-shadow:0 8px 22px rgba(20,40,100,.3);
+  position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:0;
+  width:min(31cqi,48dvh);aspect-ratio:1/1;border-radius:20px;overflow:hidden;
+  background:rgba(255,255,255,.92);border:0;box-shadow:0 8px 22px rgba(20,40,100,.3);
   display:flex;align-items:center;justify-content:center;pointer-events:none;
 }
 .pz-photo img{display:none;width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box}
@@ -654,7 +654,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
   #gachaApp .plate.idle:not([data-end="1"]) .plate-note{top:3%;font-size:clamp(16px,min(3.4cqi,5.2dvh),40px);line-height:1.25}
   .pz-photo{width:min(30cqi,calc((100dvh - 190px) * .8));top:66%}
 }
-@media (orientation:portrait){.pz-photo{top:50%;width:min(42cqi,44dvh)}}
+@media (orientation:portrait){.pz-photo{top:50%;width:min(31cqi,44dvh)}}
 
 #gachaApp .name{color:#C46A00;text-shadow:0 0 16px rgba(255,255,255,.9)}
 #gachaApp .btn-ghost{background:rgba(255,255,255,.75)}
@@ -671,7 +671,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v161</div>
+  <div class="ver-tag" id="verTag">v165</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1502,7 +1502,7 @@ async function draw(){
   setEgg({tier:tier,gone:true});
   fanfare(tier);
   confetti(110+tier*70);
-  if(ballCol==='rainbow'){[800,1600].forEach(ms=>setTimeout(()=>confetti(260),ms));fanfare(3);setTimeout(()=>fanfare(3),700)}
+  if(ballCol==='rainbow'){[800].forEach(ms=>setTimeout(()=>confetti(260),ms));fanfare(3);setTimeout(()=>fanfare(3),700)}
   render();
 }
 
