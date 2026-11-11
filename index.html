@@ -408,6 +408,13 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 .add-prize.page-add .full{grid-column:auto}
 .add-prize.page-add .pz-pick{grid-column:1}
 .add-prize.page-add .btn-gold{grid-column:2;min-height:48px}
+/* roulette form: 抽選順 sits right next to 商品名 */
+.add-prize.page-add:has(#pzLabelFld:not([hidden])){grid-template-columns:minmax(0,1fr) 150px}
+.add-prize.page-add:has(#pzLabelFld:not([hidden])) #pzItemFld{grid-column:1;grid-row:1}
+.add-prize.page-add:has(#pzLabelFld:not([hidden])) #pzRankFld{grid-column:2;grid-row:1}
+.add-prize.page-add:has(#pzLabelFld:not([hidden])) #pzLabelFld{grid-column:1/-1!important;grid-row:2}
+.add-prize.page-add:has(#pzLabelFld:not([hidden])) .pz-pick{grid-column:1;grid-row:3}
+.add-prize.page-add:has(#pzLabelFld:not([hidden])) .btn-gold{grid-column:2;grid-row:3}
 .person-add.page-add{display:grid;grid-template-columns:120px minmax(0,1fr) minmax(0,1fr) auto;gap:8px 12px;align-items:end}
 .person-add .field{min-height:44px;padding:6px 10px}
 .person-add .add-btn{min-height:48px;padding:0 22px;border-radius:10px;font-weight:700;border:0;cursor:pointer}
@@ -432,10 +439,12 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 .ptable .no{width:56px;text-align:right;color:var(--mute);font-variant-numeric:tabular-nums}
 .ptable td.empty{text-align:center;padding:18px}
 #panel-history{display:flex;flex-direction:column;overflow:hidden}
-.hist-wrap{flex:1 1 auto;min-height:0;max-height:70vh;border:1px solid var(--line);border-radius:12px;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--gold) rgba(255,255,255,.1)}
-.hist-wrap::-webkit-scrollbar{width:14px;height:14px}
-.hist-wrap::-webkit-scrollbar-track{background:rgba(255,255,255,.08);border-radius:8px}
-.hist-wrap::-webkit-scrollbar-thumb{background:var(--gold);border-radius:8px;border:3px solid transparent;background-clip:content-box;min-height:44px}
+.hist-wrap{flex:1 1 auto;min-height:0;max-height:70vh;border:1px solid var(--line);border-radius:12px;overflow:auto;}
+/* white scrollbars everywhere (dark track so they also show on the white gacha panels) */
+*{scrollbar-width:thin;scrollbar-color:#fff rgba(20,48,110,.45)}
+*::-webkit-scrollbar{width:14px;height:14px}
+*::-webkit-scrollbar-track{background:rgba(20,48,110,.45);border-radius:8px}
+*::-webkit-scrollbar-thumb{background:#fff;border-radius:8px;border:3px solid transparent;background-clip:content-box;min-height:44px}
 .htable{width:100%;border-collapse:collapse;font-size:16px;font-weight:700}
 .htable th,.htable td{padding:9px 9px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
 .htable th:last-child,.htable td:last-child{border-right:0}
@@ -844,7 +853,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v199</div>
+  <div class="ver-tag" id="verTag">v207</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -940,6 +949,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <div class="gear-pop" id="rGearPop" hidden>
         <div class="gp-row"><span>BGM</span><button class="gp-seg" type="button" data-act="bgm-toggle" aria-pressed="false">BGM ON</button></div>
         <div class="gp-row"><span>ガチャ</span><button type="button" class="gp-seg" id="gpGacha">ガチャへ戻る</button></div>
+        <div class="gp-row"><span>テスト</span><button type="button" class="gp-seg" id="gpTest" aria-pressed="false">OFF</button></div>
       </div>
     </header>
     <section class="prize-banner" id="rBanner" aria-live="polite"></section>
@@ -1058,9 +1068,9 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <input type="file" id="pzImgFile" accept="image/*" hidden>
       <ul class="prize-list" id="prizeList"></ul>
       <form class="add-prize" id="addPrize" autocomplete="off">
-        <label class="fld"><span>商品名</span><input class="field" id="pzItem" type="text" maxlength="40" placeholder="例 ホテルディナー券"></label>
+        <label class="fld" id="pzItemFld"><span>商品名</span><input class="field" id="pzItem" type="text" maxlength="40" placeholder="例 ホテルディナー券"></label>
         <label class="fld" id="pzLabelFld" hidden><span>賞名（例 ラッキー賞）</span><input class="field" id="pzLabel" type="text" maxlength="12" placeholder="例 ラッキー賞"></label>
-        <label class="fld"><span id="pzRankLbl">順位</span><input class="field" id="pzRank" type="number" inputmode="numeric" min="1" max="999" placeholder="例 1"></label>
+        <label class="fld" id="pzRankFld"><span id="pzRankLbl">順位</span><input class="field" id="pzRank" type="number" inputmode="numeric" min="1" max="999" placeholder="例 1"></label>
         <div class="fld full pz-pick"><span>商品画像（任意）</span>
           <div class="pz-pick-row"><label class="btn-ghost filebtn csvbtn" for="pzNewImg">画像を選ぶ</label><span class="pz-pick-th" id="pzNewTh" hidden><img alt=""><button type="button" id="pzNewDel" aria-label="選んだ画像を外す">✕</button></span></div>
           <input type="file" id="pzNewImg" accept="image/*" hidden></div>
@@ -2371,7 +2381,9 @@ knob.addEventListener('click',e=>{
 
 
 /* ---------- roulette (第二幕) ---------- */
-var rAwait=false,rLastId=null,rDrag=null,rJust=false;
+var rAwait=false,rLastId=null,rDrag=null,rJust=false,rTestOn=false,rTestNext=false;
+const R_TEST_W={id:'__test',empno:'9999',dept:'事業本部',name:'しんわくん'};
+const R_TEST_PZ={id:'__testpz',rank:0,label:'？賞',item:'テストギフト'};
 var R=id=>document.getElementById(id);
 const rsleep=ms=>new Promise(r=>setTimeout(r,ms));
 /* 職員番号 as a 4-digit string (short numbers are padded with zeros); null if it can't be shown on 4 reels */
@@ -2449,11 +2461,11 @@ if(window.ResizeObserver) try{new ResizeObserver(()=>rFit()).observe(R('rplate')
 window.addEventListener('resize',()=>setTimeout(rFit,60));
 function rRender(){
   const pz=rCurrentPrize(),cand=rPool();
-  const bpz=(rAwait&&S.rprizes.find(p=>p.id===rLastId))||pz;
+  const bpz=rTestOn?R_TEST_PZ:(rAwait&&S.rprizes.find(p=>p.id===rLastId))||pz;
   const b=R('rBanner');
   if(bpz){b.innerHTML='<span class="rank">'+esc(rk(bpz))+'</span><span class="item">'+esc(bpz.item)+'</span>';fitItem('#rBanner')}
   else b.innerHTML='<span class="banner-empty">'+(S.rprizes.length?'':'ルーレットの景品が登録されていません')+'</span>';
-  const can=!busy&&!rAwait&&!!pz&&cand.length>0;
+  const can=!busy&&!rAwait&&(rTestOn||(!!pz&&cand.length>0));
   R('rrig').classList.toggle('disabled',!can);
   R('rrig').classList.toggle('busy',busy);
   R('rknob').disabled=!can;
@@ -2513,17 +2525,18 @@ function rZoom(on){
   pl.style.setProperty('--zk',k.toFixed(3));
   pl.classList.add('zoom');
 }
-async function rDraw(){
+async function rDraw(test){
   if(busy) return;
-  const pz=rCurrentPrize();
+  const T=rTestOn;
+  const pz=T?R_TEST_PZ:rCurrentPrize();
   if(!pz){rResetKnob();return}
-  const cand=rPool();
+  const cand=T?[R_TEST_W]:rPool();
   if(!cand.length){toast('ルーレットの対象者がいません（ガチャ未当選で、職員番号が4桁以内の数字の方）');rResetKnob();return}
   busy=true;
-  S.rCurrentId=pz.id;
+  if(!T) S.rCurrentId=pz.id;
   rRender();
   startAudio();
-  const winner=cand[rand(cand.length)];
+  const winner=T?R_TEST_W:cand[rand(cand.length)];
   const num=empNum4(winner);
   preloadGlyphs((winner.dept||'')+(winner.name||''));
   const tier=tierOf(pz);
@@ -2550,10 +2563,12 @@ async function rDraw(){
     beep(1320+i*220,.12,'sine',.08,.05);
   }
   await rsleep(fast?250:700);
-  const entry={id:uid(),personId:winner.id,empno:winner.empno||'',dept:winner.dept||'',name:winner.name,prizeId:pz.id,rank:rk(pz),item:pz.item,at:Date.now()};
-  S.rhistory.push(entry);
-  rLastId=pz.id;
-  save();
+  if(!T){
+    const entry={id:uid(),personId:winner.id,empno:winner.empno||'',dept:winner.dept||'',name:winner.name,prizeId:pz.id,rank:rk(pz),item:pz.item,at:Date.now()};
+    S.rhistory.push(entry);
+    rLastId=pz.id;
+    save();
+  }
   busy=false;
   rAwait=true;
   rResetKnob();
@@ -2640,8 +2655,16 @@ R('rConfirm').addEventListener('click',()=>{
     $$('#dtSeg .pk-b').forEach(x=>x.classList.toggle('on',x===b));
     $$('[data-dg]').forEach(g=>{g.hidden=g.dataset.dg!==b.dataset.dt});
   });
-  R('gpRoulette').addEventListener('click',()=>curtainGo('roulette'));
+  R('gpRoulette').addEventListener('click',()=>{rTestNext=true;curtainGo('roulette')});
   R('gpGacha').addEventListener('click',()=>curtainGo('gacha'));
+  function rTestSet(on){
+    rTestOn=on;const b=R('gpTest');
+    b.setAttribute('aria-pressed',String(on));b.textContent=on?'ON':'OFF';b.classList.toggle('on',on);
+    R('rouletteApp').classList.toggle('testing',on);
+    rRender();
+  }
+  window.rTestSet=rTestSet;
+  R('gpTest').addEventListener('click',()=>{if(busy) return;rTestSet(!rTestOn)});
   R('rGearBtn').addEventListener('click',()=>{const p=R('rGearPop');p.hidden=!p.hidden;R('rGearBtn').setAttribute('aria-expanded',String(!p.hidden))});
   document.addEventListener('click',e=>{if(!e.target.closest('#rGearPop,#rGearBtn')){const p=R('rGearPop');if(!p.hidden){p.hidden=true;R('rGearBtn').setAttribute('aria-expanded','false')}}});
   /* ガチャ / ルーレット switch on the prize registration page */
@@ -2739,11 +2762,14 @@ function go(v){
   $('#menu').hidden=v!=='menu';
   $('#gachaApp').hidden=v!=='gacha';
   $('#rouletteApp').hidden=v!=='roulette';
+  if(v!=='roulette'&&rTestOn&&window.rTestSet) window.rTestSet(false); /* test mode never carries over to the real draw */
   ['prizes','people','bgm','settings'].forEach(n=>{$('#page-'+n).hidden=v!==n});
   if(['prizes','people','bgm','settings'].includes(v)) setMenuSub(true); else if(v==='gacha'||v==='roulette') setMenuSub(false);
   if(v==='menu'){if(S.opts.menuBgm&&bgmPlaying)bgmPause();menuBgmStart(false,2.5)}else if(!keepBgm) menuBgmStop();
   if(v==='gacha'){fitItem();ensureCtx();if(!practice&&!keepBgm){if(!S.opts.bgm){S.opts.bgm=true;save()}bgmStart()}renderBgm()}
   if(v==='roulette'){ensureCtx();if(!keepBgm){if(!S.opts.bgm){S.opts.bgm=true;save()}bgmStart()}renderBgm();rRender();rIdle();fitItem('#rBanner');setTimeout(rFit,50);setTimeout(rFit,400)}
+  if(v==='roulette'&&rTestNext&&window.rTestSet) window.rTestSet(true);
+  rTestNext=false;
   const sc=document.scrollingElement;if(sc)sc.scrollTop=0;
   renderMenu();
 }
