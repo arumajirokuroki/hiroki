@@ -69,6 +69,14 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .remain{margin-left:auto;font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
 .banner-empty{color:var(--mute);font-size:24px;font-weight:700}
 
+/* ガチャ画面：景品名はプレートの上部に大きく重ねる（キャラ・ガチャ機・当選カードは手前に出る） */
+#plate>#banner{position:absolute;left:18px;right:18px;top:10px;height:150px;min-height:0;pointer-events:none;z-index:auto}
+#plate>#banner{padding:8px 22px 8px 12px;gap:18px;border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(224,238,252,.95));border:4px solid #14306e;box-shadow:0 6px 0 rgba(20,48,110,.28),0 10px 26px rgba(20,48,110,.25);align-items:center;overflow:hidden}
+#plate>#banner .rank{font-size:clamp(56px,10vw,100px);line-height:1;padding:.06em .3em .1em;border-radius:20px;background:linear-gradient(180deg,#FF9A4A,#E2560B);color:#fff;border:3px solid #14306e;text-shadow:0 4px 0 rgba(120,30,0,.55);letter-spacing:.02em;box-shadow:inset 0 3px 0 rgba(255,255,255,.45)}
+#plate>#banner .item{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif;font-weight:700;color:#10275c;-webkit-text-stroke:.03em #10275c;paint-order:stroke fill;text-align:center;line-height:1.1;padding:.04em .2em .08em}
+#plate>#banner .banner-empty{color:#4a5f8f}
+#gachaApp #plate.idle:not([data-end="1"]) .plate-note{top:182px}
+
 /* ---------- gacha scene ---------- */
 .plate{
   --zl:34%;--lv:24px;--mw:min(32cqi,calc((100dvh - 232px) * .56));--bw:min(22cqi,calc(var(--mw) * .6875));
@@ -570,6 +578,9 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .head-btns{display:flex;align-items:center}
   .prize-banner{height:108px;min-height:108px;gap:2px 12px}
   .rank{font-size:58px}
+  #plate>#banner{height:140px;left:12px;right:12px;top:8px}
+  #plate>#banner .rank{font-size:84px}
+  #gachaApp #plate.idle:not([data-end="1"]) .plate-note{top:158px}
   .plate{--ph:calc(100dvh - 170px);--mw:calc(var(--ph) * .5);--bw:calc(var(--ph) * .4);--lv:12px;--zl:30%;min-height:0;border-radius:16px;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--gold-soft)}
   .rig{height:min(calc(100% - 52px),52cqi);bottom:8px}
   .mach{bottom:8px}
@@ -905,7 +916,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v224</div>
+  <div class="ver-tag" id="verTag">v227</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1051,10 +1062,9 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
     </header>
 
 
-    <section class="prize-banner" id="banner" aria-live="polite"></section>
-
     <section class="plate idle" id="plate" data-tier="0">
       <div class="rays" aria-hidden="true"></div>
+      <section class="prize-banner" id="banner" aria-live="polite"></section>
       <div class="pz-photo" id="pzPhoto" aria-hidden="true"><img id="pzPhotoImg" alt=""></div>
       <div class="rig" id="rig">
         <img class="rig-base" src="mascot_body.png" alt="しんわくん">
@@ -1420,7 +1430,7 @@ function fitItem(sel){
   const el=document.querySelector(sel+' .item');
   if(!el||!el.offsetParent) return;
   const cmp=window.matchMedia&&matchMedia('(max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse)').matches;
-  let f=cmp?84:106;
+  let f=cmp?(sel==='#banner'?112:84):(sel==='#banner'?132:106);
   el.style.fontSize=f+'px';
   /* one line only: shrink until the name fits the box width */
   el.style.whiteSpace='nowrap';
