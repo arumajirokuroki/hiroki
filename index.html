@@ -577,8 +577,8 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .plate-note{font-size:14px}
   .plate.idle .plate-note{font-size:clamp(14px,3cqi,22px)}
   .reveal{padding:12px 18px 14px;gap:3px;border-radius:14px;border-width:2px}
-  .reveal-dept{font-size:max(15px,calc(min(40px,(70cqi - var(--lv) - 36px) / var(--dlen,4))))}
-  .name{font-size:max(18px,calc(min(76px,(70cqi - var(--lv) - 24px) / var(--len,3))))}
+  .reveal-dept{font-size:max(15px,calc(min(min(66px,10dvh),(60cqi - var(--lv) - 36px) / var(--dlen,4))))}
+  .name{font-size:max(18px,calc(min(min(128px,20dvh),(60cqi - var(--lv) - 24px) / var(--len,3))))}
   .reveal-ok{right:10px;bottom:10px;min-width:76px;min-height:36px;padding:0 12px;font-size:14px}
 
   .side{display:none;position:fixed;z-index:60;top:48px;right:8px;bottom:8px;left:8px;min-height:0;box-shadow:0 12px 40px rgba(0,0,0,.6)}
@@ -694,7 +694,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 #rplate .reveal-dept{font-size:max(18px,calc(min(5.4cqi,7.5dvh,(66cqi - 40px) / var(--dlen,4))))}
 #rplate .plate-note{top:5%}
 @media (orientation:portrait){#rplate .reveal{left:12%;right:6%}.rm{left:36%;right:6%;top:8%}}
-@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){#rplate .reveal{padding:4px 16px 6px;left:24%}.rm{top:2%}#rplate .name{font-size:max(22px,calc(min(8cqi,12dvh,(60cqi - 40px) / var(--len,3))))}}
+@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){#rplate .reveal{padding:8px 18px 12px;left:22%}.rm{top:2%}#rplate .name{font-size:max(22px,calc(min(12.5cqi,19dvh,(62cqi - 40px) / var(--len,3))))}#rplate .reveal-dept{font-size:max(18px,calc(min(7.4cqi,11dvh,(62cqi - 40px) / var(--dlen,4))))}}
 
 
 
@@ -839,10 +839,21 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 @media (orientation:portrait){.pz-photo{top:50%;width:min(31cqi,44dvh)}}
 
 #gachaApp .name,#rouletteApp .name{color:#C46A00;text-shadow:0 0 16px rgba(255,255,255,.9)}
+/* 名前は漢字の収録が広いフォント1本で統一（Dela Gothic Oneは「毅」などが無く、字ごとに別の書体になっていた） */
+#gachaApp .name,#rouletteApp .name{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif;font-weight:700;-webkit-text-stroke:.035em currentColor;paint-order:stroke fill;font-synthesis:none}
 #gachaApp .btn-ghost,#rouletteApp .btn-ghost{background:rgba(255,255,255,.75)}
 #gachaApp .htable,#rouletteApp .htable{color:var(--fg)}
 #gachaApp .htable tbody tr:nth-child(even) td,#rouletteApp .htable tbody tr:nth-child(even) td{background:rgba(20,48,110,.05)}
 #gachaApp .htable th,#rouletteApp .htable th{color:#9a6200}
+/* 横向き専用：タッチ端末を縦にしたときは「横向きにしてください」を全面に出す */
+.rotate-guard{display:none}
+@media (orientation:portrait) and (pointer:coarse){
+  .rotate-guard{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#0E1730;color:#fff;text-align:center;font-family:"Zen Maru Gothic","Hiragino Sans",sans-serif}
+  .rg-ic{font-size:96px;line-height:1;color:#FFD451;animation:rgspin 2.4s ease-in-out infinite}
+  .rg-t{margin-top:18px;font-size:28px;font-weight:700}
+  .rg-s{margin-top:8px;font-size:16px;opacity:.75}
+}
+@keyframes rgspin{0%,30%{transform:rotate(0)}70%,100%{transform:rotate(-90deg)}}
 </style>
 
 <div class="start" id="startScreen" role="button" tabindex="0" aria-label="タップしてはじめる">
@@ -853,7 +864,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v207</div>
+  <div class="ver-tag" id="verTag">v212</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -986,6 +997,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
   </aside>
 </div>
 
+<div class="rotate-guard" id="rotateGuard" role="alert"><div class="rg-box"><div class="rg-ic" aria-hidden="true">⟲</div><div class="rg-t">iPadを横向きにしてください</div><div class="rg-s">このアプリは横向き専用です</div></div></div>
 <div class="curtain" id="curtain" aria-hidden="true" hidden><i class="cl"></i><i class="cr"></i></div>
 
 <div class="app" id="gachaApp" hidden>
@@ -1345,7 +1357,7 @@ function fitReveal(rv,dEl,nEl){
 function preloadGlyphs(text){
   try{
     if(!document.fonts||!document.fonts.load||!text) return;
-    [[nameEl,'400'],[deptEl,'700']].forEach(([el,wt])=>{
+    [[nameEl,'700'],[deptEl,'700']].forEach(([el,wt])=>{
       const fam=getComputedStyle(el).fontFamily;
       document.fonts.load(wt+' 40px '+fam,text).then(()=>fitReveal()).catch(()=>{});
     });
@@ -3269,5 +3281,29 @@ bgmLoad();
 render();
 idlePlate();
 renderMenu();
+/* ---- offline (app) support ---- */
+/* 1) service worker: caches the page, images and BGM so the app opens with no connection */
+try{if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+/* 2) while online, fetch the font glyphs for every registered name / department / prize so they are cached for offline use */
+let warmSig='';
+function warmFonts(){
+  try{
+    if(!navigator.onLine||!document.fonts||!document.fonts.load) return;
+    const t=new Set();
+    const add=x=>Array.from(String(x||'')).forEach(c=>t.add(c));
+    S.people.forEach(p=>{add(p.name);add(p.dept)});
+    S.prizes.concat(S.rprizes).forEach(p=>{add(p.item);add(p.label)});
+    const text=Array.from(t).join('');
+    if(!text||text===warmSig) return;
+    warmSig=text;
+    ['700 40px "Zen Maru Gothic"','500 40px "Zen Maru Gothic"','400 40px "Mochiy Pop One"','400 40px "Dela Gothic One"'].forEach(f=>document.fonts.load(f,text).catch(()=>{}));
+  }catch(e){}
+}
+let warmT=0;
+const _save=save;
+save=function(){_save();clearTimeout(warmT);warmT=setTimeout(warmFonts,2500)};
+window.addEventListener('online',()=>{warmSig='';setTimeout(warmFonts,1000)});
+setTimeout(warmFonts,4000);
 })();
+try{if(screen.orientation&&screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{})}catch(e){}
 </script>
