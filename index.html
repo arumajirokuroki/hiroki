@@ -336,7 +336,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .empty{color:var(--mute);font-size:14px}
 
 .side{display:flex;flex-direction:column;min-height:0;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}
-.tabs.stabs{grid-template-columns:repeat(3,1fr)}
+.tabs.stabs{grid-template-columns:repeat(2,1fr)}
 .side-title{padding:14px 16px;border:0;border-bottom:1px solid var(--line);color:var(--gold);font-weight:700;font-size:inherit;font-family:inherit;background:none;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
 .side-title .min-hint{font-size:13px;color:var(--mute);font-weight:700}
 @media all{
@@ -618,6 +618,47 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 .ask-t{font-family:"Mochiy Pop One","Zen Maru Gothic",var(--f-display);font-size:24px;line-height:1.3;color:#E2560B}
 .ask-s{margin:10px 0 18px;font-size:14px;color:#4a5f8f}
 .ask-b{display:flex;gap:10px}
+.ask-box.pinbox{width:min(330px,100%)}
+.pin-dots{display:flex;justify-content:center;gap:16px;margin:6px 0 16px}
+.pin-dots i{width:20px;height:20px;border-radius:50%;border:2px solid #14306e;background:transparent}
+.pin-dots i.on{background:#14306e}
+.pin-dots.bad{animation:pinShake .4s}
+.pin-dots.bad i{border-color:#d33;background:#d33}
+@keyframes pinShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.pin-pad button{min-height:56px;border-radius:14px;border:1px solid rgba(20,48,110,.25);background:#eaf3fc;color:#14306e;font-size:24px;font-weight:700;font-family:inherit;cursor:pointer;touch-action:manipulation}
+.pin-pad button:active{background:#cfe3f7}
+.pin-pad .pin-sub{font-size:16px}
+.ask-box.svbox{width:min(640px,100%);max-height:90dvh;overflow:auto;text-align:left;padding:16px 18px 14px;-webkit-overflow-scrolling:touch}
+.svbox .hint{margin:8px 0 10px;font-size:13px;color:#4a5f8f}
+.svbox .vol{color:#14306e}
+.svbox .vol output{color:#E2560B}
+.row .flag-open{flex:0 0 36px;width:36px;height:36px;min-height:0;padding:0;margin:0;align-self:center;background:transparent;border:1px solid var(--line);border-radius:10px;box-shadow:none;color:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ask-box.flagbox{width:min(820px,100%);max-height:90dvh;display:flex;flex-direction:column;text-align:left;padding:16px 16px 12px}
+.flag-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.flag-head .ask-t{font-size:22px}
+.flag-close{min-height:44px;padding:0 20px;border-radius:12px;font-weight:700;border:0;cursor:pointer}
+.flag-note{margin:8px 0;font-size:13px;line-height:1.6;color:#4a5f8f}
+.ask-box.f1box{width:min(460px,100%)}
+.f1-open-row{margin:0 0 8px}
+.f1-open{min-height:44px;padding:0 16px;border-radius:12px;font-weight:700;background:#fff3e6!important;color:#14306e!important;border:1px solid #E2560B!important}
+.f1-open span{margin-left:10px;color:#E2560B}
+.f1min{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 10px;padding:10px 12px;border-radius:12px;background:#fff3e6;color:#14306e;font-weight:700}
+.f1min .field{width:76px;min-height:44px;text-align:center;font-size:22px;font-weight:700;background:#fff;color:#14306e;border:2px solid #E2560B;border-radius:10px;padding:2px 6px}
+.f1m-b{width:44px;height:44px;border-radius:10px;border:1px solid rgba(20,48,110,.3);background:#fff;color:#14306e;font-size:24px;font-weight:700;font-family:inherit;cursor:pointer;touch-action:manipulation}
+.f1min small{flex-basis:100%;font-weight:400;font-size:12px;color:#4a5f8f}
+.flag-tools{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.flag-tools .field{flex:1;min-height:42px;background:#f3f7fd;color:#14306e;border:1px solid rgba(20,48,110,.25)}
+.flag-cnt{font-size:13px;color:#4a5f8f;white-space:nowrap}
+.flag-wrap{flex:1 1 auto;min-height:0;overflow:auto;border:1px solid rgba(20,48,110,.2);border-radius:12px;-webkit-overflow-scrolling:touch}
+.ftable{width:100%;border-collapse:collapse;font-size:16px;color:#14306e}
+.ftable th,.ftable td{padding:8px 10px;border-bottom:1px solid rgba(20,48,110,.12);text-align:left}
+.ftable thead th{position:sticky;top:0;background:#eaf3fc;font-size:12px;z-index:1}
+.ftable .no{width:44px;text-align:right;color:#7b8db4}
+.ftable th.flag,.ftable td.flag{width:92px;text-align:center}
+.ftable .fchk{width:28px;height:28px;accent-color:#E2560B;margin:0;vertical-align:middle}
+.ftable tbody tr.on td{background:#fff3e6}
+.ftable td.empty{text-align:center;padding:18px;color:#7b8db4}
 .bulk-box{width:min(560px,100%);max-height:90dvh;display:flex;flex-direction:column;text-align:left}
 .bulk-box .ask-t,.bulk-box .ask-s{text-align:center}
 .bulk-list{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
@@ -864,7 +905,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v212</div>
+  <div class="ver-tag" id="verTag">v224</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -911,25 +952,16 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
   <div class="page-head"><button class="btn-ghost" type="button" data-go="menu">‹ メニュー</button><h2>設定</h2></div>
   <div class="page-body">
     <div class="tabs stabs" role="tablist" aria-label="設定の種類">
-      <button class="tab" role="tab" id="stab-draw" aria-selected="true" aria-controls="spanel-draw" data-stab="draw" type="button">抽選の設定</button>
-      <button class="tab" role="tab" id="stab-sound" aria-selected="false" aria-controls="spanel-sound" data-stab="sound" type="button">音量設定</button>
+      <button class="tab" role="tab" id="stab-sound" aria-selected="true" aria-controls="spanel-sound" data-stab="sound" type="button">音量設定</button>
       <button class="tab" role="tab" id="stab-data" aria-selected="false" aria-controls="spanel-data" data-stab="data" type="button">データの管理</button>
     </div>
-    <div class="panel" id="spanel-draw" role="tabpanel" aria-labelledby="stab-draw">
-      <h3 class="mini" style="margin-top:22px">効果音の詳細設定</h3>
-      <p class="hint">チェックを外すとその音が鳴りません。スライダーで音量を調整できます（100%が標準、最大200%）。動かすと試し鳴りします。</p>
-      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_crack"><span>カプセルが割れるまでの音</span></label><output id="svO_crack"></output><input type="range" id="svV_crack" min="0" max="200" step="5" aria-label="カプセルが割れるまでの音の音量"></div>
-      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_tick"><span>ハンドルを回すカチカチ音</span></label><output id="svO_tick"></output><input type="range" id="svV_tick" min="0" max="200" step="5" aria-label="ハンドルを回すカチカチ音の音量"></div>
-      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_roll"><span>カプセルが転がる音</span></label><output id="svO_roll"></output><input type="range" id="svV_roll" min="0" max="200" step="5" aria-label="カプセルが転がる音の音量"></div>
-      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_build"><span>1位の盛り上がりの音</span></label><output id="svO_build"></output><input type="range" id="svV_build" min="0" max="200" step="5" aria-label="1位の盛り上がりの音の音量"></div>
-      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_wind"><span>ゆれる音・割れる直前の風の音</span></label><output id="svO_wind"></output><input type="range" id="svV_wind" min="0" max="200" step="5" aria-label="ゆれる音・風の音の音量"></div>
-      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_btn"><span>ボタンのタップ音</span></label><output id="svO_btn"></output><input type="range" id="svV_btn" min="0" max="200" step="5" aria-label="ボタンのタップ音の音量"></div>
-    </div>
-    <div class="panel" id="spanel-sound" role="tabpanel" aria-labelledby="stab-sound" hidden>
+    <div class="panel" id="spanel-sound" role="tabpanel" aria-labelledby="stab-sound">
       <div class="vol"><b>全体の音量</b><output id="oMaster"></output><input type="range" id="volMaster" min="0" max="100" step="1" aria-label="全体の音量"></div>
       <div class="vol"><b>BGM</b><output id="oBgm"></output><input type="range" id="volBgm" min="0" max="100" step="1" aria-label="BGMの音量"></div>
       <div class="vol"><b>効果音</b><output id="oSe"></output><input type="range" id="volSe" min="0" max="100" step="1" aria-label="効果音の音量"></div>
       <label class="switch"><input type="checkbox" id="optSound"><span>効果音を鳴らす</span></label>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_btn"><span>ボタンのタップ音</span></label><output id="svO_btn"></output><input type="range" id="svV_btn" min="0" max="200" step="5" aria-label="ボタンのタップ音の音量"></div>
+      <p class="hint">ボタンのタップ音は、チェックを外すと鳴りません。スライダーで音量を調整できます（100%が標準、最大200%）。</p>
       <div class="row">
         <button class="btn-gold" type="button" data-act="test-se">効果音を試す</button>
         <button class="btn-ghost" type="button" data-act="test-bgm">BGMを試し聴き</button>
@@ -959,8 +991,9 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <div class="head-btns"><button class="btn-ghost hist-btn" type="button" id="rHistBtn" aria-expanded="false">履歴</button><button class="btn-ghost gear-btn" type="button" id="rGearBtn" aria-label="ルーレットの設定" aria-expanded="false" aria-controls="rGearPop">⚙</button></div>
       <div class="gear-pop" id="rGearPop" hidden>
         <div class="gp-row"><span>BGM</span><button class="gp-seg" type="button" data-act="bgm-toggle" aria-pressed="false">BGM ON</button></div>
-        <div class="gp-row"><span>ガチャ</span><button type="button" class="gp-seg" id="gpGacha">ガチャへ戻る</button></div>
+        <div class="gp-row"><span>ルーレット音</span><button type="button" class="gp-seg" id="gpRVol">音量設定</button></div>
         <div class="gp-row"><span>テスト</span><button type="button" class="gp-seg" id="gpTest" aria-pressed="false">OFF</button></div>
+        <div class="gp-row"><span>ガチャ</span><button type="button" class="gp-seg" id="gpGacha">ガチャへ戻る</button></div>
       </div>
     </header>
     <section class="prize-banner" id="rBanner" aria-live="polite"></section>
@@ -1012,6 +1045,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
         <div class="gp-row"><span>BGM</span><button class="gp-seg" type="button" id="bgmBtn" data-act="bgm-toggle" aria-pressed="false">BGM ON</button></div>
         <div class="gp-row"><span>ガチャ速度</span><div class="gp-pair" role="group" aria-label="ガチャ速度"><button type="button" class="gp-seg" id="spdNormal" data-spd="0">ふつう</button><button type="button" class="gp-seg" id="spdFast" data-spd="1">はやい</button></div></div>
         <div class="gp-skip" id="gpSkip"><div class="gp-row"><span>スキップ</span><button type="button" class="gp-seg" id="skipOpen" aria-expanded="false" aria-controls="skipGrid">スキップ</button></div><div class="gp-skt" id="skipHint" hidden><small>押した順位まで進みます</small></div><div class="gp-grid" id="skipGrid" hidden></div></div>
+        <div class="gp-row"><span>音量</span><button type="button" class="gp-seg" id="gpVol">音量設定</button></div>
         <div class="gp-row"><span>第二幕</span><button type="button" class="gp-seg" id="gpRoulette">ルーレットへ</button></div>
       </div>
     </header>
@@ -1094,6 +1128,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <div class="row">
         <label class="btn-ghost filebtn csvbtn" for="csvFile">CSVから登録</label>
         <button class="btn-ghost csvbtn" type="button" id="csvTemplate">CSVのフォーマットをダウンロード</button>
+        <button class="flag-open" type="button" id="flagOpen" aria-label="フラグ管理" title=""></button>
         <input type="file" id="csvFile" accept=".csv,text/csv,text/plain" hidden></div>
       <div class="person-add" id="personAdd">
         <label class="fld"><span>職員番号</span><input class="field" id="npNo" type="text" inputmode="numeric" maxlength="12" placeholder="職員番号" aria-label="職員番号" autocomplete="off"></label>
@@ -1148,6 +1183,61 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
     <div class="ask-b"><button class="btn-gold" type="button" id="skipYes">はい</button><button class="btn-ghost" type="button" id="skipNo">いいえ</button></div>
   </div>
 </div>
+<div class="ask" id="svAsk" role="dialog" aria-modal="true" aria-labelledby="svAskT" hidden>
+  <div class="ask-box svbox">
+    <div class="flag-head"><div class="ask-t" id="svAskT">効果音の音量</div><button class="btn-gold flag-close" type="button" id="svClose">閉じる</button></div>
+    <p class="hint">チェックを外すとその音が鳴りません。スライダーで音量を調整できます（100%が標準、最大200%）。動かすと試し鳴りします。</p>
+    <div class="sv-list">
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_crack"><span>カプセルが割れるまでの音</span></label><output id="svO_crack"></output><input type="range" id="svV_crack" min="0" max="200" step="5" aria-label="カプセルが割れるまでの音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_tick"><span>ハンドルを回すカチカチ音</span></label><output id="svO_tick"></output><input type="range" id="svV_tick" min="0" max="200" step="5" aria-label="ハンドルを回すカチカチ音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_roll"><span>カプセルが転がる音</span></label><output id="svO_roll"></output><input type="range" id="svV_roll" min="0" max="200" step="5" aria-label="カプセルが転がる音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_build"><span>1位の盛り上がりの音</span></label><output id="svO_build"></output><input type="range" id="svV_build" min="0" max="200" step="5" aria-label="1位の盛り上がりの音の音量"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_wind"><span>ゆれる音・割れる直前の風の音</span></label><output id="svO_wind"></output><input type="range" id="svV_wind" min="0" max="200" step="5" aria-label="ゆれる音・風の音の音量"></div>
+    </div>
+  </div>
+</div>
+<div class="ask" id="pinAsk" role="dialog" aria-modal="true" aria-labelledby="pinAskT" hidden>
+  <div class="ask-box pinbox">
+    <div class="ask-t" id="pinAskT">パスワード</div>
+    <div class="ask-s" id="pinMsg">4桁の数字を入力してください</div>
+    <div class="pin-dots" id="pinDots" aria-live="polite"><i></i><i></i><i></i><i></i></div>
+    <div class="pin-pad" id="pinPad">
+      <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+      <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+      <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+      <button type="button" data-k="c" class="pin-sub" aria-label="すべて消す">消す</button><button type="button" data-k="0">0</button><button type="button" data-k="b" class="pin-sub" aria-label="1文字戻る">⌫</button>
+    </div>
+    <div class="ask-b"><button class="btn-ghost" type="button" id="pinCancel">キャンセル</button></div>
+  </div>
+</div>
+<div class="ask" id="rsvAsk" role="dialog" aria-modal="true" aria-labelledby="rsvAskT" hidden>
+  <div class="ask-box svbox">
+    <div class="flag-head"><div class="ask-t" id="rsvAskT">ルーレット音の音量</div><button class="btn-gold flag-close" type="button" id="rsvClose">閉じる</button></div>
+    <p class="hint">チェックを外すとその音が鳴りません。スライダーで音量を調整できます（100%が標準、最大200%）。動かすと試し鳴りします。</p>
+    <div class="sv-list">
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_rspin"><span>ドラムが回る音・レバーの音</span></label><output id="svO_rspin"></output><input type="range" id="svV_rspin" min="0" max="200" step="5" aria-label="ドラムが回る音・レバーの音"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_rstop"><span>数字が止まる音</span></label><output id="svO_rstop"></output><input type="range" id="svV_rstop" min="0" max="200" step="5" aria-label="数字が止まる音"></div>
+      <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_rwin"><span>当選のファンファーレ</span></label><output id="svO_rwin"></output><input type="range" id="svV_rwin" min="0" max="200" step="5" aria-label="当選のファンファーレ"></div>
+    </div>
+  </div>
+</div>
+<div class="ask" id="flagAsk" role="dialog" aria-modal="true" aria-labelledby="flagAskT" hidden>
+  <div class="ask-box flagbox">
+    <div class="flag-head"><div class="ask-t" id="flagAskT">フラグ管理</div><button class="btn-gold flag-close" type="button" id="flagClose">閉じる</button></div>
+    <div class="flag-note"><b>ガチャフラグ</b>：ガチャで「○位まで」の景品にだけ当たります（それより上の順位には当たりません）<br><b>スロットフラグ</b>：ルーレットには当たりません</div>
+    <div class="f1-open-row"><button class="btn-ghost f1-open" type="button" id="f1Open">ガチャフラグ設定<span id="f1OpenV"></span></button></div>
+    <div class="flag-tools"><input class="field" id="flagQ" type="search" placeholder="名前・部署・職員番号で絞り込み" aria-label="絞り込み" autocomplete="off"><span class="flag-cnt" id="flagCnt"></span></div>
+    <div class="flag-wrap"><table class="ftable"><thead><tr><th class="no">No.</th><th>職員番号</th><th>所属部署</th><th>名前</th><th class="flag">ガチャ<br>フラグ</th><th class="flag">スロット<br>フラグ</th></tr></thead><tbody id="flagBody"></tbody></table></div>
+  </div>
+</div>
+<div class="ask" id="f1Ask" role="dialog" aria-modal="true" aria-labelledby="f1AskT" hidden>
+  <div class="ask-box f1box">
+    <div class="ask-t" id="f1AskT">ガチャフラグの設定</div>
+    <div class="ask-s">ガチャフラグの人が当たる順位を決めます</div>
+    <div class="f1min"><span>当たるのは</span><button type="button" class="f1m-b" id="f1Minus" aria-label="1つ上の順位へ">−</button><input class="field" id="f1Min" type="text" inputmode="numeric" maxlength="3" aria-label="何位まで当たるか" autocomplete="off"><button type="button" class="f1m-b" id="f1Plus" aria-label="1つ下の順位へ">＋</button><span>位まで</span><small id="f1Hint"></small></div>
+    <div class="ask-b"><button class="btn-gold" type="button" id="f1Close">OK</button></div>
+  </div>
+</div>
 <div class="ask" id="bulkAsk" role="dialog" aria-modal="true" aria-labelledby="bulkAskT" hidden>
   <div class="ask-box bulk-box">
     <div class="ask-t" id="bulkAskT">画像をまとめて登録</div>
@@ -1197,7 +1287,7 @@ function sampleState(){
     sample:{people:true,prizes:true}
   };
 }
-function svDefault(){return {crack:{on:true,v:1},tick:{on:true,v:1},roll:{on:true,v:1},build:{on:true,v:1},wind:{on:true,v:1},btn:{on:true,v:1}}}
+function svDefault(){return {crack:{on:true,v:1},tick:{on:true,v:1},roll:{on:true,v:1},build:{on:true,v:1},wind:{on:true,v:1},btn:{on:true,v:1},rspin:{on:true,v:1},rstop:{on:true,v:1},rwin:{on:true,v:1}}}
 function load(){
   try{
     const raw=localStorage.getItem(KEY);
@@ -1238,9 +1328,13 @@ let lastResultId=null,awaitConfirm=false,lastPrizeId=null;
 
 /* ---------- derived ---------- */
 const winnerIds=()=>new Set(S.history.map(h=>h.personId));
-function pool(){
-  const w=winnerIds();
-  return S.people.filter(p=>p.status==='in'&&!w.has(p.id));
+/* ガチャフラグ: ガチャの1〜10位には当たらない / スロットフラグ: ルーレットには当たらない */
+const f1Min=()=>{const n=parseInt(S.opts&&S.opts.f1min,10);return Number.isFinite(n)&&n>=1?Math.min(n,999):11};
+/* ガチャフラグの人は「f1Min位まで」の景品にだけ当たる（既定は11位まで＝1〜10位は除外） */
+const noTop=pz=>!!pz&&Number.isFinite(+pz.rank)&&+pz.rank>=1&&+pz.rank<f1Min();
+function pool(pz){
+  const w=winnerIds(),skip1=noTop(pz);
+  return S.people.filter(p=>p.status==='in'&&!w.has(p.id)&&!(skip1&&p.f1));
 }
 /* rank is the countdown position: the first prize in the list is N位, the last one is 1位 */
 const rk=pz=>pz.label||pz.rank+'位';
@@ -1396,8 +1490,8 @@ document.addEventListener('click',e=>{
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{fitItem();fitReveal()});
 if(window.ResizeObserver) new ResizeObserver(()=>fitItem()).observe(document.querySelector('#banner'));
 function renderStage(){
-  const cand=pool();
   const pz=currentPrize();
+  const cand=pool(pz);
   /* until 次へ is pressed, keep showing the prize that was just drawn */
   const bpz=(awaitConfirm&&S.prizes.find(p=>p.id===lastPrizeId))||pz;
 
@@ -1439,10 +1533,31 @@ function renderPrizes(){
   }).join(''):'<li class="empty">景品がありません。下のフォームから追加してください。</li>';
 }
 
+function flagCell(p,f,label){return '<td class="flag"><input type="checkbox" class="fchk" data-flag="'+f+'" data-id="'+p.id+'"'+(p[f]?' checked':'')+' aria-label="'+esc(pdisp(p))+'の'+label+'"></td>'}
+function f1Show(){
+  const n=f1Min();
+  $('#f1OpenV').textContent=n<=1?'制限なし':n+'位まで当たる';
+  $('#f1Min').value=String(n);
+  $('#f1Hint').textContent=n<=1?'すべての順位に当たります（制限なし）':n+'位まで当たります（'+(n-1)+'位〜1位には当たりません）';
+}
+function f1Set(v){
+  let n=parseInt(String(v).replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-65248)),10);
+  if(!Number.isFinite(n)||n<1) n=1;
+  if(n>999) n=999;
+  S.opts.f1min=n;save();f1Show();render();
+}
+function renderFlagList(){
+  f1Show();
+  const q=($('#flagQ').value||'').trim().toLowerCase();
+  const rows=S.people.map((p,i)=>[p,i]).filter(([p])=>!q||[p.empno,p.dept,p.name].join(' ').toLowerCase().includes(q));
+  $('#flagBody').innerHTML=rows.length?rows.map(([p,i])=>'<tr'+((p.f1||p.f2)?' class="on"':'')+'><td class="no">'+(i+1)+'</td><td>'+esc(p.empno||'')+'</td><td>'+esc(p.dept||'')+'</td><td>'+esc(p.name)+'</td>'+flagCell(p,'f1','ガチャフラグ')+flagCell(p,'f2','スロットフラグ')+'</tr>').join(''):'<tr><td class="empty" colspan="6">'+(S.people.length?'該当する参加者がいません':'参加者が登録されていません')+'</td></tr>';
+  flagCount();
+}
+function flagCount(){$('#flagCnt').textContent='ガチャフラグ '+S.people.filter(p=>p.f1).length+'名 / スロットフラグ '+S.people.filter(p=>p.f2).length+'名'}
 function renderPeople(){
   const cell=(p,f,label)=>'<input class="cell" type="text" maxlength="30" data-edit="'+f+'" data-id="'+p.id+'" value="'+esc(p[f]||'')+'" aria-label="'+label+'" autocomplete="off">';
   $('#peopleBody').innerHTML=S.people.length
-    ?S.people.map((p,i)=>'<tr><td class="no">'+(i+1)+'</td><td class="emp">'+cell(p,'empno','職員番号')+'</td><td>'+cell(p,'dept','所属部署')+'</td><td>'+cell(p,'name','名前')+'</td><td class="del"><button class="icon-btn" type="button" data-act="person-del" data-id="'+p.id+'" aria-label="'+esc(pdisp(p))+'を削除">✕</button></td></tr>').join('')
+    ?S.people.map((p,i)=>'<tr><td class="no">'+(i+1)+'</td><td class="emp">'+cell(p,'empno','職員番号')+'</td><td>'+cell(p,'dept','所属部署')+'</td><td>'+cell(p,'name','名前')+'</td>'+'<td class="del"><button class="icon-btn" type="button" data-act="person-del" data-id="'+p.id+'" aria-label="'+esc(pdisp(p))+'を削除">✕</button></td></tr>').join('')
     :'<tr><td class="empty" colspan="5">まだ参加者が登録されていません。上の行に入力して「追加」を押してください</td></tr>';
 }
 
@@ -1461,7 +1576,7 @@ function renderSettings(){
 }
 
 function render(){renderStage();renderPrizes();renderPeople();renderHistory();renderSettings();rRender()}
-function syncPeopleText(){$('#npNo').value='';$('#npDept').value='';$('#npName').value=''}
+function syncPeopleText(){$('#npNo').value='';$('#npDept').value='';$('#npName').value='';}
 
 /* ---------- tabs ---------- */
 function selectTab(id){
@@ -1546,6 +1661,10 @@ function noise(dur,vol){
   }catch(e){}
 }
 const tick=()=>sv('tick',()=>beep(880,.06,'square',.11));
+/* ルーレット専用の音（歯車の「ルーレット音」で調整） */
+const rtick=()=>sv('rspin',()=>beep(880,.06,'square',.11));
+const rstopSnd=i=>sv('rstop',()=>{beep(660+i*220,.16,'triangle',.14);beep(1320+i*220,.12,'sine',.08,.05)});
+const rwinSnd=t=>sv('rwin',()=>fanfare(t));
 /* button click sound for every button */
 document.addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('button,[role=button],.menu-btn,.tab,summary');
@@ -1740,8 +1859,8 @@ async function draw(){
   if(busy) return;
   const pz=currentPrize();
   if(!pz){resetKnob();return}
-  const cand=pool();
-  if(!cand.length){toast('抽選できる参加者がいません');resetKnob();return}
+  const cand=pool(pz);
+  if(!cand.length){toast(noTop(pz)&&pool().length?'この順位に当たる参加者がいません（ガチャフラグの方は'+f1Min()+'位までにだけ当たります）':'抽選できる参加者がいません');resetKnob();return}
   busy=true;
   S.currentPrizeId=pz.id;
   lastResultId=null;
@@ -1812,7 +1931,7 @@ function addPeople(list){
   if(!list.length){toast('名前を入力してください');$('#npName').focus();return false}
   S.sample.people=false; /* keep the existing (sample) people and just add to them */
   if(S.people.length+list.length>500){toast('登録できるのは500名までです');return false}
-  list.forEach(pp=>S.people.push({id:uid(),empno:pp.empno||'',dept:pp.dept||'',name:pp.name,status:'in'}));
+  list.forEach(pp=>S.people.push({id:uid(),empno:pp.empno||'',dept:pp.dept||'',name:pp.name,status:'in',f1:!!pp.f1,f2:!!pp.f2}));
   sortPeople();
   save();render();
   return true;
@@ -1820,7 +1939,7 @@ function addPeople(list){
 function addOnePerson(){
   const empno=$('#npNo').value.trim(),dept=$('#npDept').value.trim(),name=$('#npName').value.trim();
   if(!name){toast('名前を入力してください');$('#npName').focus();return}
-  const pp={empno:empno,dept:dept,name:name};
+  const pp={empno:empno,dept:dept,name:name,f1:false,f2:false};
   if(addPeople([pp])){
     syncPeopleText();
     $('#npNo').focus();
@@ -1851,9 +1970,12 @@ function parseCSV(text){
 function csvToPeople(rows){
   if(!rows.length) return [];
   const head=rows[0];
-  const idx={empno:-1,dept:-1,name:-1};
+  const idx={empno:-1,dept:-1,name:-1,f1:-1,f2:-1};
   head.forEach((h,i)=>{
-    if(/職員番号|社員番号|番号|ID/i.test(h)) idx.empno=i;
+    const hn=String(h).normalize('NFKC');
+    if(/ガチャ\s*フラグ|フラグ\s*1|flag\s*1/i.test(hn)) idx.f1=i;
+    else if(/スロット\s*フラグ|フラグ\s*2|flag\s*2/i.test(hn)) idx.f2=i;
+    else if(/職員番号|社員番号|番号|ID/i.test(h)) idx.empno=i;
     else if(/部署|所属|部門/.test(h)) idx.dept=i;
     else if(/名前|氏名|名称|name/i.test(h)) idx.name=i;
   });
@@ -1861,21 +1983,22 @@ function csvToPeople(rows){
   if(idx.name>=0){body=rows.slice(1)}
   else{
     const n=Math.max(...rows.map(r=>r.length));
-    if(n>=3){idx.empno=0;idx.dept=1;idx.name=2}
+    if(n>=3){idx.empno=0;idx.dept=1;idx.name=2;if(n>=5){idx.f1=3;idx.f2=4}}
     else if(n===2){idx.dept=0;idx.name=1}
     else idx.name=0;
   }
-  return body.map(r=>({empno:idx.empno>=0?(r[idx.empno]||''):'',dept:idx.dept>=0?(r[idx.dept]||''):'',name:r[idx.name]||''})).filter(p=>p.name);
+  const on=v=>/^(1|○|〇|◯|●|✓|✔|はい|有|true|yes|y|on)$/i.test(String(v==null?'':v).normalize('NFKC').trim());
+  return body.map(r=>({empno:idx.empno>=0?(r[idx.empno]||''):'',dept:idx.dept>=0?(r[idx.dept]||''):'',name:r[idx.name]||'',f1:idx.f1>=0&&on(r[idx.f1]),f2:idx.f2>=0&&on(r[idx.f2])})).filter(p=>p.name);
 }
 /* a ready-to-fill CSV (UTF-8 with BOM so Excel shows the Japanese correctly) */
 $('#csvTemplate').addEventListener('click',()=>{
-  const rows=[['職員番号','所属部署','名前'],['1001','看護部','山田 花子'],['1002','事務部','佐藤 太郎'],['1003','リハビリテーション科','鈴木 一郎']];
+  const rows=[['職員番号','所属部署','名前','ガチャフラグ','スロットフラグ'],['1001','看護部','山田 花子','',''],['1002','事務部','佐藤 太郎','1',''],['1003','リハビリテーション科','鈴木 一郎','','1']];
   const text='\ufeff'+rows.map(r=>r.join(',')).join('\r\n')+'\r\n';
   const url=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));
   const a=document.createElement('a');a.href=url;a.download='参加者登録フォーマット.csv';
   document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),4000);
-  toast('フォーマットをダウンロードしました。例の3行を書き換えて「CSVから登録」で読み込んでください');
+  toast('フォーマットをダウンロードしました。例の3行を書き換えて「CSVから登録」で読み込んでください（ガチャフラグ・スロットフラグは1を入れた人だけ有効）');
 });
 /* results as CSV: 職員番号,部署名,名前,順位,商品名 in draw order (UTF-8 with BOM for Excel) */
 const csvCell=v=>{v=String(v==null?'':v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
@@ -2290,6 +2413,57 @@ $('#peopleBody').addEventListener('change',e=>{
   renderStage();renderHistory();renderMenu();
   toast('修正しました');
 });
+$('#gpVol').addEventListener('click',()=>{gearClose();$('#svAsk').hidden=false});
+$('#gpRVol').addEventListener('click',()=>{const p=$('#rGearPop');p.hidden=true;$('#rGearBtn').setAttribute('aria-expanded','false');$('#rsvAsk').hidden=false});
+$('#rsvClose').addEventListener('click',()=>{$('#rsvAsk').hidden=true});
+$('#rsvAsk').addEventListener('click',e=>{if(e.target===$('#rsvAsk')) $('#rsvClose').click()});
+$('#svClose').addEventListener('click',()=>{$('#svAsk').hidden=true});
+$('#svAsk').addEventListener('click',e=>{if(e.target===$('#svAsk')) $('#svClose').click()});
+/* フラグ管理は4桁のパスワードで開く */
+const FLAG_PIN='8005';
+let pinBuf='';
+function pinDraw(bad){
+  const d=$('#pinDots');d.classList.toggle('bad',!!bad);
+  [...d.children].forEach((x,i)=>x.classList.toggle('on',i<pinBuf.length));
+}
+function openFlagMgr(){$('#flagQ').value='';renderFlagList();$('#flagAsk').hidden=false;$('#flagBody').parentElement.scrollTop=0}
+function pinClose(){$('#pinAsk').hidden=true;pinBuf='';pinDraw()}
+function pinKey(k){
+  if($('#pinDots').classList.contains('bad')) return;
+  if(k==='c') pinBuf='';
+  else if(k==='b') pinBuf=pinBuf.slice(0,-1);
+  else if(/^\d$/.test(k)&&pinBuf.length<4) pinBuf+=k;
+  pinDraw();
+  if(pinBuf.length===4){
+    if(pinBuf===FLAG_PIN){pinClose();openFlagMgr()}
+    else{
+      $('#pinMsg').textContent='パスワードが違います';
+      pinDraw(true);
+      setTimeout(()=>{pinBuf='';pinDraw();$('#pinMsg').textContent='4桁の数字を入力してください'},600);
+    }
+  }
+}
+$('#flagOpen').addEventListener('click',()=>{pinBuf='';pinDraw();$('#pinMsg').textContent='4桁の数字を入力してください';$('#pinAsk').hidden=false});
+$('#pinPad').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b) pinKey(b.dataset.k)});
+$('#pinCancel').addEventListener('click',pinClose);
+$('#pinAsk').addEventListener('click',e=>{if(e.target===$('#pinAsk')) pinClose()});
+document.addEventListener('keydown',e=>{if($('#pinAsk').hidden) return;if(/^\d$/.test(e.key)) pinKey(e.key);else if(e.key==='Backspace') pinKey('b');else if(e.key==='Escape') pinClose()});
+$('#flagClose').addEventListener('click',()=>{$('#flagAsk').hidden=true;renderPeople();render()});
+$('#flagAsk').addEventListener('click',e=>{if(e.target===$('#flagAsk')) $('#flagClose').click()});
+$('#flagQ').addEventListener('input',renderFlagList);
+$('#f1Open').addEventListener('click',()=>{f1Show();$('#f1Ask').hidden=false});
+$('#f1Close').addEventListener('click',()=>{$('#f1Ask').hidden=true;f1Show()});
+$('#f1Ask').addEventListener('click',e=>{if(e.target===$('#f1Ask')) $('#f1Close').click()});
+$('#f1Minus').addEventListener('click',()=>f1Set(f1Min()-1));
+$('#f1Plus').addEventListener('click',()=>f1Set(f1Min()+1));
+$('#f1Min').addEventListener('change',e=>f1Set(e.target.value));
+$('#f1Min').addEventListener('focus',e=>e.target.select());
+$('#flagBody').addEventListener('change',e=>{
+  const el=e.target;if(!el.matches('input[data-flag]')) return;
+  const q=S.people.find(x=>x.id===el.dataset.id);if(!q) return;
+  q[el.dataset.flag]=el.checked;S.sample.people=false;save();
+  el.closest('tr').classList.toggle('on',!!(q.f1||q.f2));flagCount();
+});
 $('#npNo').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();$('#npDept').focus()}});
 $('#npDept').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();$('#npName').focus()}});
 $('#npNo').addEventListener('paste',onPeoplePaste);
@@ -2407,7 +2581,7 @@ function empNum4(p){
 function rWinIds(){return new Set(S.history.map(h=>h.personId).concat(S.rhistory.map(h=>h.personId)))}
 function rPool(){
   const w=rWinIds();
-  return S.people.filter(p=>p.status==='in'&&!w.has(p.id)&&empNum4(p)!==null);
+  return S.people.filter(p=>p.status==='in'&&!w.has(p.id)&&!p.f2&&empNum4(p)!==null);
 }
 function rCurrentPrize(){
   return S.rprizes.find(p=>p.id===S.rCurrentId&&isOpen(p))||S.rprizes.find(isOpen)||null;
@@ -2543,7 +2717,7 @@ async function rDraw(test){
   const pz=T?R_TEST_PZ:rCurrentPrize();
   if(!pz){rResetKnob();return}
   const cand=T?[R_TEST_W]:rPool();
-  if(!cand.length){toast('ルーレットの対象者がいません（ガチャ未当選で、職員番号が4桁以内の数字の方）');rResetKnob();return}
+  if(!cand.length){toast('ルーレットの対象者がいません（ガチャ未当選・スロットフラグなし・職員番号が4桁以内の数字の方）');rResetKnob();return}
   busy=true;
   if(!T) S.rCurrentId=pz.id;
   rRender();
@@ -2564,15 +2738,14 @@ async function rDraw(test){
       if(el>=dur) break;
       const slow=i===3?Math.max(0,(el/dur-.55)/.45):0;
       [...R('rWin').children].forEach((d,j)=>{if(j>=i) d.firstChild.textContent=String(rand(10))});
-      tick();
+      rtick();
       await rsleep(70+slow*280);
     }
     const d=R('rWin').children[i];
     d.firstChild.textContent=num[i];
     d.className='rd lock';
     rCoins(3);
-    beep(660+i*220,.16,'triangle',.14);
-    beep(1320+i*220,.12,'sine',.08,.05);
+    rstopSnd(i);
   }
   await rsleep(fast?250:700);
   if(!T){
@@ -2586,10 +2759,10 @@ async function rDraw(test){
   rResetKnob();
   rZoom(false);
   rPlate('won',{name:winner.name,dept:winner.dept||'',tier:tier});
-  fanfare(tier);
+  rwinSnd(tier);
   confetti(110+tier*70);
   rCoins(26+tier*14);
-  if(tier>=3){setTimeout(()=>confetti(260),800);setTimeout(()=>fanfare(3),700);setTimeout(()=>rCoins(40),900)}
+  if(tier>=3){setTimeout(()=>confetti(260),800);setTimeout(()=>rwinSnd(3),700);setTimeout(()=>rCoins(40),900)}
   render();
 }
 R('rConfirm').addEventListener('click',()=>{
@@ -2625,7 +2798,7 @@ R('rConfirm').addEventListener('click',()=>{
     }
     rSetPull(p);
     const step=Math.floor(p*10);
-    if(p>0.1&&step!==rDrag.tick){rDrag.tick=step;tick()}
+    if(p>0.1&&step!==rDrag.tick){rDrag.tick=step;rtick()}
   });
   function end(e){
     if(!rDrag||e.pointerId!==rDrag.id) return;
@@ -3191,7 +3364,7 @@ $('#skipYes').addEventListener('click',()=>{
   let n=0,short=false;
   for(const pz of pl.skipped){
     while(isOpen(pz)){
-      const cand=pool();
+      const cand=pool(pz);
       if(!cand.length){short=true;break}
       const w=cand[rand(cand.length)];
       S.history.push({id:uid(),personId:w.id,empno:w.empno||'',dept:w.dept||'',name:w.name,prizeId:pz.id,rank:rk(pz),item:pz.item,at:Date.now()});
@@ -3259,7 +3432,7 @@ function volSync(){
 
 
 /* ---------- per-sound settings ---------- */
-const SV_PREVIEW={crack:()=>openPop(),tick:()=>tick(),roll:()=>rollSnd(1),build:()=>buildSnd(2),wind:()=>openWind(),btn:()=>btnSnd()};
+const SV_PREVIEW={crack:()=>openPop(),tick:()=>tick(),roll:()=>rollSnd(1),build:()=>buildSnd(2),wind:()=>openWind(),btn:()=>btnSnd(),rspin:()=>{[0,1,2,3].forEach(i=>setTimeout(rtick,i*90))},rstop:()=>rstopSnd(1),rwin:()=>rwinSnd(2)};
 function svSync(){
   Object.keys(SV_PREVIEW).forEach(k=>{
     const o=S.opts.sv[k];
