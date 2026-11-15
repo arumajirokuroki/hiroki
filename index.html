@@ -72,7 +72,9 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 #gachaApp .prize-banner{height:140px;min-height:140px}
 #gachaApp .prize-banner .item{line-height:1.1}
-#gachaApp .prize-banner .rank{font-size:clamp(64px,12vw,124px);line-height:1;padding-right:.05em;font-weight:900;-webkit-text-stroke:.05em #C25E00;paint-order:stroke fill;color:#F28A12;text-shadow:0 3px 0 rgba(120,50,0,.35)}
+#gachaApp .prize-banner .rank{flex:1 1 0;min-width:0;text-align:center;padding:0}
+#gachaApp .prize-banner .item{flex:5 1 0;min-width:0}
+#gachaApp .prize-banner .rank{font-size:clamp(64px,12vw,124px);line-height:1;padding-right:.05em;font-weight:900;-webkit-text-stroke:.06em #fff;paint-order:stroke fill;color:#F28A12;text-shadow:0 3px 0 rgba(20,48,110,.25)}
 /* ---------- gacha scene ---------- */
 .plate{
   --zl:34%;--lv:24px;--mw:min(32cqi,calc((100dvh - 232px) * .56));--bw:min(22cqi,calc(var(--mw) * .6875));
@@ -911,7 +913,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v232</div>
+  <div class="ver-tag" id="verTag">v234</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
