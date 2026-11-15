@@ -69,11 +69,10 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .remain{margin-left:auto;font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
 .banner-empty{color:var(--mute);font-size:24px;font-weight:700}
 
-/* ガチャ画面：景品名はプレートの上部に大きく重ねる（キャラ・ガチャ機・当選カードは手前に出る） */
-#plate>#banner{position:absolute;left:18px;right:18px;top:10px;height:150px;min-height:0;pointer-events:none;z-index:auto}
-#plate>#banner .rank{font-size:clamp(56px,10vw,104px)}
-#gachaApp #plate.idle:not([data-end="1"]) .plate-note{top:170px}
 
+#gachaApp .prize-banner{height:140px;min-height:140px}
+#gachaApp .prize-banner .item{line-height:1.1}
+#gachaApp .prize-banner .rank{font-size:clamp(64px,12vw,124px);line-height:1;padding-right:.05em;font-weight:900;-webkit-text-stroke:.05em #C25E00;paint-order:stroke fill;color:#F28A12;text-shadow:0 3px 0 rgba(120,50,0,.35)}
 /* ---------- gacha scene ---------- */
 .plate{
   --zl:34%;--lv:24px;--mw:min(32cqi,calc((100dvh - 232px) * .56));--bw:min(22cqi,calc(var(--mw) * .6875));
@@ -574,10 +573,9 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
   .hist-btn{display:inline-flex;align-items:center;margin-right:6px}
   .head-btns{display:flex;align-items:center}
   .prize-banner{height:108px;min-height:108px;gap:2px 12px}
+  #gachaApp .prize-banner{height:108px;min-height:108px}
+  #gachaApp .prize-banner .rank{font-size:96px}
   .rank{font-size:58px}
-  #plate>#banner{height:136px;left:14px;right:14px;top:6px}
-  #plate>#banner .rank{font-size:72px}
-  #gachaApp #plate.idle:not([data-end="1"]) .plate-note{top:148px}
   .plate{--ph:calc(100dvh - 170px);--mw:calc(var(--ph) * .5);--bw:calc(var(--ph) * .4);--lv:12px;--zl:30%;min-height:0;border-radius:16px;box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--gold-soft)}
   .rig{height:min(calc(100% - 52px),52cqi);bottom:8px}
   .mach{bottom:8px}
@@ -913,7 +911,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v226</div>
+  <div class="ver-tag" id="verTag">v232</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1059,9 +1057,9 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
     </header>
 
 
+    <section class="prize-banner" id="banner" aria-live="polite"></section>
     <section class="plate idle" id="plate" data-tier="0">
       <div class="rays" aria-hidden="true"></div>
-      <section class="prize-banner" id="banner" aria-live="polite"></section>
       <div class="pz-photo" id="pzPhoto" aria-hidden="true"><img id="pzPhotoImg" alt=""></div>
       <div class="rig" id="rig">
         <img class="rig-base" src="mascot_body.png" alt="しんわくん">
@@ -1427,7 +1425,7 @@ function fitItem(sel){
   const el=document.querySelector(sel+' .item');
   if(!el||!el.offsetParent) return;
   const cmp=window.matchMedia&&matchMedia('(max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse)').matches;
-  let f=cmp?(sel==='#banner'?108:84):(sel==='#banner'?128:106);
+  let f=cmp?(sel==='#banner'?88:84):(sel==='#banner'?114:106);
   el.style.fontSize=f+'px';
   /* one line only: shrink until the name fits the box width */
   el.style.whiteSpace='nowrap';
