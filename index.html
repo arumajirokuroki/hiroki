@@ -772,7 +772,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 #rouletteApp.side-min .head-btns{margin-right:152px}
 #rouletteApp .btn-ghost{background:rgba(0,0,0,.45)!important;color:#FFE58A!important;border:1.5px solid #F5C542!important}
 #rouletteApp .prize-banner .rank{color:#FFD451;text-shadow:0 0 14px rgba(255,190,40,.8),0 2px 0 #7a4a00}
-#rouletteApp .prize-banner .item{color:#fff;text-shadow:0 0 18px rgba(255,200,80,.6),0 3px 0 rgba(0,0,0,.45)}
+#rouletteApp .prize-banner .item{font-weight:900;color:transparent;background:linear-gradient(180deg,#FFFFFF 0%,#FFF3B0 35%,#FFD23F 52%,#FFB400 70%,#FFE27A 100%);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(1px 0 0 #5a2a00) drop-shadow(-1px 0 0 #5a2a00) drop-shadow(0 1px 0 #5a2a00) drop-shadow(0 -1px 0 #5a2a00) drop-shadow(0 4px 0 #6b2f00) drop-shadow(0 0 12px rgba(255,200,70,.75))}
 #rouletteApp .banner-empty{color:#f0d28f}
 #rouletteApp .plate{
   background:
@@ -918,7 +918,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v236</div>
+  <div class="ver-tag" id="verTag">v238</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1431,8 +1431,13 @@ function fitItem(sel){
   sel=sel||'#banner';
   const el=document.querySelector(sel+' .item');
   if(!el||!el.offsetParent) return;
+  const cmp0=window.matchMedia&&matchMedia('(max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse)').matches;
   if(sel==='#banner'||sel==='#rBanner'){ /* rank: shrink until it fits its own box (never overlaps the item) */
     const rk=document.querySelector(sel+' .rank');
+    if(rk&&sel==='#rBanner'){ /* roulette: 4+ char prize names take width from the item box */
+      rk.style.flex='';const n=[...rk.textContent.trim()].length;
+      if(n>=4){const bw=rk.parentElement.clientWidth;rk.style.flex='0 0 '+Math.min(n*(cmp0?78:100),bw*.45)+'px'}
+    }
     if(rk){rk.style.fontSize='';let rf=parseFloat(getComputedStyle(rk).fontSize)||100;
       while(rf>20&&rk.scrollWidth>rk.clientWidth+1){rf-=2;rk.style.fontSize=rf+'px'}}
   }
