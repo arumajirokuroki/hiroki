@@ -78,6 +78,17 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 #gachaApp .prize-banner .rank{flex:1 1 0;min-width:0;text-align:center;padding:0;overflow:hidden;white-space:nowrap}
 #gachaApp .prize-banner .item{flex:5 1 0;min-width:0}
 #gachaApp .prize-banner .rank{font-size:clamp(64px,12vw,124px);line-height:1;padding-right:.05em;font-weight:900;-webkit-text-stroke:.06em #fff;paint-order:stroke fill;color:#F28A12;text-shadow:0 3px 0 rgba(20,48,110,.25)}
+.ptable .sort-btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:.25em;font:inherit;color:inherit;padding:8px 8px;margin:-6px -4px;border-radius:8px;-webkit-tap-highlight-color:transparent}
+.ptable .sort-btn i{font-style:normal;font-size:.8em;min-width:1em;color:#E8A01A}
+#deptBar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.1);max-height:34vh;overflow:auto}
+#deptBar[hidden]{display:none}
+.dchip{all:unset;box-sizing:border-box;cursor:pointer;padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;font-weight:700;font-size:14px;-webkit-tap-highlight-color:transparent}
+.dchip small{opacity:.7;font-weight:400;margin-left:2px}
+.dchip.on{background:#F2BE4B;color:#2a1a00;border-color:#F2BE4B}
+.dchip[data-dept=""]{background:#FF5FA2;border-color:#FF8DBD;color:#fff}
+.dchip[data-dept=""].on{background:#FF3D8F;border-color:#fff;color:#fff;box-shadow:0 0 0 2px #FF3D8F}
+.ptable .sort-btn:hover,.ptable .sort-btn.on{background:rgba(255,255,255,.14)}
+.ptable .sort-btn:focus-visible{outline:2px solid #E8A01A}
 /* ---------- gacha scene ---------- */
 .plate{
   --zl:34%;--lv:24px;--mw:min(32cqi,calc((100dvh - 232px) * .56));--bw:min(22cqi,calc(var(--mw) * .6875));
@@ -920,7 +931,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v241</div>
+  <div class="ver-tag" id="verTag">v245</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1150,9 +1161,10 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
         <label class="fld"><span>名前</span><input class="field" id="npName" type="text" maxlength="30" placeholder="名前" aria-label="名前" autocomplete="off"></label>
         <button class="btn-gold add-btn" type="button" data-act="add-person">追加</button>
       </div>
+      <div class="dept-bar" id="deptBar" hidden></div>
       <div class="ptable-wrap"><table class="ptable" aria-label="参加者の登録">
         <thead>
-          <tr><th class="no">No.</th><th class="emp">職員番号</th><th>所属部署</th><th>名前</th><th class="del"></th></tr>
+          <tr><th class="no">No.</th><th class="emp"><button class="sort-btn" type="button" data-sort="empno">職員番号<i></i></button></th><th><button class="sort-btn" type="button" data-dept-toggle="1">所属部署<i>▼</i></button></th><th>名前</th><th class="del"></th></tr>
         </thead>
         <tbody id="peopleBody"></tbody>
       </table></div>
@@ -1578,11 +1590,41 @@ function renderFlagList(){
   flagCount();
 }
 function flagCount(){$('#flagCnt').textContent='ガチャフラグ '+S.people.filter(p=>p.f1).length+'名 / スロットフラグ '+S.people.filter(p=>p.f2).length+'名'}
+let pSort={k:'no',d:1},pDept=null,pDeptOpen=false;
+/* 部署名の五十音ソート用の読み（漢字は辞書にある語だけ読みに変換。無い語はそのまま比較） */
+const DEPT_YOMI={'事務':'じむ','総務':'そうむ','人事':'じんじ','経理':'けいり','医事':'いじ','医局':'いきょく','医師':'いし','看護':'かんご','病棟':'びょうとう','外来':'がいらい','手術':'しゅじゅつ','手術室':'しゅじゅつしつ','薬剤':'やくざい','薬局':'やっきょく','検査':'けんさ','放射線':'ほうしゃせん','栄養':'えいよう','給食':'きゅうしょく','リハビリ':'りはびり','理学療法':'りがくりょうほう','作業療法':'さぎょうりょうほう','言語聴覚':'げんごちょうかく','臨床工学':'りんしょうこうがく','透析':'とうせき','救急':'きゅうきゅう','集中治療':'しゅうちゅうちりょう','内科':'ないか','外科':'げか','整形外科':'せいけいげか','脳神経外科':'のうしんけいげか','小児科':'しょうにか','産婦人科':'さんふじんか','眼科':'がんか','耳鼻科':'じびか','皮膚科':'ひふか','泌尿器科':'ひにょうきか','精神科':'せいしんか','循環器':'じゅんかんき','消化器':'しょうかき','呼吸器':'こきゅうき','地域連携':'ちいきれんけい','連携':'れんけい','相談':'そうだん','医療':'いりょう','福祉':'ふくし','介護':'かいご','訪問':'ほうもん','在宅':'ざいたく','健診':'けんしん','健康管理':'けんこうかんり','管理':'かんり','企画':'きかく','情報':'じょうほう','システム':'しすてむ','施設':'しせつ','用度':'ようど','営業':'えいぎょう','本部':'ほんぶ','事業':'じぎょう','衛藤':'えとう','病院':'びょういん','診療':'しんりょう','技術':'ぎじゅつ','部':'ぶ','課':'か','科':'か','室':'しつ','係':'かかり','センター':'せんたー','統括':'とうかつ','師長':'しちょう','全':'ぜん','共通':'きょうつう','法人':'ほうじん','役員':'やくいん','理事':'りじ','院長':'いんちょう','秘書':'ひしょ','広報':'こうほう','教育':'きょういく','研修':'けんしゅう','感染':'かんせん','対策':'たいさく','安全':'あんぜん','品質':'ひんしつ','保健':'ほけん','保育':'ほいく','清掃':'せいそう','警備':'けいび','運転':'うんてん','調理':'ちょうり'};
+const DEPT_KEYS=Object.keys(DEPT_YOMI).sort((a,b)=>b.length-a.length);
+function deptYomi(d){
+  let t=String(d).normalize('NFKC'),o='';
+  for(let i=0;i<t.length;){
+    const k=DEPT_KEYS.find(k=>t.startsWith(k,i));
+    if(k){o+=DEPT_YOMI[k];i+=k.length}else{o+=t[i];i++}
+  }
+  return o.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-96)).toLowerCase();
+}
+const deptCmp=(x,y)=>deptYomi(x).localeCompare(deptYomi(y),'ja',{numeric:true})||x.localeCompare(y,'ja',{numeric:true});
 function renderPeople(){
+  document.querySelectorAll('#panel-people .sort-btn[data-sort]').forEach(b=>{const on=b.dataset.sort===pSort.k&&pSort.k!=='no';b.classList.toggle('on',on);b.querySelector('i').textContent=on?(pSort.d>0?'▲':'▼'):'';b.setAttribute('aria-pressed',on?'true':'false')});
+  const depts=[...new Set(S.people.map(p=>p.dept||'').filter(Boolean))].sort(deptCmp);
+  if(pDept!==null&&pDept!==''&&!depts.includes(pDept)) pDept=null;
+  const cnt=d=>S.people.filter(p=>(p.dept||'')===d).length;
+  const bar=$('#deptBar');
+  bar.hidden=!pDeptOpen;
+  bar.innerHTML=pDeptOpen?'<button type="button" class="dchip'+(pDept===null?' on':'')+'" data-dept="">すべて <small>'+S.people.length+'</small></button>'+depts.map(d=>'<button type="button" class="dchip'+(pDept===d?' on':'')+'" data-dept="'+esc(d)+'">'+esc(d)+' <small>'+cnt(d)+'</small></button>').join(''):'';
+  const tb=document.querySelector('#panel-people [data-dept-toggle]');
+  tb.classList.toggle('on',pDept!==null||pDeptOpen);
+  tb.firstChild.nodeValue=pDept!==null?'所属部署：'+pDept:'所属部署';
+  tb.querySelector('i').textContent=pDeptOpen?'▲':'▼';
   const cell=(p,f,label)=>'<input class="cell" type="text" maxlength="30" data-edit="'+f+'" data-id="'+p.id+'" value="'+esc(p[f]||'')+'" aria-label="'+label+'" autocomplete="off">';
-  $('#peopleBody').innerHTML=S.people.length
-    ?S.people.map((p,i)=>'<tr><td class="no">'+(i+1)+'</td><td class="emp">'+cell(p,'empno','職員番号')+'</td><td>'+cell(p,'dept','所属部署')+'</td><td>'+cell(p,'name','名前')+'</td>'+'<td class="del"><button class="icon-btn" type="button" data-act="person-del" data-id="'+p.id+'" aria-label="'+esc(pdisp(p))+'を削除">✕</button></td></tr>').join('')
-    :'<tr><td class="empty" colspan="5">まだ参加者が登録されていません。上の行に入力して「追加」を押してください</td></tr>';
+  let rows=S.people.map((p,i)=>[p,i]).filter(([p])=>pDept===null||(p.dept||'')===pDept);
+  if(pSort.k==='empno') rows.sort((A,B)=>{
+    const x=String(A[0].empno||''),y=String(B[0].empno||'');
+    if(!x&&!y) return A[1]-B[1]; if(!x) return 1; if(!y) return -1;
+    return (x.localeCompare(y,'ja',{numeric:true})||A[1]-B[1])*pSort.d;
+  });
+  $('#peopleBody').innerHTML=rows.length
+    ?rows.map(([p,i])=>'<tr><td class="no">'+(i+1)+'</td><td class="emp">'+cell(p,'empno','職員番号')+'</td><td>'+cell(p,'dept','所属部署')+'</td><td>'+cell(p,'name','名前')+'</td>'+'<td class="del"><button class="icon-btn" type="button" data-act="person-del" data-id="'+p.id+'" aria-label="'+esc(pdisp(p))+'を削除">✕</button></td></tr>').join('')
+    :'<tr><td class="empty" colspan="5">'+(S.people.length?'この部署の参加者はいません':'まだ参加者が登録されていません。上の行に入力して「追加」を押してください')+'</td></tr>';
 }
 
 function renderHistory(){
@@ -2417,6 +2459,17 @@ $('#prizeList').addEventListener('change',e=>{
   if(v===p.item){el.value=v;return}
   p.item=v; S.history.forEach(h=>{if(h.prizeId===p.id)h.item=p.item}); S.rhistory.forEach(h=>{if(h.prizeId===p.id)h.item=p.item});
   save(); renderStage();renderHistory();renderMenu(); toast('修正しました');
+});
+document.querySelector('#panel-people thead').addEventListener('click',e=>{
+  if(e.target.closest('[data-dept-toggle]')){pDeptOpen=!pDeptOpen;renderPeople();return}
+  const b=e.target.closest('.sort-btn[data-sort]');if(!b) return;
+  const k=b.dataset.sort;
+  if(pSort.k===k) pSort.d=-pSort.d; else {pSort.k=k;pSort.d=1}
+  renderPeople();
+});
+$('#deptBar').addEventListener('click',e=>{
+  const c=e.target.closest('.dchip');if(!c) return;
+  pDept=c.dataset.dept===''?null:c.dataset.dept;pDeptOpen=false;renderPeople();
 });
 $('#peopleBody').addEventListener('keydown',e=>{
   if(e.target.matches('input.cell')&&e.key==='Enter'&&!e.isComposing){e.preventDefault();e.target.blur()}
