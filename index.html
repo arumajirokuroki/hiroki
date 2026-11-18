@@ -89,6 +89,35 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .dchip[data-dept=""].on{background:#FF3D8F;border-color:#fff;color:#fff;box-shadow:0 0 0 2px #FF3D8F}
 .ptable .sort-btn:hover,.ptable .sort-btn.on{background:rgba(255,255,255,.14)}
 .ptable .sort-btn:focus-visible{outline:2px solid #E8A01A}
+.split-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+.split-grid button{min-height:64px;border-radius:14px;border:2px solid #14306e;background:#fff;color:#14306e;font:inherit;font-size:20px;font-weight:700;cursor:pointer}
+.split-grid button small{display:block;font-size:12px;font-weight:400;opacity:.75}
+.split-grid button.on{background:#14306e;color:#fff}
+.split-grid button:disabled{opacity:.35;cursor:not-allowed}
+.rmulti{position:absolute;left:0;right:0;bottom:0;top:0;z-index:80;display:flex;flex-direction:column;padding:clamp(8px,1.6cqi,22px);background:radial-gradient(ellipse at 50% 40%,#12805a 0%,#0a5a3c 55%,#063d27 100%);border-radius:inherit;overflow:hidden}
+.rmulti[hidden]{display:none}
+.rmulti{padding-bottom:72px}
+.rmulti .rmulti-ok{left:50%;right:auto;transform:translateX(-50%);bottom:12px}
+@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){.rmulti{padding-bottom:56px}.rmulti-ok{min-height:38px;min-width:90px;font-size:15px;bottom:10px}}
+.rmulti-grid{flex:1;min-height:0;display:grid;gap:clamp(6px,1.2cqi,16px);grid-auto-rows:1fr}
+.mcell{container-type:size;min-height:0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2cqh;border-radius:0;background:linear-gradient(180deg,#2b0b12,#0e0305);border:clamp(4px,.9cqmin,10px) solid transparent;border-image:linear-gradient(135deg,#fff3b0,#E8A01A 30%,#8a5a00 55%,#FFE58A 80%,#C98B00) 1;box-shadow:0 0 34px rgba(255,190,50,.55),0 10px 26px rgba(0,0,0,.6),inset 0 0 24px rgba(0,0,0,.85);overflow:hidden;padding:1.2cqh 2cqw;animation:mZoom .7s cubic-bezier(.3,1.1,.4,1) both}
+/* 1段だけのときは縦長にならないようにする */
+@keyframes mZoom{0%{transform:scale(.4);opacity:0}100%{transform:none;opacity:1}}
+.mcell .mi{width:100%;height:100%;display:grid;grid-template-areas:"w" "d" "n";grid-template-rows:minmax(0,41fr) minmax(0,17fr) minmax(0,42fr);justify-items:stretch;gap:1.2cqh}
+.mcell .mw{grid-area:w}.mcell .md{grid-area:d}.mcell .mn{grid-area:n}
+@container (min-aspect-ratio:11/5){
+  .mcell .mi{grid-template-areas:"w d" "w n";grid-template-columns:54fr 46fr;grid-template-rows:minmax(0,38fr) minmax(0,62fr);column-gap:2.5cqw;gap:1.2cqh 2.5cqw}
+}
+.mcell .mw{display:flex;gap:min(1.8cqw,1.8cqh);justify-content:center;min-height:0;height:100%}
+.mcell .rd{flex:1 1 0;min-width:0;width:auto;height:100%;aspect-ratio:auto;font-size:min(26cqw,34cqh);border-radius:min(1.6cqw,1.6cqh)}
+@container (min-aspect-ratio:11/5){.mcell .rd{font-size:min(15cqw,60cqh)}}
+.mcell .md,.mcell .mn{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;white-space:nowrap;line-height:1;opacity:0;transform:translateY(8%);transition:opacity .5s,transform .5s}
+.mcell .md>span,.mcell .mn>span{display:inline-block;white-space:nowrap}
+.mcell .md{color:#fff3d6;font-weight:700}
+.mcell .mn{color:#FFD451;font-weight:700;text-shadow:0 0 14px rgba(255,190,40,.7),0 2px 0 rgba(0,0,0,.55);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif}
+.mcell.show .md,.mcell.show .mn{opacity:1;transform:none}
+.rmulti-ok{position:absolute;right:18px;bottom:18px;z-index:2;min-width:104px;min-height:48px;padding:0 20px;font-size:17px;letter-spacing:.12em;box-shadow:0 4px 12px rgba(0,0,0,.4);background:linear-gradient(#FFE58A,#E8A01A);color:#3a0a18}
+.rmulti-ok[hidden]{display:none}
 /* ---------- gacha scene ---------- */
 .plate{
   --zl:34%;--lv:24px;--mw:min(32cqi,calc((100dvh - 232px) * .56));--bw:min(22cqi,calc(var(--mw) * .6875));
@@ -935,7 +964,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v247</div>
+  <div class="ver-tag" id="verTag">v256</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1022,6 +1051,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <div class="gear-pop" id="rGearPop" hidden>
         <div class="gp-row"><span>BGM</span><button class="gp-seg" type="button" data-act="bgm-toggle" aria-pressed="false">BGM ON</button></div>
         <div class="gp-row"><span>ルーレット音</span><button type="button" class="gp-seg" id="gpRVol">音量設定</button></div>
+        <div class="gp-row"><span>複数当選</span><button type="button" class="gp-seg" id="gpSplit">なし</button></div>
         <div class="gp-row"><span>テスト</span><button type="button" class="gp-seg" id="gpTest" aria-pressed="false">OFF</button></div>
         <div class="gp-row"><span>ガチャ</span><button type="button" class="gp-seg" id="gpGacha">ガチャへ戻る</button></div>
       </div>
@@ -1050,6 +1080,10 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       </div>
       <button class="btn-gold reveal-ok" id="rConfirm" type="button">次へ</button>
     </section>
+    <div class="rmulti" id="rMulti" hidden aria-live="polite">
+      <div class="rmulti-grid" id="rMultiGrid"></div>
+      <button class="btn-gold rmulti-ok" id="rMultiOk" type="button" hidden>次へ</button>
+    </div>
   </main>
   <aside class="side" id="rSide">
     <button class="side-title" id="rSideMin" type="button" aria-expanded="true"><span>履歴</span><span class="min-hint" id="rMinHint">最小化 ▾</span></button>
@@ -1251,6 +1285,13 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_rstop"><span>数字が止まる音</span></label><output id="svO_rstop"></output><input type="range" id="svV_rstop" min="0" max="200" step="5" aria-label="数字が止まる音"></div>
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_rwin"><span>当選のファンファーレ</span></label><output id="svO_rwin"></output><input type="range" id="svV_rwin" min="0" max="200" step="5" aria-label="当選のファンファーレ"></div>
     </div>
+  </div>
+</div>
+<div class="ask" id="splitAsk" role="dialog" aria-modal="true" aria-labelledby="splitAskT" hidden>
+  <div class="ask-box svbox">
+    <div class="flag-head"><div class="ask-t" id="splitAskT">複数当選（分割）</div><button class="btn-gold flag-close" type="button" id="splitClose">閉じる</button></div>
+    <p class="hint" id="splitHint"></p>
+    <div class="split-grid" id="splitGrid"></div>
   </div>
 </div>
 <div class="ask" id="flagAsk" role="dialog" aria-modal="true" aria-labelledby="flagAskT" hidden>
@@ -2532,6 +2573,32 @@ $('#peopleBody').addEventListener('change',e=>{
 $('#gpVol').addEventListener('click',()=>{gearClose();$('#svAsk').hidden=false});
 $('#gpRVol').addEventListener('click',()=>{const p=$('#rGearPop');p.hidden=true;$('#rGearBtn').setAttribute('aria-expanded','false');$('#rsvAsk').hidden=false});
 $('#rsvClose').addEventListener('click',()=>{$('#rsvAsk').hidden=true});
+/* ---- 複数当選（1つの賞を最大6人で分割） ---- */
+function splitRender(){
+  const pz=rCurrentPrize();if(!pz) return;
+  const cur=pz.split>1?pz.split:1,won=wonCount(pz);
+  $('#splitHint').textContent='「'+rk(pz)+'」を何人で分けますか？ 当選者は「'+rk(pz)+'-1」「'+rk(pz)+'-2」…と履歴に残ります。'+(won?'（すでに'+won+'人当選しているので、それより少なくはできません）':'');
+  $('#splitGrid').innerHTML=[1,2,3,4,5,6].map(n=>'<button type="button" data-split="'+n+'"'+(n===cur?' class="on"':'')+((n<Math.max(1,won))?' disabled':'')+'>'+n+'人<small>'+(n===1?'分割なし':'分割')+'</small></button>').join('');
+}
+$('#gpSplit').addEventListener('click',()=>{
+  const p=$('#rGearPop');p.hidden=true;$('#rGearBtn').setAttribute('aria-expanded','false');
+  if(busy||rAwait){toast('抽選中は変更できません');return}
+  if(rTestOn){toast('テストがONの間は設定できません');return}
+  if(!rCurrentPrize()){toast('ルーレットの景品がありません');return}
+  splitRender();$('#splitAsk').hidden=false;
+});
+$('#splitGrid').addEventListener('click',e=>{
+  const b=e.target.closest('[data-split]');if(!b||b.disabled) return;
+  const pz=rCurrentPrize();if(!pz) return;
+  const n=+b.dataset.split;
+  if(n>1){ if(!(pz.split>1)) pz.count0=pz.count; pz.split=n; pz.count=n }
+  else if(pz.split>1){ pz.count=Math.max(pz.count0||1,wonCount(pz)); delete pz.split; delete pz.count0 }
+  save();rRender();if(!rAwait&&!busy) rIdle();render();
+  toast(n>1?(rk(pz)+'を'+n+'人で分けます'):'分割をやめました');
+  $('#splitAsk').hidden=true;
+});
+$('#splitClose').addEventListener('click',()=>{$('#splitAsk').hidden=true});
+$('#splitAsk').addEventListener('click',e=>{if(e.target===$('#splitAsk')) $('#splitClose').click()});
 $('#rsvAsk').addEventListener('click',e=>{if(e.target===$('#rsvAsk')) $('#rsvClose').click()});
 $('#svClose').addEventListener('click',()=>{$('#svAsk').hidden=true});
 $('#svAsk').addEventListener('click',e=>{if(e.target===$('#svAsk')) $('#svClose').click()});
@@ -2734,6 +2801,7 @@ function rPlate(mode,o){
 }
 function rIdle(){
   rAwait=false;
+  try{R('rMulti').hidden=true}catch(e){}
   try{rZoom(false)}catch(e){}
   const pz=rCurrentPrize();
   rPlate('idle',{note:S.rprizes.length?'':'景品を登録してね'});
@@ -2767,6 +2835,7 @@ function rRender(){
   const b=R('rBanner');
   if(bpz){b.innerHTML='<span class="rank">'+esc(rk(bpz))+'</span><span class="item">'+esc(bpz.item)+'</span>';fitItem('#rBanner')}
   else b.innerHTML='<span class="banner-empty">'+(S.rprizes.length?'':'ルーレットの景品が登録されていません')+'</span>';
+  const gs=R('gpSplit');if(gs) gs.textContent=(pz&&pz.split>1)?pz.split+'人':'なし';
   const can=!busy&&!rAwait&&(rTestOn||(!!pz&&cand.length>0));
   R('rrig').classList.toggle('disabled',!can);
   R('rrig').classList.toggle('busy',busy);
@@ -2834,11 +2903,17 @@ async function rDraw(test){
   if(!pz){rResetKnob();return}
   const cand=T?[R_TEST_W]:rPool();
   if(!cand.length){toast('ルーレットの対象者がいません（ガチャ未当選・スロットフラグなし・職員番号が4桁以内の数字の方）');rResetKnob();return}
+  if(!T&&pz.split>1){
+    const need=Math.max(1,pz.split-wonCount(pz));
+    if(cand.length<need){toast('対象者が足りません（あと'+need+'人必要です）');rResetKnob();return}
+    return rDrawMulti(pz,need,cand);
+  }
   rthunk();
   busy=true;
   if(!T) S.rCurrentId=pz.id;
   rRender();
   startAudio();
+  const wonBefore=T?0:wonCount(pz);
   const winner=T?R_TEST_W:cand[rand(cand.length)];
   const num=empNum4(winner);
   preloadGlyphs((winner.dept||'')+(winner.name||''));
@@ -2866,7 +2941,7 @@ async function rDraw(test){
   }
   await rsleep(fast?250:700);
   if(!T){
-    const entry={id:uid(),personId:winner.id,empno:winner.empno||'',dept:winner.dept||'',name:winner.name,prizeId:pz.id,rank:rk(pz),item:pz.item,at:Date.now()};
+    const entry={id:uid(),personId:winner.id,empno:winner.empno||'',dept:winner.dept||'',name:winner.name,prizeId:pz.id,rank:rk(pz)+(pz.split>1?'-'+(wonBefore+1):''),item:pz.item,at:Date.now()};
     S.rhistory.push(entry);
     rLastId=pz.id;
     save();
@@ -2882,6 +2957,61 @@ async function rDraw(test){
   if(tier>=3){setTimeout(()=>confetti(260),800);setTimeout(()=>rwinSnd(3),700);setTimeout(()=>rCoins(40),900)}
   render();
 }
+/* 分割抽選：人数分のドラムを一度に表示して、同時に当選 */
+async function rDrawMulti(pz,k,cand){
+  rthunk();
+  busy=true;S.rCurrentId=pz.id;
+  rRender();startAudio();
+  const pool=cand.slice(),ws=[];
+  for(let i=0;i<k;i++) ws.push(pool.splice(rand(pool.length),1)[0]);
+  const wonBefore=wonCount(pz),tier=tierOf(pz);
+  ws.forEach(w=>preloadGlyphs((w.dept||'')+(w.name||'')));
+  const ov=R('rMulti'),grid=R('rMultiGrid'),ok=R('rMultiOk');
+  
+  grid.innerHTML=ws.map((w,i)=>'<div class="mcell"><div class="mi"><div class="mw">'+'<div class="rd spin"><span>?</span></div>'.repeat(4)+'</div><div class="md"><span>'+esc(w.dept||'')+'</span></div><div class="mn"><span>'+esc(w.name)+'</span></div></div></div>').join('');
+  ok.hidden=true;
+  /* バナー（商品名）の位置から画面いっぱいに広げる */
+  ov.style.top=(R('rBanner').offsetTop-4)+'px';
+  ov.hidden=false;
+  const gw=Math.max(100,ov.clientWidth-30),gh=Math.max(100,ov.clientHeight-100);
+  let cols=1,best=-1;
+  for(let c=1;c<=Math.min(k,3);c++){
+    const r=Math.ceil(k/c),W=gw/c,H=gh/r;
+    const sc=(W/H>=2.2)?Math.min(.105*W,.26*H):Math.min(.2*W,.24*H);
+    if(sc>best+1){best=sc;cols=c}
+  }
+  grid.style.gridTemplateColumns='repeat('+cols+',1fr)';
+  const cells=[...grid.children],nums=ws.map(empNum4);
+  const fast=shortMode();
+  const times=fast?[800,600,600,1000]:[2600,1700,1700,3000];
+  for(let i=0;i<4;i++){
+    const t0=performance.now(),dur=times[i];
+    while(true){
+      const el=performance.now()-t0;
+      if(el>=dur) break;
+      const slow=i===3?Math.max(0,(el/dur-.55)/.45):0;
+      cells.forEach(c=>[...c.querySelectorAll('.rd')].forEach((d,j)=>{if(j>=i) d.firstChild.textContent=String(rand(10))}));
+      rtick();
+      await rsleep(70+slow*280);
+    }
+    cells.forEach((c,n)=>{const d=c.querySelectorAll('.rd')[i];d.firstChild.textContent=nums[n][i];d.className='rd lock'});
+    rstopSnd(i);
+  }
+  await rsleep(fast?250:700);
+  ws.forEach((w,i)=>S.rhistory.push({id:uid(),personId:w.id,empno:w.empno||'',dept:w.dept||'',name:w.name,prizeId:pz.id,rank:rk(pz)+'-'+(wonBefore+i+1),item:pz.item,at:Date.now()+i}));
+  rLastId=pz.id;save();
+  busy=false;rAwait=true;rResetKnob();
+  cells.forEach(c=>{c.classList.add('show');
+    /* 枠いっぱい：高さに合わせた大きさから、幅に収まるまで縮める */
+    const f=el=>{const sp=el.firstChild,H=el.clientHeight,W=el.clientWidth*.97;let z=Math.max(10,H*.92);el.style.fontSize=z+'px';
+      const w=sp.offsetWidth;if(w>W&&w>0){z=Math.max(9,z*W/w);el.style.fontSize=z+'px'}};
+    f(c.querySelector('.mn'));f(c.querySelector('.md'))});
+  ok.hidden=false;
+  rwinSnd(tier);confetti(110+tier*70);
+  if(tier>=3){setTimeout(()=>confetti(260),800);setTimeout(()=>rwinSnd(3),700)}
+  render();
+}
+R('rMultiOk').addEventListener('click',()=>{if(!rAwait||busy) return;rIdle();render()});
 R('rConfirm').addEventListener('click',()=>{
   if(!rAwait||busy) return;
   rIdle();render();
