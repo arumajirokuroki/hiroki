@@ -118,6 +118,29 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .mcell.show .md,.mcell.show .mn{opacity:1;transform:none}
 .rmulti-ok{position:absolute;right:18px;bottom:18px;z-index:2;min-width:104px;min-height:48px;padding:0 20px;font-size:17px;letter-spacing:.12em;box-shadow:0 4px 12px rgba(0,0,0,.4);background:linear-gradient(#FFE58A,#E8A01A);color:#3a0a18}
 .rmulti-ok[hidden]{display:none}
+.gp-grid .gp-seg.sel{background:#14306e;color:#fff}
+#gachaApp .stage{position:relative}
+.gmulti{position:absolute;left:0;right:0;bottom:0;top:0;z-index:80;display:flex;flex-direction:column;padding:clamp(8px,1.6cqi,22px) clamp(8px,1.6cqi,22px) 72px;background:radial-gradient(ellipse at 50% 30%,#bfe3ff 0%,#8fc4f2 60%,#5d9fe0 100%);border-radius:inherit;overflow:hidden}
+.gmulti[hidden]{display:none}
+.ask-box .grp-new{width:100%;margin-top:10px;color:#14306e;border:2px dashed #14306e;background:#fff;font-size:16px}
+.grp-card .icon-btn{color:#14306e;border-color:#14306e;background:#fff}
+#grpList{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.grp-card{border:2px solid #14306e;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;background:#eaf3fc}
+.grp-card .gt{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700}
+.grp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.grp-chip{min-height:40px;min-width:56px;padding:0 12px;border-radius:999px;border:2px solid #14306e;background:#fff;color:#14306e;font:inherit;font-weight:700;cursor:pointer}
+.grp-chip.sel{background:#14306e;color:#fff}
+.grp-chip.other{opacity:.45}
+.gmulti-grid{flex:1;min-height:0;display:grid;gap:clamp(6px,1.2cqi,16px);grid-auto-rows:1fr}
+.gcell{container-type:size;min-height:0;min-width:0;border-radius:20px;background:linear-gradient(180deg,#fff,#e3f0fc);border:clamp(3px,.7cqmin,8px) solid #14306e;box-shadow:0 6px 0 rgba(20,48,110,.3),0 12px 26px rgba(20,48,110,.3);padding:1.6cqh 2.4cqw;animation:mZoom .6s cubic-bezier(.3,1.2,.4,1) both;display:grid;grid-template-rows:minmax(0,24fr) minmax(0,20fr) minmax(0,56fr);gap:1.2cqh}
+.gcell .gh,.gcell .gd,.gcell .gn{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;white-space:nowrap;line-height:1}
+.gcell .gh>span,.gcell .gd>span,.gcell .gn>span{display:inline-block;white-space:nowrap}
+.gcell .gh{color:#10275c;font-weight:700}
+.gcell .gh b{display:inline-block;font-family:var(--f-display);font-weight:400;color:#fff;background:linear-gradient(180deg,#FF9A4A,#E2560B);border-radius:.25em;padding:.02em .3em .08em;margin-right:.3em;-webkit-text-stroke:.03em #fff;paint-order:stroke fill}
+.gcell .gd{color:#3a5a95;font-weight:700}
+.gcell .gn{color:#10275c;font-weight:700;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif}
+.gmulti-ok{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;z-index:2;min-width:104px;min-height:48px;padding:0 20px;font-size:17px;letter-spacing:.12em;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+@media (max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse){.gmulti{padding-bottom:56px}.gmulti-ok{min-height:38px;min-width:90px;font-size:15px;bottom:10px}}
 /* ---------- gacha scene ---------- */
 .plate{
   --zl:34%;--lv:24px;--mw:min(32cqi,calc((100dvh - 232px) * .56));--bw:min(22cqi,calc(var(--mw) * .6875));
@@ -451,6 +474,7 @@ button.chip.absent{opacity:.5;text-decoration:line-through}
 
 .csvbtn{width:auto;padding:0 18px;min-height:48px;border-radius:10px;font-weight:700}
 .row .csvbtn{flex:1 1 220px;justify-content:center;text-align:center}
+.row.pzrow{flex-wrap:nowrap}.row.pzrow .csvbtn{flex:1 1 0;min-width:0;padding:0 8px;font-size:14px;line-height:1.25}
 .page-tools{flex:0 0 auto;margin:0;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
 .page-add{flex:0 0 auto;margin:0!important;padding:10px 16px 12px!important;border-top:0!important;border-bottom:1px solid var(--line);background:var(--panel)}
 .add-prize.page-add{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px 12px;align-items:end}
@@ -964,7 +988,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v256</div>
+  <div class="ver-tag" id="verTag">v266</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1109,6 +1133,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
         <div class="gp-row"><span>BGM</span><button class="gp-seg" type="button" id="bgmBtn" data-act="bgm-toggle" aria-pressed="false">BGM ON</button></div>
         <div class="gp-row"><span>ガチャ速度</span><div class="gp-pair" role="group" aria-label="ガチャ速度"><button type="button" class="gp-seg" id="spdNormal" data-spd="0">ふつう</button><button type="button" class="gp-seg" id="spdFast" data-spd="1">はやい</button></div></div>
         <div class="gp-skip" id="gpSkip"><div class="gp-row"><span>スキップ</span><button type="button" class="gp-seg" id="skipOpen" aria-expanded="false" aria-controls="skipGrid">スキップ</button></div><div class="gp-skt" id="skipHint" hidden><small>押した順位まで進みます</small></div><div class="gp-grid" id="skipGrid" hidden></div></div>
+        <div class="gp-skip" id="gpMulti"><div class="gp-row"><span>グループ当選</span><button type="button" class="gp-seg" id="grpToggle" aria-pressed="false">OFF</button></div></div>
         <div class="gp-row"><span>音量</span><button type="button" class="gp-seg" id="gpVol">音量設定</button></div>
         <div class="gp-row"><span>第二幕</span><button type="button" class="gp-seg" id="gpRoulette">ルーレットへ</button></div>
       </div>
@@ -1160,6 +1185,10 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <button class="btn-gold reveal-ok" id="confirmBtn" type="button">次へ</button>
       <div class="flash" id="flash" aria-hidden="true"></div>
     </section>
+    <div class="gmulti" id="gMulti" hidden aria-live="polite">
+      <div class="gmulti-grid" id="gMultiGrid"></div>
+      <button class="btn-gold gmulti-ok" id="gMultiOk" type="button">次へ</button>
+    </div>
 
 
   </main>
@@ -1168,10 +1197,11 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
     <button class="side-title" id="sideMin" type="button" aria-expanded="true"><span>履歴</span><span class="min-hint" id="minHint">最小化 ▾</span></button>
 
     <div class="panel" id="panel-prizes" role="tabpanel" aria-labelledby="tab-prizes">
-      <div class="row">
+      <div class="row pzrow">
         <label class="btn-ghost filebtn csvbtn" for="pzCsvFile">CSVから登録</label>
         <button class="btn-ghost csvbtn" type="button" id="pzCsvTemplate">CSVのフォーマットをダウンロード</button>
         <label class="btn-ghost filebtn csvbtn" for="pzBulkFile">画像をまとめて登録</label>
+        <button class="btn-ghost csvbtn" type="button" id="grpAdd">＋ グループを作成</button>
         <input type="file" id="pzBulkFile" accept="image/*" multiple hidden>
         <input type="file" id="pzCsvFile" accept=".csv,text/csv,text/plain" hidden></div>
       <input type="file" id="pzImgFile" accept="image/*" hidden>
@@ -1285,6 +1315,13 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_rstop"><span>数字が止まる音</span></label><output id="svO_rstop"></output><input type="range" id="svV_rstop" min="0" max="200" step="5" aria-label="数字が止まる音"></div>
       <div class="vol"><label class="switch" style="margin:0"><input type="checkbox" id="svOn_rwin"><span>当選のファンファーレ</span></label><output id="svO_rwin"></output><input type="range" id="svV_rwin" min="0" max="200" step="5" aria-label="当選のファンファーレ"></div>
     </div>
+  </div>
+</div>
+<div class="ask" id="grpAsk" role="dialog" aria-modal="true" aria-labelledby="grpAskT" hidden>
+  <div class="ask-box svbox">
+    <div class="flag-head"><div class="ask-t" id="grpAskT">同時当選グループ</div><button class="btn-gold flag-close" type="button" id="grpClose">閉じる</button></div>
+    <div id="grpList"></div>
+    <button class="btn-ghost csvbtn grp-new" type="button" id="grpNew">＋ グループを追加</button>
   </div>
 </div>
 <div class="ask" id="splitAsk" role="dialog" aria-modal="true" aria-labelledby="splitAskT" hidden>
@@ -1473,6 +1510,7 @@ function setEgg(o){
 }
 function idlePlate(){
   awaitConfirm=false;
+  try{$('#gMulti').hidden=true}catch(e){}
   const pz=currentPrize();
   setPlate('idle',{note:pz?'しんわくんの手を\n下にひっぱろう！':(S.prizes.length?'':'景品を登録してね')});
   if(!pz&&S.prizes.length) plate.dataset.end='1';
@@ -1599,7 +1637,48 @@ function renderStage(){
 
 }
 
+function grpItem(p){return String(p.item||'').replace(/\s+/g,'').toLowerCase()}
+function grpSame(g,p){
+  const m=S.prizes.filter(x=>(g.ids||[]).includes(x.id)&&x.id!==p.id);
+  return !m.length||m.every(x=>grpItem(x)===grpItem(p));
+}
+function renderGroups(){
+  $('#grpAdd').hidden=PK!=='prizes';
+  if($('#grpAsk').hidden) return;
+  const gs=gGroups(),ps=S.prizes.slice().sort((a,b)=>b.rank-a.rank);
+  $('#grpList').innerHTML=gs.map((g,n)=>'<div class="grp-card"><div class="gt"><span>グループ'+(n+1)+'<small>（'+(g.ids||[]).filter(id=>S.prizes.some(p=>p.id===id)).length+'賞）</small></span><button class="icon-btn" type="button" data-grp-del="'+g.id+'" aria-label="グループ'+(n+1)+'を削除" style="min-height:40px;width:40px">✕</button></div><div class="grp-chips">'
+    +ps.map(p=>{const inThis=(g.ids||[]).includes(p.id),other=!inThis&&(gs.some(x=>x!==g&&(x.ids||[]).includes(p.id))||!grpSame(g,p));return '<button type="button" class="grp-chip'+(inThis?' sel':'')+(other?' other':'')+'" data-grp="'+g.id+'" data-pz="'+p.id+'" aria-pressed="'+inThis+'" title="'+esc(p.item)+'">'+esc(rk(p))+'</button>'}).join('')
+    +'</div></div>').join('');
+}
+function grpNew(){
+  if(!Array.isArray(S.pgroups)) S.pgroups=[];
+  S.pgroups.push({id:uid(),ids:[]});save();renderGroups();
+}
+$('#grpAdd').addEventListener('click',()=>{
+  if(!gGroups().length) grpNew();
+  $('#grpAsk').hidden=false;renderGroups();
+});
+$('#grpNew').addEventListener('click',grpNew);
+$('#grpClose').addEventListener('click',()=>{$('#grpAsk').hidden=true;gearMultiSync()});
+$('#grpAsk').addEventListener('click',e=>{
+  if(e.target===$('#grpAsk')){$('#grpClose').click();return}
+  const d=e.target.closest('[data-grp-del]');
+  if(d){S.pgroups=gGroups().filter(g=>g.id!==d.dataset.grpDel);save();renderGroups();gearMultiSync();return}
+  const b=e.target.closest('[data-grp]');if(!b) return;
+  const g=gGroups().find(x=>x.id===b.dataset.grp);if(!g) return;
+  g.ids=(g.ids||[]).filter(id=>S.prizes.some(p=>p.id===id));
+  const id=b.dataset.pz,i=g.ids.indexOf(id);
+  if(i>=0) g.ids.splice(i,1);
+  else{
+    if(!grpSame(g,S.prizes.find(p=>p.id===id)||{})){toast('同じ商品名の順位だけ、同じグループに入れられます');return}
+    if(g.ids.length>=4){toast('1グループに入れられるのは4賞までです');return}
+    if(gGroups().some(x=>x!==g&&(x.ids||[]).includes(id))){toast('この順位はほかのグループに入っています');return}
+    g.ids.push(id);
+  }
+  save();renderGroups();gearMultiSync();
+});
 function renderPrizes(){
+  renderGroups();
   const cur=PK==='rprizes'?rCurrentPrize():currentPrize();
   $('#prizeList').innerHTML=PL().length?PL().slice().reverse().map((p,i)=>{
     const w=wonCount(p),done=w>=p.count,isCur=cur&&cur.id===p.id;
@@ -1688,7 +1767,12 @@ function renderSettings(){
   $('#optSound').checked=!!S.opts.sound;
 }
 
-function render(){renderStage();renderPrizes();renderPeople();renderHistory();renderSettings();rRender()}
+function pruneGroups(){
+  if(!Array.isArray(S.pgroups)) return;
+  if(!S.prizes.length){S.pgroups=[];S.gon=false;return}
+  S.pgroups.forEach(g=>{g.ids=(g.ids||[]).filter(id=>S.prizes.some(p=>p.id===id))});
+}
+function render(){pruneGroups();renderStage();renderPrizes();renderPeople();renderHistory();renderSettings();rRender()}
 function syncPeopleText(){$('#npNo').value='';$('#npDept').value='';$('#npName').value='';}
 
 /* ---------- tabs ---------- */
@@ -2001,10 +2085,72 @@ async function hatch(tier,ready){
   await w(250);
 }
 
+/* ---- 複数当選：選んだ順位が1回のガチャで一斉に当選 ---- */
+function gGroups(){return Array.isArray(S.pgroups)?S.pgroups:[]}
+function gMultiSel(){
+  const cur=S.gon?currentPrize():null;
+  if(!cur) return [];
+  const g=gGroups().find(g=>(g.ids||[]).includes(cur.id));
+  if(!g) return [];
+  return S.prizes.filter(p=>g.ids.includes(p.id)&&isOpen(p)).slice(0,4);
+}
+async function drawMulti(list){
+  if(busy) return;
+  /* 当たれる人が少ない景品（ガチャフラグの制限あり）から先に決める */
+  const order=list.slice().sort((a,b)=>(noTop(b)?1:0)-(noTop(a)?1:0));
+  const used=new Set(),got=new Map();
+  for(const pz of order){
+    const c=pool(pz).filter(p=>!used.has(p.id));
+    if(!c.length){toast('「'+rk(pz)+'」に当たる参加者が足りません');resetKnob();return}
+    const w=c[rand(c.length)];used.add(w.id);got.set(pz.id,w);
+  }
+  busy=true;
+  lastResultId=null;
+  renderStage();
+  startAudio();
+  list.forEach(pz=>{const w=got.get(pz.id);preloadGlyphs((w.dept||'')+(w.name||''))});
+  let best=list[0];list.forEach(p=>{if(tierOf(p)>tierOf(best)) best=p});
+  const tier=tierOf(best);
+  ballTier=tier;ballCol=colOf(best);
+  const ready=eggReady;eggReady=false;
+  setPlate('spinning',{tier:tier});
+  await hatch(tier,ready);
+  const now=Date.now();
+  list.forEach((pz,i)=>{const w=got.get(pz.id);S.history.push({id:uid(),personId:w.id,empno:w.empno||'',dept:w.dept||'',name:w.name,prizeId:pz.id,rank:rk(pz),item:pz.item,at:now+i})});
+  S.currentPrizeId=(currentPrize()||{}).id||null;
+  save();
+  busy=false;
+  lastPrizeId=null;
+  awaitConfirm=true;
+  resetKnob(true);
+  setEgg({tier:tier,gone:true});
+  gMultiShow(list.map(pz=>({pz,w:got.get(pz.id)})));
+  fanfare(tier);
+  confetti(110+tier*70);
+  if(ballCol==='rainbow'){setTimeout(()=>confetti(260),800);fanfare(3);setTimeout(()=>fanfare(3),700)}
+  render();
+}
+function gMultiShow(items){
+  const ov=$('#gMulti'),grid=$('#gMultiGrid'),k=items.length;
+  grid.innerHTML=items.map(({pz,w})=>'<div class="gcell"><div class="gh"><span><b>'+esc(rk(pz))+'</b></span></div><div class="gd"><span>'+esc(w.dept||'')+'</span></div><div class="gn"><span>'+esc(w.name)+'</span></div></div>').join('');
+  ov.style.top=($('#banner').offsetTop-4)+'px';
+  ov.hidden=false;
+  const gw=Math.max(100,ov.clientWidth-30),gh=Math.max(100,ov.clientHeight-100);
+  let cols=1,best=-1;
+  for(let c=1;c<=Math.min(k,4);c++){const r=Math.ceil(k/c),W=gw/c,H=gh/r,sc=Math.min(W*.2,H*.32);if(sc>best+1){best=sc;cols=c}}
+  grid.style.gridTemplateColumns='repeat('+cols+',1fr)';
+  [...grid.children].forEach(c=>{
+    const f=(el,hf)=>{const sp=el.firstChild,H=el.clientHeight,W=el.clientWidth*.97;let z=Math.max(10,H*hf);el.style.fontSize=z+'px';const w=sp.offsetWidth;if(w>W&&w>0){z=Math.max(9,z*W/w);el.style.fontSize=z+'px'}};
+    f(c.querySelector('.gh'),.7);f(c.querySelector('.gd'),.8);f(c.querySelector('.gn'),.9);
+  });
+}
+$('#gMultiOk').addEventListener('click',()=>{if(!awaitConfirm||busy) return;$('#confirmBtn').click()});
 async function draw(){
   if(busy) return;
   const pz=currentPrize();
   if(!pz){resetKnob();return}
+  const msel=gMultiSel();
+  if(msel.length>=2) return drawMulti(msel);
   const cand=pool(pz);
   if(!cand.length){toast(noTop(pz)&&pool().length?'この順位に当たる参加者がいません（ガチャフラグの方は'+f1Min()+'位までにだけ当たります）':'抽選できる参加者がいません');resetKnob();return}
   busy=true;
@@ -2921,7 +3067,7 @@ async function rDraw(test){
   rPlate('spinning',{tier:tier});
   rDigits(null,'spin');
   rZoom(true);
-  const fast=shortMode();
+  const fast=reduced(); /* ガチャの「速く」設定の影響を受けない（ルーレットは常に通常速度） */
   const times=fast?[800,600,600,1000]:[2600,1700,1700,3000];
   for(let i=0;i<4;i++){
     const t0=performance.now(),dur=times[i];
@@ -2982,7 +3128,7 @@ async function rDrawMulti(pz,k,cand){
   }
   grid.style.gridTemplateColumns='repeat('+cols+',1fr)';
   const cells=[...grid.children],nums=ws.map(empNum4);
-  const fast=shortMode();
+  const fast=reduced(); /* ガチャの「速く」設定の影響を受けない（ルーレットは常に通常速度） */
   const times=fast?[800,600,600,1000]:[2600,1700,1700,3000];
   for(let i=0;i<4;i++){
     const t0=performance.now(),dur=times[i];
@@ -3623,7 +3769,19 @@ $('#skipYes').addEventListener('click',()=>{
   save();idlePlate();render();
   toast(short?'対象者が足りなくなったため、'+n+'件でスキップを止めました':n+'件をスキップしました。次は'+rk(pl.target)+'です');
 });
-function gearSync(){gearSkipSync();const f=!!S.opts.fast;$('#spdNormal').classList.toggle('on',!f);$('#spdFast').classList.toggle('on',f);$('#spdNormal').setAttribute('aria-pressed',String(!f));$('#spdFast').setAttribute('aria-pressed',String(f))}
+function gearMultiSync(){
+  const has=gGroups().some(g=>(g.ids||[]).filter(id=>S.prizes.some(p=>p.id===id)).length>=2);
+  $('#gpMulti').hidden=!has;
+  if(!has){S.gon=false;return}
+  const on=!!S.gon,b=$('#grpToggle');
+  b.textContent=on?'ON':'OFF';b.setAttribute('aria-pressed',String(on));
+}
+$('#grpToggle').addEventListener('click',e=>{
+  e.stopPropagation();
+  if(busy||awaitConfirm){toast('結果を「次へ」で閉じてから切り替えてください');return}
+  S.gon=!S.gon;save();gearMultiSync();
+});
+function gearSync(){gearSkipSync();gearMultiSync();const f=!!S.opts.fast;$('#spdNormal').classList.toggle('on',!f);$('#spdFast').classList.toggle('on',f);$('#spdNormal').setAttribute('aria-pressed',String(!f));$('#spdFast').setAttribute('aria-pressed',String(f))}
 function gearClose(){const p=$('#gearPop');if(p.hidden)return;skipShow(false);p.hidden=true;$('#gearBtn').setAttribute('aria-expanded','false')}
 $('#gearBtn').addEventListener('click',e=>{const p=$('#gearPop');p.hidden=!p.hidden;$('#gearBtn').setAttribute('aria-expanded',String(!p.hidden));gearSync()});
 $('#gearPop').addEventListener('click',e=>{const t=e.target.closest('[data-spd]');if(t){S.opts.fast=t.dataset.spd==='1';save();gearSync()}});
