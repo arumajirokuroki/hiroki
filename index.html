@@ -187,7 +187,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 @keyframes hop{0%,100%{transform:translateY(0) scale(1.02,.97)}40%{transform:translateY(-20px) scale(.98,1.03)}}
 @keyframes joy{0%{transform:translateY(0)}30%{transform:translateY(-38px) rotate(-4deg)}60%{transform:translateY(0) rotate(3deg)}100%{transform:translateY(0)}}
 
-.egg-wrap{position:absolute;inset:0;pointer-events:none}
+.egg-wrap{position:absolute;inset:0;pointer-events:none;z-index:6}
 .egg{
   position:absolute;left:calc(50% - var(--bw) / 2);bottom:calc(12px + .9cqi);
   --ox:calc(100cqi / 3);--oy:calc(var(--bw) / 2 + .9cqi - var(--mw) * .2133);
@@ -991,7 +991,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v269</div>
+  <div class="ver-tag" id="verTag">v272</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1514,7 +1514,7 @@ function setEgg(o){
   eggSync();
 }
 /* グループ当選: 当選数ぶんのカプセルを並べて転がす（本体のカプセル＋複製） */
-function eggSync(){document.querySelectorAll('#egg ~ .eclone').forEach(x=>{x.className=eggEl.className+' eclone'})}
+function eggSync(){document.querySelectorAll('#egg ~ .eclone').forEach(x=>{if(x.dataset.rel!=='0') x.className=eggEl.className+' eclone'})}
 function eggMultiClear(){
   document.querySelectorAll('#egg ~ .eclone').forEach(x=>x.remove());
   ['--dx','--es','animation-delay','translate','scale'].forEach(k=>eggEl.style.removeProperty(k));
@@ -1522,12 +1522,11 @@ function eggMultiClear(){
 function eggMulti(n){
   eggMultiClear();
   if(n<2) return;
-  const sc={2:.66,3:.52,4:.43}[Math.min(4,n)]||.43,gap=1.0;
+  const sc=1,gap={2:1.05,3:.92,4:.78}[Math.min(4,n)]||.78; /* 1個のときと同じ大きさ。キャラや筐体に重なってもよい */
   const place=(el,i)=>{
     const dx=(i-(n-1)/2)*sc*gap;
     el.style.setProperty('translate','calc(var(--bw) * '+dx.toFixed(3)+') 0');
     el.style.setProperty('scale',String(sc));
-    el.style.setProperty('animation-delay',(i*.16).toFixed(2)+'s');
   };
   place(eggEl,0);
   for(let i=1;i<n;i++){
@@ -2076,8 +2075,18 @@ async function hatch(tier,ready){
   clearEggPose();
   /* ranked capsules (1位-5位) come out in their final colour from the start; no colour upgrades */
   const base=ballCol?tier:0;
+  /* グループ当選: 1つ目が転がり終わる前に、2つ目以降も1秒おきに排出口から出てくる */
+  const extra=[...document.querySelectorAll('#egg ~ .eclone')];
+  extra.forEach(c=>{c.dataset.rel='0'});
   setEgg({tier:base,roll:true});
   rollSnd(k);
+  for(const c of extra){
+    await w(1000);
+    if(id!==hatchId) break;
+    c.dataset.rel='1';c.className=eggEl.className+' eclone';
+    rollSnd(k);
+  }
+  extra.forEach(c=>{delete c.dataset.rel});
   await w(1650);
   curWob=1;
   setEgg({tier:base,wob:1});
@@ -3761,7 +3770,20 @@ function renderBgm(){
   $$('[data-act="bgm-toggle"]').forEach(b=>{b.textContent=S.opts.bgm&&bgmPlaying?'BGM ON':'BGM OFF';b.setAttribute('aria-pressed',String(!!(S.opts.bgm&&bgmPlaying)))});
   gearSync();
 }
-function skipTargets(){const o=S.prizes.filter(isOpen);return o.length>1?o.slice(1):[]}
+/* グループ当選がONで、まだ2賞以上あいているグループに属する賞 → そのグループのあいている賞（なければ空） */
+function skipGroupOf(p){
+  if(!gOn()||!p) return [];
+  const g=gGroups().find(g=>(g.ids||[]).includes(p.id));
+  if(!g) return [];
+  const m=S.prizes.filter(x=>g.ids.includes(x.id)&&isOpen(x));
+  return m.length>=2?m:[];
+}
+function skipTargets(){
+  const o=S.prizes.filter(isOpen);
+  if(!o.length) return [];
+  /* 先頭の賞はふつう押す意味がないが、グループに入っているときはグループごとスキップできる */
+  return (o.length>1||skipGroupOf(o[0]).length)?(skipGroupOf(o[0]).length?o:o.slice(1)):[];
+}
 let skipId=null;
 function skipShow(on){$('#skipGrid').hidden=!on;$('#skipHint').hidden=!on;$('#skipOpen').setAttribute('aria-expanded',String(on));$('#skipOpen').classList.toggle('on',on)}
 $('#skipOpen').addEventListener('click',()=>skipShow($('#skipGrid').hidden));
@@ -3774,16 +3796,22 @@ function gearSkipSync(){
 }
 function skipPlan(id){
   const t=S.prizes.filter(isOpen),i=t.findIndex(p=>p.id===id);
-  return {target:t[i],skipped:i>0?t.slice(0,i):[]};
+  if(i<0) return {target:null,skipped:[],end:false,grp:false};
+  /* グループに当たる賞を押したら、そのグループ全部をスキップして、グループ以外の賞に飛ぶ */
+  const g=skipGroupOf(t[i]);
+  const set=new Set(t.slice(0,i).concat(g));
+  const skipped=t.filter(p=>set.has(p));
+  const target=t.find(p=>!set.has(p))||null;
+  return {target,skipped,end:!target&&skipped.length>0,grp:g.length>0};
 }
 $('#skipGrid').addEventListener('click',e=>{
   const b=e.target.closest('[data-skip]');if(!b) return;
   if(busy||awaitConfirm){toast('結果を「次へ」で閉じてからスキップしてください');return}
-  const pl=skipPlan(b.dataset.skip);if(!pl.target||!pl.skipped.length) return;
+  const pl=skipPlan(b.dataset.skip);if(!pl.skipped.length) return;
   skipId=b.dataset.skip;
   const n=pl.skipped.reduce((a,p)=>a+p.count-wonCount(p),0);
-  $('#skipAskT').textContent=rk(pl.target)+'までスキップ？';
-  $('#skipAskS').textContent=rk(pl.skipped[0])+'〜'+rk(pl.skipped[pl.skipped.length-1])+'の'+n+'件を演出なしで自動抽選して、結果を記録します。元に戻せません。';
+  $('#skipAskT').textContent=pl.target?(pl.grp?'グループごとスキップして'+rk(pl.target)+'へ？':rk(pl.target)+'までスキップ？'):'最後までスキップ？';
+  $('#skipAskS').textContent=(pl.grp?pl.skipped.map(rk).join('・'):rk(pl.skipped[0])+'〜'+rk(pl.skipped[pl.skipped.length-1]))+'の'+n+'件を演出なしで自動抽選して、結果を記録します。元に戻せません。';
   gearClose();$('#skipAsk').hidden=false;$('#skipYes').focus();
 });
 $('#skipNo').addEventListener('click',()=>{$('#skipAsk').hidden=true});
@@ -3791,7 +3819,7 @@ $('#skipAsk').addEventListener('click',e=>{if(e.target===$('#skipAsk'))$('#skipA
 $('#skipYes').addEventListener('click',()=>{
   $('#skipAsk').hidden=true;
   if(busy||awaitConfirm) return;
-  const pl=skipPlan(skipId);if(!pl.target) return;
+  const pl=skipPlan(skipId);if(!pl.skipped.length) return;
   let n=0,short=false;
   for(const pz of pl.skipped){
     while(isOpen(pz)){
@@ -3803,9 +3831,9 @@ $('#skipYes').addEventListener('click',()=>{
     }
     if(short) break;
   }
-  S.currentPrizeId=short?null:pl.target.id;lastResultId=null;lastPrizeId=null;
+  S.currentPrizeId=short||!pl.target?null:pl.target.id;lastResultId=null;lastPrizeId=null;
   save();idlePlate();render();
-  toast(short?'対象者が足りなくなったため、'+n+'件でスキップを止めました':n+'件をスキップしました。次は'+rk(pl.target)+'です');
+  toast(short?'対象者が足りなくなったため、'+n+'件でスキップを止めました':n+'件をスキップしました。'+(pl.target?'次は'+rk(pl.target)+'です':'すべて終わりました'));
 });
 function gearMultiSync(){
   const has=gGroups().some(g=>(g.ids||[]).filter(id=>S.prizes.some(p=>p.id===id)).length>=2);
