@@ -77,6 +77,9 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 #rouletteApp .prize-banner .rank{font-size:clamp(64px,12vw,124px);line-height:1;font-weight:400;flex:1 1 0;min-width:0;text-align:center;padding:0;overflow:hidden;white-space:nowrap}
 #gachaApp .prize-banner .rank{flex:1 1 0;min-width:0;text-align:center;padding:0;overflow:hidden;white-space:nowrap}
 #gachaApp .prize-banner .item{flex:5 1 0;min-width:0}
+#gachaApp .prize-banner .rank.grp{display:grid;grid-template-columns:auto auto;grid-auto-rows:1fr;align-content:center;justify-content:center;column-gap:.3em;flex:0 1 auto;max-width:48%;line-height:1}
+#gachaApp .prize-banner .rank.grp.g2{grid-template-columns:auto}
+#gachaApp .prize-banner .rank.grp i{font-style:normal;white-space:nowrap;display:flex;align-items:center;justify-content:center}
 #gachaApp .prize-banner .rank{font-size:clamp(64px,12vw,124px);line-height:1;padding-right:.05em;font-weight:900;-webkit-text-stroke:.06em #fff;paint-order:stroke fill;color:#F28A12;text-shadow:0 3px 0 rgba(20,48,110,.25)}
 .ptable .sort-btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:.25em;font:inherit;color:inherit;padding:8px 8px;margin:-6px -4px;border-radius:8px;-webkit-tap-highlight-color:transparent}
 .ptable .sort-btn i{font-style:normal;font-size:.8em;min-width:1em;color:#E8A01A}
@@ -988,7 +991,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v266</div>
+  <div class="ver-tag" id="verTag">v269</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1409,6 +1412,7 @@ function load(){
         d.opts.vol=Object.assign({master:1,bgm:.5,se:1},d.opts.vol||{});
         {const dv=svDefault(),o=d.opts.sv||{};Object.keys(dv).forEach(k=>{dv[k]=Object.assign(dv[k],o[k]||{})});d.opts.sv=dv}
         d.sample=Object.assign({people:false,prizes:false},d.sample||{});
+        delete d.gon; /* グループ当選は起動のたびに自動（グループがあればON） */
         /* older saves: prizes had no numeric rank */
         if(d.prizes.some(p=>typeof p.rank!=='number')){
           if(d.sample.prizes&&!d.history.length) d.prizes=sampleState().prizes;
@@ -1507,10 +1511,35 @@ function setEgg(o){
   if(o.tier&&o.tier===ballTier&&ballCol) c.push('col-'+ballCol);
   if(o.wob) c.push('w'+o.wob);
   eggEl.className=c.join(' ');
+  eggSync();
+}
+/* グループ当選: 当選数ぶんのカプセルを並べて転がす（本体のカプセル＋複製） */
+function eggSync(){document.querySelectorAll('#egg ~ .eclone').forEach(x=>{x.className=eggEl.className+' eclone'})}
+function eggMultiClear(){
+  document.querySelectorAll('#egg ~ .eclone').forEach(x=>x.remove());
+  ['--dx','--es','animation-delay','translate','scale'].forEach(k=>eggEl.style.removeProperty(k));
+}
+function eggMulti(n){
+  eggMultiClear();
+  if(n<2) return;
+  const sc={2:.66,3:.52,4:.43}[Math.min(4,n)]||.43,gap=1.0;
+  const place=(el,i)=>{
+    const dx=(i-(n-1)/2)*sc*gap;
+    el.style.setProperty('translate','calc(var(--bw) * '+dx.toFixed(3)+') 0');
+    el.style.setProperty('scale',String(sc));
+    el.style.setProperty('animation-delay',(i*.16).toFixed(2)+'s');
+  };
+  place(eggEl,0);
+  for(let i=1;i<n;i++){
+    const c=eggEl.cloneNode(true);
+    c.removeAttribute('id');c.classList.add('eclone');
+    place(c,i);
+    eggEl.parentNode.appendChild(c);
+  }
 }
 function idlePlate(){
   awaitConfirm=false;
-  try{$('#gMulti').hidden=true}catch(e){}
+  try{$('#gMulti').hidden=true;eggMultiClear()}catch(e){}
   const pz=currentPrize();
   setPlate('idle',{note:pz?'しんわくんの手を\n下にひっぱろう！':(S.prizes.length?'':'景品を登録してね')});
   if(!pz&&S.prizes.length) plate.dataset.end='1';
@@ -1537,7 +1566,9 @@ function fitItem(sel){
       rk.style.flex='';const n=[...rk.textContent.trim()].length;
       if(n>=4){const bw=rk.parentElement.clientWidth;rk.style.flex='0 0 '+Math.min(n*(cmp0?78:100),bw*.45)+'px'}
     }
-    if(rk){rk.style.fontSize='';let rf=parseFloat(getComputedStyle(rk).fontSize)||100;
+    if(rk){rk.style.fontSize='';
+      if(rk.classList.contains('grp')){const bh0=document.querySelector(sel).clientHeight;rk.style.fontSize=Math.max(20,bh0/2*.8)+'px'} /* 2段に並べる */
+      let rf=parseFloat(getComputedStyle(rk).fontSize)||100;
       while(rf>20&&rk.scrollWidth>rk.clientWidth+1){rf-=2;rk.style.fontSize=rf+'px'}}
   }
   const cmp=window.matchMedia&&matchMedia('(max-height:520px) and (orientation:landscape), (orientation:landscape) and (pointer:coarse)').matches;
@@ -1617,7 +1648,10 @@ function renderStage(){
   const bpz=(awaitConfirm&&S.prizes.find(p=>p.id===lastPrizeId))||pz;
 
   if(bpz){
-    $('#banner').innerHTML='<span class="rank">'+esc(rk(bpz))+'</span><span class="item">'+esc(bpz.item)+'</span>';
+    /* グループ当選に当たる順位のときは、同時に当選する順位をすべて並べて見せる */
+    const gs=awaitConfirm?[]:gMultiSel();
+    const rankHtml=gs.length>=2?'<span class="rank grp g'+gs.length+'">'+gs.map(p=>'<i>'+esc(rk(p))+'</i>').join('')+'</span>':'<span class="rank">'+esc(rk(bpz))+'</span>';
+    $('#banner').innerHTML=rankHtml+'<span class="item">'+esc(bpz.item)+'</span>';
     fitItem();
   }else{
     $('#banner').innerHTML='<span class="banner-empty">'+(S.prizes.length?'':'景品が登録されていません')+'</span>';
@@ -1652,7 +1686,7 @@ function renderGroups(){
 }
 function grpNew(){
   if(!Array.isArray(S.pgroups)) S.pgroups=[];
-  S.pgroups.push({id:uid(),ids:[]});save();renderGroups();
+  S.pgroups.push({id:uid(),ids:[]});delete S.gon;save();renderGroups();
 }
 $('#grpAdd').addEventListener('click',()=>{
   if(!gGroups().length) grpNew();
@@ -1663,7 +1697,7 @@ $('#grpClose').addEventListener('click',()=>{$('#grpAsk').hidden=true;gearMultiS
 $('#grpAsk').addEventListener('click',e=>{
   if(e.target===$('#grpAsk')){$('#grpClose').click();return}
   const d=e.target.closest('[data-grp-del]');
-  if(d){S.pgroups=gGroups().filter(g=>g.id!==d.dataset.grpDel);save();renderGroups();gearMultiSync();return}
+  if(d){S.pgroups=gGroups().filter(g=>g.id!==d.dataset.grpDel);delete S.gon;save();renderGroups();gearMultiSync();return}
   const b=e.target.closest('[data-grp]');if(!b) return;
   const g=gGroups().find(x=>x.id===b.dataset.grp);if(!g) return;
   g.ids=(g.ids||[]).filter(id=>S.prizes.some(p=>p.id===id));
@@ -1675,7 +1709,7 @@ $('#grpAsk').addEventListener('click',e=>{
     if(gGroups().some(x=>x!==g&&(x.ids||[]).includes(id))){toast('この順位はほかのグループに入っています');return}
     g.ids.push(id);
   }
-  save();renderGroups();gearMultiSync();
+  delete S.gon;save();renderGroups();gearMultiSync();
 });
 function renderPrizes(){
   renderGroups();
@@ -1769,7 +1803,8 @@ function renderSettings(){
 
 function pruneGroups(){
   if(!Array.isArray(S.pgroups)) return;
-  if(!S.prizes.length){S.pgroups=[];S.gon=false;return}
+  if(!S.prizes.length){S.pgroups=[];delete S.gon;return}
+  if(!S.pgroups.length) delete S.gon;
   S.pgroups.forEach(g=>{g.ids=(g.ids||[]).filter(id=>S.prizes.some(p=>p.id===id))});
 }
 function render(){pruneGroups();renderStage();renderPrizes();renderPeople();renderHistory();renderSettings();rRender()}
@@ -2087,8 +2122,10 @@ async function hatch(tier,ready){
 
 /* ---- 複数当選：選んだ順位が1回のガチャで一斉に当選 ---- */
 function gGroups(){return Array.isArray(S.pgroups)?S.pgroups:[]}
+/* グループ当選: グループがあれば初期はON、1つも無ければOFF（切り替えた後はその選択を覚える） */
+function gOn(){return gGroups().length>0&&S.gon!==false}
 function gMultiSel(){
-  const cur=S.gon?currentPrize():null;
+  const cur=gOn()?currentPrize():null;
   if(!cur) return [];
   const g=gGroups().find(g=>(g.ids||[]).includes(cur.id));
   if(!g) return [];
@@ -2108,6 +2145,7 @@ async function drawMulti(list){
   lastResultId=null;
   renderStage();
   startAudio();
+  eggMulti(list.length);
   list.forEach(pz=>{const w=got.get(pz.id);preloadGlyphs((w.dept||'')+(w.name||''))});
   let best=list[0];list.forEach(p=>{if(tierOf(p)>tierOf(best)) best=p});
   const tier=tierOf(best);
@@ -3772,14 +3810,14 @@ $('#skipYes').addEventListener('click',()=>{
 function gearMultiSync(){
   const has=gGroups().some(g=>(g.ids||[]).filter(id=>S.prizes.some(p=>p.id===id)).length>=2);
   $('#gpMulti').hidden=!has;
-  if(!has){S.gon=false;return}
-  const on=!!S.gon,b=$('#grpToggle');
+  if(!has){if(!gGroups().length) delete S.gon;return}
+  const on=gOn(),b=$('#grpToggle');
   b.textContent=on?'ON':'OFF';b.setAttribute('aria-pressed',String(on));
 }
 $('#grpToggle').addEventListener('click',e=>{
   e.stopPropagation();
   if(busy||awaitConfirm){toast('結果を「次へ」で閉じてから切り替えてください');return}
-  S.gon=!S.gon;save();gearMultiSync();
+  S.gon=!gOn();save();gearMultiSync();
 });
 function gearSync(){gearSkipSync();gearMultiSync();const f=!!S.opts.fast;$('#spdNormal').classList.toggle('on',!f);$('#spdFast').classList.toggle('on',f);$('#spdNormal').setAttribute('aria-pressed',String(!f));$('#spdFast').setAttribute('aria-pressed',String(f))}
 function gearClose(){const p=$('#gearPop');if(p.hidden)return;skipShow(false);p.hidden=true;$('#gearBtn').setAttribute('aria-expanded','false')}
