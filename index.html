@@ -968,6 +968,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 #gachaApp .name{text-shadow:.045em 0 0 #fff,-.045em 0 0 #fff,0 .045em 0 #fff,0 -.045em 0 #fff,.032em .032em 0 #fff,-.032em .032em 0 #fff,.032em -.032em 0 #fff,-.032em -.032em 0 #fff,0 0 16px rgba(255,255,255,.9)}
 /* 名前は漢字の収録が広いフォント1本で統一（Dela Gothic Oneは「毅」などが無く、字ごとに別の書体になっていた） */
 #gachaApp .name,#rouletteApp .name{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif;font-weight:700;-webkit-text-stroke:.035em currentColor;paint-order:stroke fill;font-synthesis:none}
+#gachaApp .name{-webkit-text-stroke:.012em currentColor} /* ガチャの結果の名前: 線を少し細く */
 #gachaApp .btn-ghost,#rouletteApp .btn-ghost{background:rgba(255,255,255,.75)}
 #gachaApp .htable,#rouletteApp .htable{color:var(--fg)}
 #gachaApp .htable tbody tr:nth-child(even) td,#rouletteApp .htable tbody tr:nth-child(even) td{background:rgba(20,48,110,.05)}
@@ -991,7 +992,7 @@ body.practice .stage{box-shadow:inset 0 0 0 4px rgba(226,86,11,.55)}
 <div class="menu" id="menu">
   <div class="menu-bg" aria-hidden="true"></div>
   <button class="quit-btn" type="button" id="quitBtn">終了</button>
-  <div class="ver-tag" id="verTag">v273</div>
+  <div class="ver-tag" id="verTag">v275</div>
   <div class="menu-hero"><img src="mascot.png" alt="病院のマスコット"></div>
   <div>
     <h1 class="menu-title">大抽選会ガチャ</h1>
@@ -1380,6 +1381,15 @@ function rand(n){
     return a[0]%n;
   }catch(e){return Math.floor(Math.random()*n)}
 }
+
+/* 抽選: 候補者全員を「山札」のようにシャッフルして（Fisher–Yates法、暗号用乱数）、先頭から当選者を引く */
+function shuffled(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=rand(i+1);const t=a[i];a[i]=a[j];a[j]=t}
+  return a;
+}
+function pickWinners(cand,k){return shuffled(cand).slice(0,k||1)}
+function pickWinner(cand){return pickWinners(cand,1)[0]}
 
 /* ---------- data ---------- */
 const SAMPLE_DEPTS=['外来','3階病棟','4階病棟','手術室','薬剤部','放射線科','リハビリ科','栄養科','検査科','事務部','医療安全室','地域連携室','透析室','ICU','救急外来','5階病棟','訪問看護','臨床工学科','総務課','医事課'];
@@ -2149,7 +2159,7 @@ async function drawMulti(list){
   for(const pz of order){
     const c=pool(pz).filter(p=>!used.has(p.id));
     if(!c.length){toast('「'+rk(pz)+'」に当たる参加者が足りません');resetKnob();return}
-    const w=c[rand(c.length)];used.add(w.id);got.set(pz.id,w);
+    const w=pickWinner(c);used.add(w.id);got.set(pz.id,w);
   }
   busy=true;
   lastResultId=null;
@@ -2206,7 +2216,7 @@ async function draw(){
   lastResultId=null;
   renderStage();
   startAudio();
-  const winner=cand[rand(cand.length)];
+  const winner=pickWinner(cand);
   preloadGlyphs((winner.dept||'')+(winner.name||''));
   const tier=tierOf(pz);
   ballTier=tier;ballCol=colOf(pz);
@@ -3108,7 +3118,7 @@ async function rDraw(test){
   rRender();
   startAudio();
   const wonBefore=T?0:wonCount(pz);
-  const winner=T?R_TEST_W:cand[rand(cand.length)];
+  const winner=T?R_TEST_W:pickWinner(cand);
   const num=empNum4(winner);
   preloadGlyphs((winner.dept||'')+(winner.name||''));
   const tier=tierOf(pz);
@@ -3156,8 +3166,7 @@ async function rDrawMulti(pz,k,cand){
   rthunk();
   busy=true;S.rCurrentId=pz.id;
   rRender();startAudio();
-  const pool=cand.slice(),ws=[];
-  for(let i=0;i<k;i++) ws.push(pool.splice(rand(pool.length),1)[0]);
+  const ws=pickWinners(cand,k);
   const wonBefore=wonCount(pz),tier=tierOf(pz);
   ws.forEach(w=>preloadGlyphs((w.dept||'')+(w.name||'')));
   const ov=R('rMulti'),grid=R('rMultiGrid'),ok=R('rMultiOk');
@@ -3826,7 +3835,7 @@ $('#skipYes').addEventListener('click',()=>{
     while(isOpen(pz)){
       const cand=pool(pz);
       if(!cand.length){short=true;break}
-      const w=cand[rand(cand.length)];
+      const w=pickWinner(cand);
       S.history.push({id:uid(),personId:w.id,empno:w.empno||'',dept:w.dept||'',name:w.name,prizeId:pz.id,rank:rk(pz),item:pz.item,at:Date.now()});
       n++;
     }
